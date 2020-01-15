@@ -29,6 +29,8 @@
 	<script src="https://localhost:8000/js/utils/draw_encoder.js"></script>
 	<script src="https://localhost:8000/js/utils/JSONcopy.js"></script>
 	<script src="https://localhost:8000/js/utils/sleep.js"></script>
+	<script src="https://localhost:8000/js/utils/FileSaver.js"></script>
+	<script src="https://localhost:8000/js/utils/Blob.js"></script>
 </head>
 
 <script type="text/javascript">
@@ -39,7 +41,6 @@
 		script.setAttribute('src', "https://localhost:8000/js/1.js");
 		document.getElementsByTagName("head")[0].appendChild(script);
 	}
-
 </script>
 
 <body>
@@ -75,4 +76,23 @@
 	<!-- <script type="text/javascript" src="https://localhost:8000/js/utils/displayPointerPosition.js"></script> -->
 	
 </body>
+
+<script>
+	window.onbeforeunload = function() {
+		var dataEntry = '';
+		for (var i=0;i<m.learningData.length;i++) {
+			currentData = m.learningData[i];
+			dataEntry += Object.keys(currentData)[0] + ': ' + currentData[Object.keys(currentData)[0]] + '\n';
+			dataEntry += '\t' + Object.keys(currentData)[1] + ': ' + currentData[Object.keys(currentData)[1]] + '\n';
+			dataEntry += '\t' + Object.keys(currentData)[2] + ': ' + currentData[Object.keys(currentData)[2]] + '\n';
+		}
+		var blob = new Blob([dataEntry],{ type: "text/plain;charset=utf-8" });
+		var date = new Date();
+		var filename = String(date.getFullYear())+String(date.getMonth())+String(date.getDate())+'_';
+		filename += String(date.getHours())+String(date.getMinutes())+String(date.getSeconds());
+		console.log(filename)
+		saveAs(blob, filename+'.txt');
+	}
+
+</script>
 </html>

@@ -43,7 +43,7 @@ https_server.on('listening', https_onListening);
 
 listener();
 /** 
-* Handle ROS communica  tion
+* Handle ROS communication
 */
 function listener() {
   // Register node with ROS master

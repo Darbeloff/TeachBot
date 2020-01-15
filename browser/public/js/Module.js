@@ -31,9 +31,15 @@ function Module(module_num, main, content_elements) {
 	this.main = main;
 	this.content_elements = content_elements;
 	this.loaded = {'audio':false, 'text':false, 'json':false};
+	this.startTime = new Date();
 	
 	// Initialize self to module for use in event callbacks
 	self = this;
+
+	// Variable to store learning data of a user
+	this.learningData = [];
+	this.learningData.push({'instruction':['intro', 2],'type':'scroll_wheel', 'data':8});
+	this.learningData.push({'instruction':['intro', 3],'type':'scroll_wheel', 'data':7});
 
 	/*******************************
 	 *   Setup ROS communication   *
@@ -475,6 +481,18 @@ Module.prototype.devRxCallback = function(req, resp) {
 }
 
 /**
+ * Collect data for assessing user's learning progress.
+ *
+ * Depending on the 
+ *
+ * @param {object}	learningData	Dictionary containing the data collected.
+ * 
+ */
+
+ Module.prototype.trackLearning = function() {
+ 	console.log('in progress. not sure if this is needed though...');
+ }
+/**
  * Runs a command from the JSON file.
  *
  * Finds a command from a given address in the JSON file and performs it, then advances to the next command.
@@ -534,37 +552,35 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 		switch(instr.type) {
 			case 'pause':
 
-				console.log("module paused here.")
+				console.log(self.learningData);
 
-				break
+				console.log("module paused here.");
 
-			// case 'shadow':
+				break;
 
-			// 	const Kx = 72.73;
-			// 	const bx = 51.45;
-			// 	const Ky = 157.89;
-			// 	const by = -30;
+			case 'startTimer':
+				self.startTime = new Date();
+				this.start(this.getNextAddress(instructionAddr));
+				break;
 
-			// 	this.endpoint.subscribe(async function(message) {
-			// 		self.ctx.clearRect(0,0,100*self.cw,100*self.ch);
-			// 		var x_center = Kx * message.position.y + bx;
-			// 		var y_center = Ky * message.position.x + by;
-			// 		draw_ball(self.ctx, x_center, y_center, 8, '#7c2629');
-			// 	});
+			case 'stopTimer':
+				self.endTime = new Date();
+				var timeDiff = self.endTime - self.startTime;
+				var newLearningData = {
+					'instruction':instructionAddr.slice(),
+					'type':'time',
+					'data':timeDiff
+				};
+				self.learningData.push(newLearningData);
+				this.start(this.getNextAddress(instructionAddr));
+				break;
 
-			// 	this.pressed.subscribe(async function(message) {
-			// 		if (VERBOSE) console.log('Pressed: ' + message.data);
-			// 		if (message.data == true) {
-			// 			self.endpoint.unsubscribe();
-			// 			self.endpoint.removeAllListeners();
-			// 			self.pressed.unsubscribe();
-			// 			self.pressed.removeAllListeners();
-			// 			self.displayOff();
-			// 			self.start(self.getNextAddress(instructionAddr));
-			// 		}
-			// 	});
-
-			// 	break
+			case 'waiting':
+				setTimeout(() => {
+					console.log("passed!");
+					this.start(this.getNextAddress(instructionAddr));
+				}, instr.duration*1000);
+				break;
 
 			case 'adjustPoseBy':
 				checkInstruction(instr, ['geometry', 'axis', 'amount'], instructionAddr);
@@ -1151,6 +1167,12 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 				goal.on('result', function(result) {
 					if (VERBOSE) console.log('Button pressed:' + result.answer);
 					self.dictionary[instr.store_answer_in] = result.answer;
+					var newLearningData = {
+						'instruction':instructionAddr.slice(),
+						'type':'multiple_choice',
+						'data':result.answer
+					};
+					self.learningData.push(newLearningData);
 					self.displayOff(true);
 					self.start(self.getNextAddress(instructionAddr));
 				});
@@ -1293,6 +1315,12 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 							if (VERBOSE) console.log('Scroll wheel button pressed.');
 							if (instr.hasOwnProperty('store_answer_in')) {
 								self.dictionary[instr.store_answer_in] = wheel_val;
+								var newLearningData = {
+									'instruction':instructionAddr.slice(),
+									'type':'scroll_wheel',
+									'data':wheel_val
+								};
+								self.learningData.push(newLearningData);
 							}
 							self.wheel_delta_topic.unsubscribe();
 							self.wheel_delta_topic.removeAllListeners();

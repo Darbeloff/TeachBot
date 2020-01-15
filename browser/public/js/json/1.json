@@ -78,8 +78,14 @@
 				"delay":false
 			},
 			{
+				"type":"startTimer"
+			},
+			{
 				"type":"scrollWheelInput",
 				"skippable":true
+			},
+			{
+				"type":"stopTimer"
 			},
 			{
 				"//":"Step back and we'll count them together.",
@@ -130,8 +136,14 @@
 				"delay":false
 			},
 			{
+				"type":"startTimer"
+			},
+			{
 				"type":"scrollWheelInput",
 				"store_answer_in":"wheelVal"
+			},
+			{
+				"type":"stopTimer"
 			},
 			{
 				"type":"if",
@@ -281,6 +293,9 @@
 				"delay":false
 			},
 			{
+				"type":"startTimer"
+			},
+			{
 				"type":"joint_move",
 				"joints":"shoulder",
 				"terminatingCondition":"lambda self: self.finished",
@@ -301,6 +316,9 @@
 				"width_ratio": [9],
 				"max_height_ratio": [80],
 				"fillStyle": ["#7c2629"]
+			},
+			{
+				"type":"stopTimer"
 			},
 			{
 				"//":"Let me show you how I know. Please stand back.",
@@ -335,11 +353,14 @@
 				"delay":false
 			},
 			{
+				"type":"startTimer"
+			},
+			{
 				"type":"joint_move",
 				"joints":"wrist",
 				"terminatingCondition":"lambda self: self.finished",
 				"resetPOS":"joint_dof_start",
-				"min_thresh":"0.5",
+				"min_thresh":"0.8",
 				"bias":"BIAS_WRIST",
 				"listen":false
 			},
@@ -357,10 +378,16 @@
 				"fillStyle": ["BlueViolet"]
 			},
 			{
+				"type":"stopTimer"
+			},
+			{
 				"//":"So far I've only unlocked one motor at a time. Let's try unlocking both my shoulder and wrist motors. Push on my arm again and see what happens. When you're done, press the scroll wheel button.",
 				"type":"play",
 				"audio_index":7,
 				"delay":false
+			},
+			{
+				"type":"startTimer"
 			},
 			{
 				"type":"joint_move",
@@ -385,6 +412,9 @@
 				"fillStyle": ["#7c2629", "BlueViolet"]
 			},
 			{
+				"type":"stopTimer"
+			},
+			{
 				"//":"Good! Now, before we go further, how many encoders do you think I have in my arm? Step back so I can move my arm for you to use the scroll wheel.",
 				"type":"play",
 				"audio_index":8,
@@ -395,8 +425,14 @@
 				"joint_angles":"joint_buttons"
 			},
 			{
+				"type":"startTimer"
+			},
+			{
 				"type":"scrollWheelInput",
 				"store_answer_in":"wheelVal"
+			},
+			{
+				"type":"stopTimer"
 			},
 			{
 				"type":"if",
@@ -417,7 +453,13 @@
 						"delay":true
 					},
 					{
+						"type":"startTimer"
+					},
+					{
 						"type":"scrollWheelInput"
+					},
+					{
+						"type":"stopTimer"
 					}
 				]
 			},
@@ -426,6 +468,9 @@
 				"type":"play",
 				"audio_index":11,
 				"delay":false
+			},
+			{
+				"type":"startTimer"
 			},
 			{
 				"type":"interaction_control",
@@ -453,6 +498,9 @@
 				"max_height_ratio": [70,70,70,70,70,70,70],
 				"fillStyle": ["#7c2629", "#7c2629", "#7c2629", "#7c2629", "#7c2629", "#7c2629", "#7c2629"],
 				"label": ["Joint 1","Joint 2","Joint 3","Joint 4","Joint 5","Joint 6","Joint 7"]
+			},
+			{
+				"type":"stopTimer"
 			},
 			{
 				"//":"Using my encoders, I can measure the angles of all seven of my motors. Please stand back so I can reset my position.",
@@ -578,13 +626,19 @@
 				"delay":false
 			},
 			{
+				"type":"startTimer"
+			},
+			{
 				"type":"joint_move",
 				"joints":"elbow",
 				"terminatingCondition":"lambda self : self.limb.joint_angle(elbow)<joint_dot_2[3]",
 				"resetPOS":"kinematics_init_pos",
 				"min_thresh":"1.0",
-				"bias":"BIAS_SHOULDER",
+				"bias":"BIAS_ELBOW",
 				"listen":true
+			},
+			{
+				"type":"stopTimer"
 			},
 			{
 				"//":"I only needed to use one motor, but it was my elbow, not my wrist.",
@@ -668,12 +722,15 @@
 				"delay":false
 			},
 			{
+				"type":"startTimer"
+			},
+			{
 				"type":"joint_move",
 				"joints":"elbow",
 				"terminatingCondition":"lambda self : self.finished",
 				"resetPOS":"joint_dot_3_init",
 				"min_thresh":"1.0",
-				"bias":"BIAS_SHOULDER",
+				"bias":"BIAS_ELBOW",
 				"listen":false,
 				"wait":true
 			},
@@ -723,13 +780,16 @@
 						"terminatingCondition":"lambda self : self.endpoints_equal(self.limb.endpoint_pose(),dot_3,0.05) or self.finished",
 						"resetPOS":"joint_dot_3_init",
 						"min_thresh":"0.8",
-						"bias":"BIAS_SHOULDER",
+						"bias":"BIAS_ELBOW",
 						"listen":true
 					},
 					{
 						"type":"update"
 					}
 				]
+			},
+			{
+				"type":"stopTimer"
 			},
 			{
 				"//":"Great! Now let me try.",
@@ -972,13 +1032,19 @@
 				"delay":false
 			},
 			{
+				"type":"startTimer"
+			},
+			{
 				"type":"joint_move",
 				"joints":"elbow",
 				"terminatingCondition":"lambda self : self.limb.joint_angle(elbow)<point_b[3]",
 				"resetPOS":"point_a",
 				"min_thresh":"1.0",
-				"bias":"BIAS_SHOULDER",
+				"bias":"BIAS_ELBOW",
 				"listen":true
+			},
+			{
+				"type":"stopTimer"
 			},
 			{
 				"//":"Great! Thanks. Now I'm going to move to point B on my own.",
@@ -1017,13 +1083,19 @@
 				"delay":false
 			},
 			{
+				"type":"startTimer"
+			},
+			{
 				"type":"joint_move",
 				"joints":"elbow",
 				"terminatingCondition":"lambda self : self.limb.joint_angle(elbow)>point_b[3]",
 				"resetPOS":"point_c",
 				"min_thresh":"1.0",
-				"bias":"BIAS_SHOULDER",
+				"bias":"BIAS_ELBOW",
 				"listen":true
+			},
+			{
+				"type":"stopTimer"
 			},
 			{
 				"//":"Thank you! At any point, I know the position of my arm because of my encoder. Here is position A,",
@@ -1123,6 +1195,9 @@
 				"store_answer_in":"wait_output"
 			},
 			{
+				"type":"startTimer"
+			},
+			{
 				"//":"Watch the projection as you push my arm. I've put up a little display showing how far you've pushed my arm and how much force I'm using to push back. The further you push my arm, the harder I tell my motors to push back. It should feel a little bit like a rubber band: the more you displace it, the harder it will want to spring back into its original position. When you're done, press the scroll wheel button.",
 				"type":"play",
 				"audio_index":9,
@@ -1137,6 +1212,9 @@
 				"type":"projection"
 			},
 			{
+				"type":"stopTimer"
+			},
+			{
 				"//":"Before, I was using the feedback from my encoders to go somewhere new. Now, I'm using feedback to stay in one place. What am I using to know when my arm is moving?",
 				"type":"play",
 				"audio_index":10,
@@ -1145,6 +1223,9 @@
 			{
 				"type":"goToJointAngles",
 				"joint_angles":"joint_buttons"
+			},
+			{
+				"type":"startTimer"
 			},
 			{
 				"type":"multiple_choice",
@@ -1193,6 +1274,9 @@
 						]
 					}
 				]
+			},
+			{
+				"type":"stopTimer"
 			},
 			{
 				"type":"goToJointAngles",

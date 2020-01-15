@@ -26,10 +26,6 @@ from sawyer.msg import *
 from sawyer.srv import *
 from cv_bridge import CvBridge, CvBridgeError
 
-from signal import signal, SIGINT
-from sys import exit
-import threading
-
 class Module():
 	FORCE2VELOCITY = {'right_j0': 0.06, 'right_j1': 0.06, 'right_j2': 0.4, 'right_j3': 0.2, 'right_j4': 1, 'right_j5': 0.9, 'right_j6': 2}
 	VERBOSE = True
@@ -892,9 +888,9 @@ if __name__ == '__main__':
 	default = [0.0, -0.78, 0.0, 1.57, 0, -0.79, 0.2]
 	joint_buttons = [0.0, -0.78, 0.0, 1.57, 0, -2.99, -1.37]
 
-	BIAS_SHOULDER = -0.55#-0.5
-	BIAS_ELBOW = 0.4
-	BIAS_WRIST = 0.75
+	BIAS_SHOULDER = 0.55#-0.5
+	BIAS_ELBOW = -0.4
+	BIAS_WRIST = -0.7
 	#shoulder_wrist_bias = {shoulder: BIAS_SHOULDER, wrist: BIAS_WRIST}
 	#shoulder_wrist_thresh = {shoulder: 1.0, wrist: 0.5}
 
