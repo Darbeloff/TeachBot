@@ -643,7 +643,7 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 					canvas_container.style.display = 'initial';
 					arc3pt(this.ctx,instr.x1*this.cw,instr.y1*this.ch,instr.x2*this.cw,instr.y2*this.ch,instr.x3*this.cw,instr.y3*this.ch,instr.ccw);
 				} else if (instr.shape=='bar') {
-					draw_bar_new(this.ctx, instr.x_ratio*this.cw, instr.y_ratio*this.ch, instr.width_ratio*this.cw, instr.max_height_ratio*this.ch, instr.height_percent, instr.fillStyle, instr.label);
+					draw_bar(this.ctx, instr.x_ratio*this.cw, instr.y_ratio*this.ch, instr.width_ratio*this.cw, instr.max_height_ratio*this.ch, instr.height_percent, instr.fillStyle, instr.label);
 				} else if (instr.shape=='rectangle') {
 					if (instr.hasOwnProperty('label')){
 						draw_rectangle(this.ctx, instr.x_ratio*this.cw, instr.y_ratio*this.ch, instr.w_ratio*this.cw, instr.h_ratio*this.ch, instr.rotate, instr.label)
@@ -694,9 +694,9 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 										height_percent = (eval('message.'+joint)+Math.PI)/(2*Math.PI);
 									}
 									if (instr.hasOwnProperty('label')) {
-										draw_bar_new(self.ctx, x, y, width, max_height, height_percent, instr.fillStyle[i], instr.label[i]);
+										draw_bar(self.ctx, x, y, width, max_height, height_percent, instr.fillStyle[i], instr.label[i]);
 									} else{
-										draw_bar_new(self.ctx, x, y, width, max_height, height_percent, instr.fillStyle[i]);
+										draw_bar(self.ctx, x, y, width, max_height, height_percent, instr.fillStyle[i]);
 									};
 								};
 							} else if (instr.shape == 'ball'){
@@ -1002,42 +1002,6 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 					goal.send();
 					this.start(self.getNextAddress(instructionAddr));
 				}
-
-				break;
-
-			case 'interaction_projection':
-				protractor_table.style.display = 'initial';
-
-				var bar_ctx = [];
-				for(let j=0; j<JOINTS; j++) {
-					bar_ctx.push(document.getElementById('bar' + (j+1)).getContext('2d'));
-				}
-
-				this.position.subscribe(async function(message) {
-					if (VERBOSE) console.log('Received: ' + message.j0, message.j1, message.j2, message.j3, message.j4, message.j5, message.j6);
-					var locations = [message.j0, message.j1, message.j2, message.j3, message.j4, message.j5, message.j6]
-					for (let p=1; p<=locations.length; p++) {
-						document.getElementById('protractor' + p).value = '' + (100*locations[p-1]);
-						let cw = bar_ctx[p-1].canvas.width/100.0;
-						let ch = bar_ctx[p-1].canvas.height/100.0;
-						bar_ctx[p-1].clearRect(0,0,100*cw,100*ch);
-						draw_bar(bar_ctx[p-1], locations[p-1], 3.15,9*cw,91*cw,50*ch,6*cw, self.robot_color);
-						document.getElementById('bar' + p).value = '' + (100*locations[p-1]);
-					}
-				});
-
-				this.pressed.subscribe(async function(message) {
-					if (VERBOSE) console.log('Pressed: ' + message.data);
-					if (message.data == true) {
-						self.position.unsubscribe();
-						self.position.removeAllListeners();
-						self.pressed.unsubscribe();
-						self.pressed.removeAllListeners();
-						self.displayOff();
-						self.start(self.getNextAddress(instructionAddr));
-					}
-					
-				});
 
 				break;
 
