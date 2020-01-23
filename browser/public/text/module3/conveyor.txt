@@ -1,3 +1,0 @@
-We’ll start with learning how I would interface with a conveyor belt to package a box into one of the bins from the last module.
-Let’s say the conveyor belt is set up to deliver one empty box to me every five seconds, then stop for two seconds for me to pick up the package, then continue. No matter what I do, the conveyor belt will do this.
-As long as the conveyor belt repeats this exact process every time, I have a few options for figuring out when to pick the box off the belt.

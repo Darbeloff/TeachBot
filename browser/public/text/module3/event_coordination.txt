@@ -1,0 +1,17 @@
+This problem kinds of reminds me of when I tried to move my arm to a target in Module 1 and missed the target. Because I didn’t listen closely to feedback I was receiving, I would miss the target.
+A similar problem happened here. Because the conveyor belt isn’t communicating with me at all, I have to guess when the conveyor belt has placed a box in front of me.
+Just like when I ‘closed the loop’ by listening to my encoders and correct my arm position, I’m going to need to communicate with the conveyor belt so that I know when a box is ready for me to pick up.
+For now, can you tell me when to start? When you see a box in the designated pickup area, press the scroll wheel button.
+Keep it going! You’re doing great!
+Don’t worry, let’s try again!
+So, as you can see, this kind of planning works a lot better when there’s some inconsistency with the motions I’m dealing with. This methodology is called event based coordination.
+That said, it wouldn’t be good if I relied on a human operator to just tell me when the box is ready for pickup.
+Let me try to communicate directly with the conveyor belt. Whenever it  carries an object to the pickup area, it sends me a message and turn on the red light.
+After the conveyor belt sends a message to me, it waits for me to pick up the box before turning off the red light and brings the next box.
+On my end, after receiving the message, I will pick up the box and send a message back to the conveyor to tell it that I’ve picked up the box.
+Then, I can inspect the box, place it in the designated area, and move on to the next box. The whole process looks something like this:
+In this process, each device, including myself, can have two states: ready and busy.
+When the conveyor belt turns on the red light and waits for me to grab the box, it is at the ready state. Otherwise, it is busy since the box is not ready for pick up yet.
+For me, the ready state means that I can pick up a box from the conveyor belt. While inspecting the box, I am in the busy state.
+Let me show the status of both me and the conveyor. Notice how they change during the operation.
+The key here is that a sequence should be followed, like how I tried to put a box into a bin. I cannot pick up a box before the conveyor belt tells me that it is ready.

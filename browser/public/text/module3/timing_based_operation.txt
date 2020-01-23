@@ -1,8 +1,9 @@
-The first one we'll talk about is purely about timing. Since I know that the conveyor belt is doing a repetitive cycle thats constantly timed, I can just use that to figure out when to grab the box, and even when to place it back. That would look something like this.
-This kind of methodology is known as timing based coordination.
+Let’s say the conveyor belt delivers one box to me every five seconds, stops for two seconds for me to pick up the box, and then continues. No matter what I do, the conveyor belt will do this.
+The first one we’ll talk about is purely about timing. Since I know that the conveyor belt is doing a repetitive cycle that’s constantly timed, I can just use that to figure out when to grab the box, and even when to place it back if necessary. That would look something like this.
+This methodology is called timing based coordination.
 Timing based coordination is great for things like this where I know exactly the amount of time that motions will take place. But what happens if the timing gets messed up, even by a small amount?
 Something like this would happen.
-Can you fix this by programming a different amount of time I should wait before attemping to grab the box? You can change the wait time using the scroll wheel. 
-Seems like this one isn't working that well. Can you try again?
-Hmmmm. It seems like there just isn't a perfect timing for all of the boxes being dispensed. The timing is very inconsistent.
-This problem kind of reminds me of when I tried to move my arm to a target in Module 1 and missed the target. Because I didn't listen very closely to feedback I was receiving, I would miss the target because I was, to some extent, guessing my position. 
+Can you fix this by changing the amount of time I should wait before attempting to grab the box? Currently, it is set to wait for 5 seconds. Turn the scroll wheel to change the amount and press it when you are done.
+Thanks, now let me try.
+It seems like this one isn’t working well. Can you tell me a different time?
+Hmmm. There seems to be no perfect timing for all of the boxes being dispensed.
