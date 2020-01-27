@@ -4,63 +4,48 @@
 <head>
 
 <title>Module3</title>
-<link rel="stylesheet" type="text/css" href="https://localhost:8000/css/3.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script type="text/javascript" src='https://lib.smartsparrow.com/simcapi-js-3.0.6.min.js'></script>
-<script src="https://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
-<script type="text/javascript" src="https://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="https://localhost:8000/css/main.css">
+	<link rel="stylesheet" type="text/css" href="https://localhost:8000/css/sawyer.css">
 
+	<!-- Structural Utilities -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script type="text/javascript" src='https://lib.smartsparrow.com/simcapi-js-3.0.6.min.js'></script>
+	<script src="https://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+	<script type="text/javascript" src="https://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
+	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/gh/jquery-textfill/jquery-textfill@0.6.0/source/jquery.textfill.min.js"></script>
+
+	<!-- TeachBot Utilities -->
+	<script src="https://localhost:8000/js/utils/arc3pt.js"></script>
+	<script src="https://localhost:8000/js/utils/display_choices.js"></script>
+	<script src="https://localhost:8000/js/utils/draw_ball.js"></script>
+	<script src="https://localhost:8000/js/utils/draw_bar.js"></script>
+	<script src="https://localhost:8000/js/utils/draw_goal.js"></script>
+	<script src="https://localhost:8000/js/utils/draw_pos_orien.js"></script>
+	<script src="https://localhost:8000/js/utils/draw_odometer.js"></script>
+	<script src="https://localhost:8000/js/utils/draw_rectangle.js"></script>
+	<script src="https://localhost:8000/js/utils/draw_spring.js"></script>
+	<script src="https://localhost:8000/js/utils/JSONcopy.js"></script>
+	<script src="https://localhost:8000/js/utils/sleep.js"></script>
 </head>
+
 <body>
-	<div class = "text_box" id = "textdiv">
-		<p id="text">Loading...</p>
+	<!-- <img id="image" src="https://localhost:8000/images/Welcome.png" alt="Welcome" height = "90%"> -->
+
+	<div id="canvas_container">
+		<canvas id="canvas_obj"></canvas>
 	</div>
-	<img id="image_changer" src="https://localhost:8000/images/Welcome.png" alt="Welcome">
+
+	<div id='adjustable'>Loading...</div>
+
 	<audio id="player"></audio>
 
-	<div class ="container" id="canvas_container">
-		<canvas id="canvas" height="500px" width="780px" ></canvas>
-	</div>
-
-	<!----list of options for timing programming---->
-	<div id="od_container" class="container">
-		<div id="odometer" class="odometer">0</div>
-	</div>
-	
-	<!----list of options for event programing-----> 
-	<div class ="gallery" id = "choice_list0" tabindex ="-1" style='z-index: 1' >
-		<div class = "desc" id = "option0">Option 0 Description</div>
-	</div>
-	<div class ="gallery" id = "choice_list1" tabindex ="-1" style='z-index: 2' >
-		<div class = "desc" id = "option1">Option 1 Description</div>
-	</div>
-	<div class ="gallery" id = "choice_list2" tabindex ="-1" style='z-index: 3' >
-		<div class = "desc" id = "option2">Option 2 Description</div>
-	</div>
-	<div class ="gallery" id = "choice_list3" tabindex ="-1" style='z-index: 4'>
-		<div class = "desc" id = "option3">Option 3 Description</div>
-	</div>
-	<div class ="gallery" id = "choice_list4" tabindex ="-1" style='z-index: 5' >
-		<div class = "desc" id = "option4">Option 4 Description</div>
-	</div>
-	<div class ="gallery" id = "choice_list5" tabindex ="-1" style='z-index: 6'>
-		<div class = "desc" id = "option5">Option 5 Description</div>
-	</div>
-	<div class ="gallery" id = "choice_list6" tabindex ="-1" style='z-index: 7' >
-		<div class = "desc" id = "option6">Option 6 Description</div>
-	</div>
-	<div class ="gallery" id = "choice_list7" tabindex ="-1" style='z-index: 8' >
-		<div class = "desc" id = "option7">Option 7 Description</div>
-	</div>
-	<div class ="gallery" id = "choice_list8" tabindex ="-1" style='z-index: 9' >
-		<div class = "desc" id = "option8">Option 8 Description</div>
-	</div>
-
-	<!---selection list----->
-	<div class ="selected_container" id = "selection_list">
-		<div class = "desc" id = "selected_values">Picked actions:</div>
-	</div>
+	<script type="text/javascript" src="https://localhost:8000/js/Module.js"></script>
 	<script type ="text/javascript" src = 'https://localhost:8000/js/3.js'> </script>
+
+	<!-- Display Pointer Position -->
+	<!-- <script type="text/javascript" src="https://localhost:8000/js/utils/displayPointerPosition.js"></script> -->
+	
 
 </body>
 

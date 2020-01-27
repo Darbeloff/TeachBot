@@ -10,40 +10,88 @@
 	<!-- <link rel="stylesheet" type="text/css" href="https://localhost:8000/css/test.css"> -->
 </head>
 
-<script type="text/javascript">
-	function resizeCanvas() {
-		canvas_obj.width = window.innerWidth * 0.96;
-		canvas_obj.height = window.innerHeight * 0.76;
-	}
-	function drawCircle() {
-		var ctx = canvas_obj.getContext("2d");
-		ctx.beginPath();
-		ctx.arc(60, 60, 40, 0, 2*Math.PI);
-		ctx.stroke();
-	}
-	function clearCanvas() {
-		var ctx = canvas_obj.getContext("2d");
-		ctx.clearRect(0, 0, canvas_obj.width, canvas_obj.height)
-	}
-
-</script>
-
 <body>
 
-	<div id="canvas" class="container">
-		<canvas id="canvas_obj" ></canvas>
-		<script type="text/javascript">
-			resizeCanvas();
-			window.addEventListener('resize', resizeCanvas, false);
-		</script>
-	</div>
-
-	<div id="adjustable" class="container">
-		<p align="center">Here is for displaying the audio text.</p>
-		<button onclick="drawCircle()">draw a circle</button>
-		<button onclick="clearCanvas()">clear</button>
-	</div>
+	<canvas id="myCanvas" width="500" height="500" style="border:1px solid #d3d3d3;"></canvas>
+	<button onclick="stop()">Stop</button>
+	<button onclick="resume()">Resume</button>
+	<button onclick="changeSpeed(1)">Faster</button>
+	<button onclick="changeSpeed(-1)">Slower</button>
 
 </body>
+
+<script type="text/javascript">
+	var c = document.getElementById("myCanvas");
+	var ctx = c.getContext("2d");
+	var canvas_frame_req;
+	window.cancelAnimationFrame(canvas_frame_req);
+
+	canvas_frame_req = window.requestAnimationFrame(function(timestamp) {
+		drawCanvas(timestamp);
+	});
+
+	var i = 0;
+	var run = false;
+	var speed = 1;
+
+	function ConveyorBelt(timestamp) {
+		ctx.clearRect(0,0,500,500);
+		if (i<450){
+			ctx.beginPath();
+			ctx.rect(20, 20+i/1, 100, 10);
+			ctx.rect(120, 20+i/2, 100, 10);
+			ctx.stroke();
+			if (run) { i+=speed; }
+		} else { i=0; }
+
+		canvas_frame_req = window.requestAnimationFrame(function(timestamp) {
+			drawCanvas(timestamp);
+		});
+	}
+
+	function stop() {
+		run = false;
+	}
+
+	function resume() {
+		run = true;
+	}
+
+	function changeSpeed(amount) {
+		speed = Math.min(10, Math.max(0, speed+amount));
+	}
+
+	function ConveyorBelt(ctx, step){
+		this.speed = 0.0;
+		this.direction = 0;
+		this.width = 0;
+		this.length = 0;
+		
+
+
+	}
+
+	ConveyorBelt.prototype.update = function(speed, direction) {
+
+	}
+
+	// var i = 1;                     //  set your counter to 1
+	// function myLoop () {           //  create a loop function
+	//    	setTimeout(function () {    //  call a 3s setTimeout when the loop is called
+	//    		ctx.clearRect(0,0,500,500);
+	//       	ctx.beginPath();
+	// 		var y = 20 + i*delta;
+	// 		ctx.rect(20, y, 100, 10);
+	// 		ctx.rect(20, y+30, 100,10);
+	// 		ctx.stroke();
+	// 	    i++;                     //  increment the counter
+	// 	    if (i < 200) {            //  if the counter < 10, call the loop function
+	// 	       myLoop();             //  ..  again which will trigger another 
+	// 	    }                        //  ..  setTimeout()
+	//    }, 16)
+	// }
+	// myLoop();
+
+</script>
 	
 </html>
