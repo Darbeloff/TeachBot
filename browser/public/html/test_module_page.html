@@ -10,88 +10,31 @@
 	<!-- <link rel="stylesheet" type="text/css" href="https://localhost:8000/css/test.css"> -->
 </head>
 
+<!-- <script type="text/javascript">
+	var foo = [1,2,3,4,5]
+
+	foo.forEach(function(item, index) {
+		foo[index] = item + 1;
+	}, foo);
+
+	console.log(foo);
+</script> -->
+
 <body>
 
 	<canvas id="myCanvas" width="500" height="500" style="border:1px solid #d3d3d3;"></canvas>
-	<button onclick="stop()">Stop</button>
-	<button onclick="resume()">Resume</button>
-	<button onclick="changeSpeed(1)">Faster</button>
-	<button onclick="changeSpeed(-1)">Slower</button>
+	<br>
+	<br>
+
+	<script type="text/javascript" src="https://localhost:8000/js/ConveyorBelt.js"></script>
+
+	<button onclick="conveyor.stop()">Stop</button>
+	<button onclick="conveyor.resume()">Resume</button>
+	<button onclick="conveyor.changeSpeed(1)">Move down</button>
+	<button onclick="conveyor.changeSpeed(-1)">Move up</button>
+	<button onclick="conveyor.setSpeed(10)">10</button>
+	<button onclick="conveyor.setSpeed(-10)">-10</button>
 
 </body>
-
-<script type="text/javascript">
-	var c = document.getElementById("myCanvas");
-	var ctx = c.getContext("2d");
-	var canvas_frame_req;
-	window.cancelAnimationFrame(canvas_frame_req);
-
-	canvas_frame_req = window.requestAnimationFrame(function(timestamp) {
-		drawCanvas(timestamp);
-	});
-
-	var i = 0;
-	var run = false;
-	var speed = 1;
-
-	function ConveyorBelt(timestamp) {
-		ctx.clearRect(0,0,500,500);
-		if (i<450){
-			ctx.beginPath();
-			ctx.rect(20, 20+i/1, 100, 10);
-			ctx.rect(120, 20+i/2, 100, 10);
-			ctx.stroke();
-			if (run) { i+=speed; }
-		} else { i=0; }
-
-		canvas_frame_req = window.requestAnimationFrame(function(timestamp) {
-			drawCanvas(timestamp);
-		});
-	}
-
-	function stop() {
-		run = false;
-	}
-
-	function resume() {
-		run = true;
-	}
-
-	function changeSpeed(amount) {
-		speed = Math.min(10, Math.max(0, speed+amount));
-	}
-
-	function ConveyorBelt(ctx, step){
-		this.speed = 0.0;
-		this.direction = 0;
-		this.width = 0;
-		this.length = 0;
-		
-
-
-	}
-
-	ConveyorBelt.prototype.update = function(speed, direction) {
-
-	}
-
-	// var i = 1;                     //  set your counter to 1
-	// function myLoop () {           //  create a loop function
-	//    	setTimeout(function () {    //  call a 3s setTimeout when the loop is called
-	//    		ctx.clearRect(0,0,500,500);
-	//       	ctx.beginPath();
-	// 		var y = 20 + i*delta;
-	// 		ctx.rect(20, y, 100, 10);
-	// 		ctx.rect(20, y+30, 100,10);
-	// 		ctx.stroke();
-	// 	    i++;                     //  increment the counter
-	// 	    if (i < 200) {            //  if the counter < 10, call the loop function
-	// 	       myLoop();             //  ..  again which will trigger another 
-	// 	    }                        //  ..  setTimeout()
-	//    }, 16)
-	// }
-	// myLoop();
-
-</script>
 	
 </html>
