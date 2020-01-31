@@ -511,16 +511,17 @@ class Module():
 	def cb_Gripper(self,goal):
 
 		result_Gripper = GripperResult()
-		result_Gripper.is_done = False
+		result_Gripper.is_done = ''
 
 		if (goal.grip==True):
-			if self.VERBOSE: rospy.loginfo('Closing gripper')
+			if self.VERBOSE: rospy.loginfo('Closing gripper...')
 			self.close_gripper()
+			result_Gripper.is_done = 'close'
 		else:
-			if self.VERBOSE: rospy.loginfo('Opening gripper')
+			if self.VERBOSE: rospy.loginfo('Opening gripper...')
 			self.open_gripper()
+			result_Gripper.is_done = 'open'
 
-		result_Gripper.is_done = True
 		self.GripperAct.set_succeeded(result_Gripper)
 
 	def cb_camera(self, data):

@@ -10,30 +10,26 @@
 	<!-- <link rel="stylesheet" type="text/css" href="https://localhost:8000/css/test.css"> -->
 </head>
 
-<!-- <script type="text/javascript">
-	var foo = [1,2,3,4,5]
-
-	foo.forEach(function(item, index) {
-		foo[index] = item + 1;
-	}, foo);
-
-	console.log(foo);
-</script> -->
-
 <body>
 
-	<canvas id="myCanvas" width="500" height="500" style="border:1px solid #d3d3d3;"></canvas>
+	<div align="center">
+		<canvas id="myCanvas" style="border:1px solid #d3d3d3;"></canvas>
+	</div>
+
 	<br>
 	<br>
-
-	<script type="text/javascript" src="https://localhost:8000/js/ConveyorBelt.js"></script>
-
 	<button onclick="conveyor.stop()">Stop</button>
 	<button onclick="conveyor.resume()">Resume</button>
-	<button onclick="conveyor.changeSpeed(1)">Move down</button>
-	<button onclick="conveyor.changeSpeed(-1)">Move up</button>
-	<button onclick="conveyor.setSpeed(10)">10</button>
-	<button onclick="conveyor.setSpeed(-10)">-10</button>
+	<button onclick="conveyor.changeSpeed(0.1)">Move down</button>
+	<button onclick="conveyor.changeSpeed(-0.1)">Move up</button>
+	<button onclick="conveyor.setSpeed(3)">3</button>
+	<button onclick="conveyor.setSpeed(-3)">-3</button>
+	<br>
+	<button onclick="conveyor.addBox()">Add a box</button>
+	<button onclick="conveyor.pickupArea()">pickup area</button>
+
+	<script type="text/javascript" src="https://localhost:8000/js/ConveyorBelt.js"></script>
+	<script type="text/javascript" src="https://localhost:8000/js/GripperProjection.js"></script>
 
 </body>
 	

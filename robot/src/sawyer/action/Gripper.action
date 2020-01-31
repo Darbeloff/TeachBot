@@ -5,7 +5,7 @@ bool grip
 ---
 
 # result definition
-bool is_done
+string is_done
 ---
 
 # feedback definition
