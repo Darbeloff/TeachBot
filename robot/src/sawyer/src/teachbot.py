@@ -47,6 +47,10 @@ class Module():
 		rospy.init_node('Sawyer_comm_node', anonymous=True)
 		intera_interface.HeadDisplay().display_image('logo.png')
 
+		# Limb
+		self.limb = LimbPlus()
+		self.limb.go_to_joint_angles()
+
 		# Global Vars
 		self.audio_duration = 0
 		self.finished = False
@@ -66,10 +70,17 @@ class Module():
 		self.control = {
 			'i': 0,
 			'order': 15,
-			'effort': [],
+			'effort': [],			# Structured self.control['effort'][tap #, e.g. i][joint, e.g. 'right_j0']
 			'position': [],
 			'velocity': [],
 		}
+		zeroVec = self.limb.joint_velocities()
+		for joint in zeroVec.keys():
+			zeroVec[joint] = 0.0
+		for i in range(self.control['order']):
+			self.control['effort'].append(zeroVec.copy())
+			self.control['position'].append(zeroVec.copy())
+			self.control['velocity'].append(zeroVec.copy())
 
 		# Publishing topics
 		suppress_cuff_interaction = rospy.Publisher('/robot/limb/right/suppress_cuff_interaction', Empty, queue_size=1)
@@ -109,10 +120,6 @@ class Module():
 		self.AdjustPoseByAct = actionlib.SimpleActionServer('/teachbot/AdjustPoseBy', AdjustPoseByAction, execute_cb=self.cb_AdjustPoseBy, auto_start=True)
 		self.JointImpedanceAct = actionlib.SimpleActionServer('/teachbot/JointImpedance', JointImpedanceAction, execute_cb=self.cb_JointImpedance, auto_start=True)
 		self.WaitAct = actionlib.SimpleActionServer('/teachbot/Wait', WaitAction, execute_cb=self.cb_Wait, auto_start=True)
-
-		# Limb
-		self.limb = LimbPlus()
-		self.limb.go_to_joint_angles()
 
 		# Lights
 		self.lights = intera_interface.Lights()
@@ -403,12 +410,12 @@ class Module():
 		effort = JointInfo()
 		for j in range(Module.JOINTS):
 			setattr(position, 'j'+str(j), data.position[j+1])
-			setattr(self.control['position'][self.control.i], 'right_j'+str(j), data.position[j+1])
+			self.control['position'][self.control['i']]['right_j'+str(j)] = data.position[j+1]
 			setattr(velocity, 'j'+str(j), data.velocity[j+1])
-			setattr(self.control['velocity'][self.control.i], 'right_j'+str(j), data.velocity[j+1])
+			self.control['velocity'][self.control['i']]['right_j'+str(j)] = data.velocity[j+1]
 			setattr(effort, 'j'+str(j), data.effort[j+1])
-			setattr(self.control['effort'][self.control.i], 'right_j'+str(j), data.effort[j+1])
-		self.control.i = self.control.i+1 if self.control.i+1<self.control.order else 0
+			self.control['effort'][self.control['i']]['right_j'+str(j)] = data.effort[j+1]
+		self.control['i'] = self.control['i']+1 if self.control['i']+1<self.control['order'] else 0
 		self.position_topic.publish(position)
 		self.velocity_topic.publish(velocity)
 		self.effort_topic.publish(effort)
@@ -760,6 +767,7 @@ class Module():
 		result.done = True
 		self.JointMoveAct.set_succeeded(result);
 
+	# TODO: Deprecate
 	def cb_Wait(self, goal):
 
 		result_wait = sawyer.msg.WaitResult()
@@ -815,27 +823,37 @@ class Module():
 		self.MultipleChoiceAct.set_succeeded(self.multiple_chocie_result)
 
 	def cb_SetRobotMode(self, req):
-		if self.modeTimer is not None:
+		if self.VERBOSE: rospy.loginfo('Entering ' + req.mode + ' mode.')
+
+		if not (self.modeTimer is None):
 			self.modeTimer.shutdown()
 
-		if req.mode is 'position':
+		if req.mode == 'position':
 			self.limb.exit_control_mode()
 
-		elif req.mode is 'admittance ctrl':
+		elif req.mode == 'admittance ctrl':
 			self.limb.set_command_timeout(2)																# Set command timeout to be much greater than the command period
 			joints = [];
 			for j in req.joints:
 				joints.append({ 'right_j'+str(j): {} })
-			rospy.loginfo(req.min_thresh)
+			if len(req.min_thresh)!=0:
+				for i,j in enumerate(req.joints):
+					# TODO: ERROR HERE XXX
+					print(type(i))
+					print(type(j))
+					joints['right_j'+str(j)].min_thresh = req.min_thresh[i]
+			rospy.loginfo(joints)
 
-		elif req.mode is 'impedance ctrl':
+		elif req.mode == 'impedance ctrl':
 			self.limb.set_command_timeout(2)																# Set command timeout to be much greater than the command period
 
-		elif req.mode is 'interaction ctrl':
+		elif req.mode == 'interaction ctrl':
 			pass
 
 		else:
 			rospy.logerr('Robot mode ' + req.mode + ' is not a supported mode.')
+
+		return True
 
 	def cb_AdmittanceCtrl(self, joints, resetPos, rateNom=10, tics=15):
 		self.joint_safety_check(lambda self : self.limb.go_to_joint_angles(resetPos), lambda self : None)
@@ -845,7 +863,7 @@ class Module():
 		velocities = self.limb.joint_velocities()
 		for joint in velocities.keys():
 			if joint in joints.keys():
-				filteredForce = sum([self.control.effort[i][joint] for i in range(self.control.order)])/self.control.order + joints[joint].bias
+				filteredForce = sum([self.control['effort'][i][joint] for i in range(self.control['order'])])/self.control['order'] + joints[joint].bias
 				#numpy.mean(effortVec[joint])+bias_vec[joint]
 				#rospy.loginfo(joint + ': ' + str(filteredForce))
 				if abs(filteredForce) < joints[joint].min_thresh:

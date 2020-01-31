@@ -3,15 +3,18 @@
 # Request: new mode
 string mode
 
-# Custom Ctrl Parameter for Admittance and Impedance Ctrl
-int32[] joints
-string resetPOS
-float32[] min_thresh
-float32[] bias
-float32[] tol
-float32[] V2F
-float32[] X2F
-float32[] F2V
+# Custom Ctrl Parameters for Admittance and Impedance Ctrl
+int32[] joints			# List of joints to control. Joints not in this list are fixed if in admittance ctrl mode and stiff if in impedance ctrl mode.
+string resetPOS			# Name of pose to which to return if arm exits safety zone.
+
+# Admittance Ctrl Parameters
+float32[] min_thresh	# Minimum threshold necessary for movement. Admittance ctrl only.
+float32[] bias			# Force bias in joint. Admittance ctrl only.
+float32[] F2V			# Force-to-velocity conversion factor. Admittance ctrl only.
+
+# Impedance Ctrl Parameters
+float32[] V2F			# Damping constant. Impedance ctrl only.
+float32[] X2F			# Spring constant. Impedance ctrl only.
 
 # Interaction Ctrl Paramters
 ---

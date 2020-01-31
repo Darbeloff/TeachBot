@@ -116,7 +116,7 @@ function Module(module_num, main, content_elements) {
 		ros: ros,
 		name: '/teachbot/set_robot_mode',
 		serviceType: 'SetRobotMode'
-	})
+	});
 	this.UpdateAudioDurationSrv = new ROSLIB.Service({
 		ros: ros,
 		name: '/teachbot/audio_duration',
@@ -1080,8 +1080,11 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 				break;
 
 			case 'wait':
-				checkInstruction(instr, ['what'], instructionAddr);
-
+				this.wait(instr, instructionAddr).then((msg) => {
+					this.start(self.getNextAddress(instructionAddr));
+				});
+				
+				/*
 				var goal = new ROSLIB.Goal({
 					actionClient: this.WaitAct,
 					goalMessage:{ 
@@ -1097,7 +1100,7 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 					self.start(self.getNextAddress(instructionAddr));
 				});
 				goal.send();
-
+				*/
 				break;
 
 			case 'joint_impedance':
