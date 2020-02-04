@@ -17,13 +17,6 @@ ros.on('connection', function() { console.log('Connected to websocket server.');
 ros.on('error', function(error) { console.log('Error connecting to websocket server: ', error); window.alert('Error connecting to websocket server'); });
 ros.on('close', function() { console.log('Connection to websocket server closed.'); });
 
-// Publishing topics
-var allowCuffInteraction = new ROSLIB.Topic({
-	ros: ros,
-	name: '/teachbot/allowCuffInteraction',
-	messageType: 'std_msgs/Bool'
-});
-
 // Subscribing topics
 var position = new ROSLIB.Topic({
 	ros: ros,
@@ -39,6 +32,12 @@ var endpoint = new ROSLIB.Topic({
 
 
 // Action clients
+var AllowCuffInteractionAct = new ROSLIB.ActionClient({
+	ros: ros,
+	serverName: '/teachbot/AllowCuffInteraction',
+	actionName: ROBOT + '/AllowCuffInteractionAction'
+});
+
 var GoToJointAnglesAct = new ROSLIB.ActionClient({
 	ros: ros,
 	serverName: '/teachbot/GoToJointAngles',
@@ -134,13 +133,30 @@ function sendJointAngles(g0, g1, g2, g3, g4, g5, g6) {
 };
 
 function enableCuffInteraction() {
-	var req = new ROSLIB.Message({data: true});
-	allowCuffInteraction.publish(req);
+	var goal = new ROSLIB.Goal({
+		actionClient: AllowCuffInteractionAct,
+		goalMessage:{
+			allow:true
+		}
+	});
+	goal.on('result', function(result) {
+		console.log(result.status);
+	});
+	goal.send();
 }
 
 function disableCuffInteraction() {
-	var req = new ROSLIB.Message({data: false});
-	allowCuffInteraction.publish(req);
+	var goal = new ROSLIB.Goal({
+		actionClient: AllowCuffInteractionAct,
+		goalMessage:{
+			allow:false
+		}
+	});
+	goal.on('result', function(result) {
+		position.unsubscribe();
+		endpoint.unsubscribe();
+	});
+	goal.send();
 }
 
 function anglesToClipboard() {

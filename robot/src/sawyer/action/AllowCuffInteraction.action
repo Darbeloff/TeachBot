@@ -1,0 +1,12 @@
+# enable or disable cuff interaction .action file
+
+# goal definition
+bool allow
+---
+
+# result definition
+string status
+---
+
+# feedback definition
+int32 feedback

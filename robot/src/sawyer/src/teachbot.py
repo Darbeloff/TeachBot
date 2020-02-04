@@ -27,10 +27,6 @@ from sawyer.msg import *
 from sawyer.srv import *
 from cv_bridge import CvBridge, CvBridgeError
 
-from signal import signal, SIGINT
-from sys import exit
-import threading
-
 class Module():
 	FORCE2VELOCITY = {'right_j0': 0.06, 'right_j1': 0.06, 'right_j2': 0.4, 'right_j3': 0.2, 'right_j4': 1, 'right_j5': 0.9, 'right_j6': 2}
 	VERBOSE = True
@@ -56,7 +52,7 @@ class Module():
 		self.finished = False
 		self.startPos = 0
 		self.devMode = False
-		self.allowCuffInteraction = False
+		self.allow_cuff_interaction = False
 		self.modeTimer = None
 
 		self.p_command = lambda self: self.pub_num(180/math.pi*self.limb.joint_angle(shoulder))
@@ -97,7 +93,6 @@ class Module():
 		rospy.Subscriber('/robot/joint_states', sensor_msgs.msg.JointState, self.forwardJointState)
 		rospy.Subscriber('/robot/limb/right/endpoint_state', intera_core_msgs.msg.EndpointState, self.forwardEndpointState)
 		rospy.Subscriber('/teachbot/camera', Bool, self.cb_camera)
-		rospy.Subscriber('/teachbot/allowCuffInteraction', Bool, self.cb_allowCuffInteraction)
 
 		# Service Servers
 		rospy.Service('/teachbot/audio_duration', AudioDuration, self.rx_audio_duration)
@@ -107,6 +102,7 @@ class Module():
 		self.DevModeSrv = rospy.ServiceProxy('/teachbot/dev_mode', DevMode)
 
 		# Actions
+		self.AllowCuffInteractionAct = actionlib.SimpleActionServer('/teachbot/AllowCuffInteraction', AllowCuffInteractionAction, execute_cb=self.cb_AllowCuffInteraction, auto_start=True)
 		self.CuffInteractionAct = actionlib.SimpleActionServer('/teachbot/CuffInteraction', CuffInteractionAction, execute_cb=self.cb_CuffInteraction, auto_start=True)
 		self.GoToJointAnglesAct = actionlib.SimpleActionServer('/teachbot/GoToJointAngles', GoToJointAnglesAction, execute_cb=self.cb_GoToJointAngles, auto_start=True)
 		self.JointMoveAct = actionlib.SimpleActionServer('/teachbot/JointMove', JointMoveAction, execute_cb=self.cb_joint_move, auto_start=True)
@@ -155,9 +151,8 @@ class Module():
 		for key in self.cuff_callback_ids:
 			self.cuff_callback_ids[key] = -1
 
-		# Turn off cuff interaction.
-		if not self.allowCuffInteraction:
-			rospy.Timer(rospy.Duration(0.1), lambda event=None : suppress_cuff_interaction.publish())
+		# Monitor whether complete cuff interaction is allowed.
+		rospy.Timer(rospy.Duration(0.1), lambda event=None : False if self.allow_cuff_interaction else suppress_cuff_interaction.publish())
 
 		# Initialization complete. Spin.
 		rospy.loginfo('Ready.')
@@ -451,10 +446,12 @@ class Module():
 				self.lights.set_light_state('head_blue_light',True)
 				if self.VERBOSE: rospy.loginfo('Entering dev mode')
 
-	def cb_allowCuffInteraction(self, data):
-		status = "activated." if data.data else "off."
-		rospy.loginfo("Cuff interaction " + status)
-		self.allowCuffInteraction = data.data
+	def cb_AllowCuffInteraction(self, goal):
+		result_AllowCuffInteraction = AllowCuffInteractionResult()
+		self.allow_cuff_interaction = goal.allow
+		rospy.loginfo("Allow cuff interaction? " + str(self.allow_cuff_interaction))
+		result_AllowCuffInteraction.status = "active" if goal.allow else "off"
+		self.AllowCuffInteractionAct.set_succeeded(result_AllowCuffInteraction)
 
 	def subscribe_to_wheel_move(self):
 		def rx_wheel_move(data):
