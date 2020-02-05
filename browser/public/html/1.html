@@ -38,41 +38,26 @@
 	<script src="https://localhost:8000/js/instructions/wait.js"></script>
 </head>
 
-<script type="text/javascript">
-	function begin() {
-		document.getElementById("adjustable").innerHTML = "Loading..."
-		var script = document.createElement("script");
-		script.setAttribute('type', "text/javascript");
-		script.setAttribute('src', "https://localhost:8000/js/1.js");
-		document.getElementsByTagName("head")[0].appendChild(script);
-	}
-
-</script>
-
 <body>
-	<!-- Welcome image -->
-	<img id="image" class="welcome" src="https://localhost:8000/images/Welcome.png" alt="Welcome" height = "90%">
-	
-	<!-- Canvas -->
-	<div id="canvas_container">
-		<canvas id="canvas_obj"></canvas>
+
+	<div id="display_container">
+		<!-- Canvas -->
+		<canvas id="canvas_obj" style="display: none"></canvas>
+		
+		<!-- Welcome image -->
+		<img id="image" class="welcome" src="https://localhost:8000/images/Welcome.png" alt="Welcome" height = "90%">
+
+		<!-- Animation -->
+		<video id="animator" class="centered" style="display: none" preload><source src="https://localhost:8000/videos/motor_animation.mp4" type="video/mp4">
+		</video>
+
 	</div>
 
 	<!-- Audio text -->
-	<div id='adjustable'>
-		<!-- <div align="center">
-			<button onclick="begin()">Begin Module 1</button>
-		</div> -->
-	</div>
+	<div id='adjustable'></div>
 
 	<!-- Speech -->
 	<audio id="player"></audio>
-
-	<!-- Animation -->
-	<video id="animator" class="centered" preload>
-		<source src="https://localhost:8000/videos/motor_animation.mp4" type="video/mp4">
-	</video>
-
 
 	<!-- Run JS Module -->
 	<script type="text/javascript" src="https://localhost:8000/js/1.js"></script>

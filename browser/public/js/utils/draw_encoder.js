@@ -3,9 +3,9 @@
  *
  * @param {object}  ctx          The context of the canvas on which to draw.
  * @param {object}  encoder_moving_part_url         The url of image for moving part of robot arm.
- * @param {object}  encoder_moving_part_url         The url of image for still part of robot arm.
- * @param {object}  encoder_moving_part_url         The url of image for body of motor.
- * @param {object}  encoder_moving_part_url         The url of image for rotating circle of motor.
+ * @param {object}  encoder_still_part_url         	The url of image for still part of robot arm.
+ * @param {object}  encoder_motor_url     			The url of image for body of motor.
+ * @param {object}  encoder_motor_circle_url        The url of image for rotating circle of motor.
  */
 function draw_encoder(ctx, encoder_moving_part_url, encoder_still_part_url, encoder_motor_url, encoder_motor_circle_url) {
 	var max_turn = 60; // change in angle
@@ -24,7 +24,6 @@ function draw_encoder(ctx, encoder_moving_part_url, encoder_still_part_url, enco
 	var h = w*.5;
 	var startx = canvas.width/2 - w/2;
 	var starty = canvas.height/2 - h/2;
-
 
 
 	drawMoving = function() {
@@ -199,8 +198,6 @@ function draw_encoder(ctx, encoder_moving_part_url, encoder_still_part_url, enco
 		ctx.restore();
 	};
 
-
-	
 	moving_part.src = encoder_moving_part_url;
 	still_part.src = encoder_still_part_url;
 	motor.src = encoder_motor_url;
@@ -211,4 +208,4 @@ function draw_encoder(ctx, encoder_moving_part_url, encoder_still_part_url, enco
 	
 }
 
-var encoder = 0;
+// var encoder = 0;

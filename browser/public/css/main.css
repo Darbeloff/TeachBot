@@ -76,7 +76,7 @@ button.module {
 	font-size: 2vh;
 }
 
-#canvas_container {
+#display_container {
 	width: 100%;
 	height: 80%;
 	text-align: center;

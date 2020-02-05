@@ -10,7 +10,7 @@ const ROBOT = 'sawyer';
  *
  * General interpreter for module JSON files. Loads, parses, and plays instructions.
  * Example of how to use:
- * >> var m = new Module(1, main, [image,canvas_container]);
+ * >> var m = new Module(1, main, [image,canvas_obj]);
  * >> async function main() {
  * >>     m.displayOff();
  * >>     image.style.display = 'initial';
@@ -691,7 +691,7 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 
 			case 'initializeDisplay':
 				this.displayOff();
-				canvas_container.style.display = 'initial';
+				canvas_obj.style.display = 'initial';
 				this.ctx.clearRect(0,0,100*this.cw,100*this.ch);
 				this.start(self.getNextAddress(instructionAddr));
 				break;
@@ -936,7 +936,7 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 
 			case 'encode':
 				self.displayOff();
-				canvas_container.style.display = 'initial';
+				canvas_obj.style.display = 'initial';
 				this.ctx.clearRect(0,0,100*this.cw,100*this.ch);
 				var encoder_moving_part_url = DIR + 'images/moving_part.png';
 				var encoder_still_part_url = DIR + 'images/still_part.png';
@@ -1278,7 +1278,7 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 
 			case 'projection':
 				this.displayOff();
-				canvas_container.style.display = 'initial';
+				canvas_obj.style.display = 'initial';
 
 				this.position.subscribe(async function(message) {
 					if (VERBOSE) console.log(message.j1);
@@ -1314,7 +1314,7 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 
 				this.ctx.clearRect(0,0,100*this.cw,100*this.ch);
 
-				canvas_container.style.display = 'initial';
+				canvas_obj.style.display = 'initial';
 
 				this.start(this.getNextAddress(instructionAddr));
 

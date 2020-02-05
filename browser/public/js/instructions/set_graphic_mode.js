@@ -35,7 +35,7 @@ Module.prototype.set_graphic_mode = function(instr, instructionAddr) {
 			break;
 
 		case 'canvas':
-			canvas_container.style.display = 'initial';
+			canvas_obj.style.display = 'initial';
 			if (instr.hasOwnProperty('clear') && instr.clear) {
 				this.drawings = [];
 			}
@@ -46,14 +46,14 @@ Module.prototype.set_graphic_mode = function(instr, instructionAddr) {
 
 			break;
 
-		case 'multiple choice':
-			canvas_container.style.display = 'initial';
+		case 'multiple_choice':
+			canvas_obj.style.display = 'initial';
 			display_choices(m.ctx, ['Motors','Buttons','Cameras','Encoders','Wheels'], DIR + 'images/sized_cuff.png');
 
 			break;
 
 		case 'scroll wheel':
-			canvas_container.style.display = 'initial';
+			canvas_obj.style.display = 'initial';
 			run_odometer = true;
 			canvas_obj.width = canvas_obj.width;
 			init_odometer(this.ctx);

@@ -3,16 +3,97 @@
 		"id": "intro",
 		"instructions": [
 			{
-				"type":"set_robot_mode",
-				"mode":"admittance ctrl",
-				"joints":[0],
-				"resetPOS":"default",
-				"min_thresh":[0.1]
+				"type":"encode"
 			},
 			{
 				"type":"wait",
 				"for":"time",
-				"s":10
+				"s":6
+			},
+			{
+				"type":"pause"
+			},
+			{
+				"type": "stopEncode"
+			},
+			{
+				"type":"set_graphic_mode",
+				"mode":"image",
+				"location":"images/Welcome.png"
+			},
+			{
+				"type":"wait",
+				"for":"time",
+				"s":2
+			},
+			{
+				"type":"multiple_choice",
+				"store_answer_in":"wheelVal"
+			},
+			{
+				"type":"scrollWheelInput",
+				"skippable":false
+			},
+			{
+				"type":"set_graphic_mode",
+				"mode":"video",
+				"skippable":true
+			},
+			{
+				"type":"wait",
+				"for":"time",
+				"s":2
+			},
+			{
+				"type": "set_graphic_mode",
+				"mode": "canvas"
+			},
+			{
+				"type": "draw",
+				"shape": "bar",
+				"height_percent": "0.7",
+				"x": 4,
+				"y": 85,
+				"width": 9,
+				"max_height": 80,
+				"fillStyle": ["#7c2629"]
+			},
+			{
+				"type":"wait",
+				"for":"time",
+				"s":2
+			},
+			{
+				"type":"set_graphic_mode",
+				"mode":"video",
+				"skippable":true
+			},
+			{
+				"type":"wait",
+				"for":"time",
+				"s":2
+			},
+			{
+				"type": "set_graphic_mode",
+				"mode": "canvas"
+			},
+			{
+				"type": "draw",
+				"shape": "bar",
+				"height_percent": "0.7",
+				"x": 4,
+				"y": 85,
+				"width": 9,
+				"max_height": 80,
+				"fillStyle": ["#7c2629"]
+			},
+			{
+				"type":"wait",
+				"for":"time",
+				"s":2
+			},
+			{
+				"type":"pause"
 			},
 			{
 				"//":"Hello, my name is TeachBot. It's nice to meet you.",
