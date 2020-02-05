@@ -96,10 +96,11 @@ Module.prototype.wait = async function(instr, instructionAddr) {
 			break;
 
 		case 'endpoint pos':
-			throw 'ToDo: Add wait for endpoint pos functionality';
+			throw 'TODO: Add wait for endpoint pos functionality';
 
 		case 'user input':
-			throw 'ToDo: Add wait for user input';
+			await new Promise((resolve, reject) )
+			throw 'TODO: Add wait for user input';
 
 		default:
 			throw `Wait for ${instr.for} unsupported`;

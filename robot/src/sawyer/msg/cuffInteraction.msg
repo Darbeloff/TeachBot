@@ -1,2 +1,0 @@
-string terminatingCondition
-bool ways

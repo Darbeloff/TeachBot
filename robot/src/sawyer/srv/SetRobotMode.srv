@@ -5,7 +5,7 @@ string mode
 
 # Custom Ctrl Parameters for Admittance and Impedance Ctrl
 int32[] joints			# List of joints to control. Joints not in this list are fixed if in admittance ctrl mode and stiff if in impedance ctrl mode.
-string resetPOS			# Name of pose to which to return if arm exits safety zone.
+string resetPos			# Name of pose to which to return if arm exits safety zone.
 
 # Admittance Ctrl Parameters
 float32[] min_thresh	# Minimum threshold necessary for movement. Admittance ctrl only.
@@ -17,6 +17,23 @@ float32[] V2F			# Damping constant. Impedance ctrl only.
 float32[] X2F			# Spring constant. Impedance ctrl only.
 
 # Interaction Ctrl Paramters
+bool position_only
+bool orientation_only
+bool plane_horizontal
+bool plane_vertical_xz
+bool plane_vertical_yz
+bool nullspace_only
+bool position_x
+bool position_y
+bool position_z
+bool orientation_x
+bool orientation_y
+bool orientation_z
+int32[] constrained_axes
+bool in_endpoint_frame
+int32[] interaction_frame
+float32[] K_nullspace
+int32 rate
 ---
 # Response
 bool done

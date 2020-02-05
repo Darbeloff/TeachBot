@@ -24,12 +24,8 @@ catkin_python_setup()
 
 add_message_files(
   FILES
-  adjustPoseTo.msg
   JointInfo.msg
-  JointImpedance.msg
   EndpointInfo.msg
-  GoToCartesianPose.msg
-  adjustPoseBy.msg
   Image.msg
 )
 
@@ -47,15 +43,12 @@ add_action_files(
   AllowCuffInteraction.action
   CuffInteraction.action
   GoToJointAngles.action
-  InteractionControl.action
-  JointMove.action
   GoToCartesianPose.action
   Gripper.action
   MultipleChoice.action
   AdjustPoseTo.action
   PickUpBox.action
   AdjustPoseBy.action
-  JointImpedance.action
   Wait.action
 )
 

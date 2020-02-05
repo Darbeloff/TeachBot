@@ -139,7 +139,7 @@ function Module(module_num, main, content_elements) {
 		serverName: '/teachbot/GoToJointAngles',
 		actionName: ROBOT + '/GoToJointAnglesAction'
 	});
-	this.JointMoveAct = new ROSLIB.ActionClient({
+	/*this.JointMoveAct = new ROSLIB.ActionClient({
 		ros: ros,
 		serverName: '/teachbot/JointMove',
 		actionName: ROBOT + '/JointMoveAction'
@@ -148,7 +148,7 @@ function Module(module_num, main, content_elements) {
 		ros: ros,
 		serverName: '/teachbot/InteractionControl',
 		actionName: ROBOT + '/InteractionControlAction'
-	});
+	});*/
 	this.AdjustPoseToAct = new ROSLIB.ActionClient({
 		ros: ros,
 		serverName: '/teachbot/AdjustPoseTo',
@@ -179,11 +179,11 @@ function Module(module_num, main, content_elements) {
 		serverName: '/teachbot/AdjustPoseBy',
 		actionName: ROBOT + '/AdjustPoseByAction'
 	});
-	this.JointImpedanceAct = new ROSLIB.ActionClient({
+	/*this.JointImpedanceAct = new ROSLIB.ActionClient({
 		ros: ros,
 		serverName: '/teachbot/JointImpedance',
 		actionName: ROBOT + '/JointImpedanceAction'
-	});
+	});*/
 	this.WaitAct =  new ROSLIB.ActionClient({
 		ros: ros,
 		serverName: '/teachbot/Wait',
@@ -404,20 +404,7 @@ Module.prototype.getGoToGoal = function(joint_angles, speed_ratio=0, wait=false)
 	});
 }
 
-/**
- * Format JointMove goal for sending.
- *
- * When the returned object is sent, the robot should activate admittance control.
- *
- * @param  {[string,Array]}	joints 	             Either an Array of joint(s) that determines which joints to unlock.
- * @param  {string}			terminatingCondition Condition that once reached, the program exit out of the function.
- * @param  {string}         resetPOS             String that states the position the robot should default to after the terminatingCondition is reached
- * @param  {string}         min_thresh           Specifies the minimum amount of force that requires the joint(s) to move
- * @param  {string}         bias                 Each joint has a bias that takes into account an internal force in the robot and counteracts it
- * @param  {float32}        tol                  Float that is used in the callback function in the teachbot script
- * @return {object}                              ROSLIB.Goal object to be sent.
- */
-Module.prototype.getJointMoveGoal = function(joints, terminatingCondition, resetPOS, min_thresh, bias, tol = 0) {
+/*Module.prototype.getJointMoveGoal = function(joints, terminatingCondition, resetPOS, min_thresh, bias, tol = 0) {
 	return new ROSLIB.Goal({
 		actionClient: self.JointMoveAct,
 		goalMessage: {
@@ -429,7 +416,7 @@ Module.prototype.getJointMoveGoal = function(joints, terminatingCondition, reset
 			tol: tol
 		}
 	});
-}
+}*/
 
 Module.prototype.pub_angle = function(angle) {
 	
@@ -1042,7 +1029,7 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 
 				break;
 
-			case 'interaction_control':
+			/*case 'interaction_control':
 				checkInstruction(instr, ["position_only","orientation_x","orientation_y","orientation_z","position_x","position_y","position_z", "in_end_point_frame", "PASS", "ways"], instructionAddr);
 
 				var orient_bw_url = DIR + 'images/orientation_bw.png';
@@ -1077,7 +1064,7 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 					this.start(self.getNextAddress(instructionAddr));
 				}
 
-				break;
+				break;*/
 
 			case 'wait':
 				this.wait(instr, instructionAddr).then((msg) => {
@@ -1103,7 +1090,7 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 				*/
 				break;
 
-			case 'joint_impedance':
+			/*case 'joint_impedance':
 				checkInstruction(instr, ["terminatingCondition","tics"], instructionAddr);
 
 				var goal = new ROSLIB.Goal({
@@ -1117,9 +1104,9 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 
 				this.start(self.getNextAddress(instructionAddr));
 
-				break;
+				break;*/
 
-			case 'joint_move':
+			/*case 'joint_move':
 				checkInstruction(instr, ["joints","terminatingCondition","resetPOS","min_thresh","bias","listen"], instructionAddr);
 
 				var goal;
@@ -1153,9 +1140,9 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 					}
 				}
 
-				break;
+				break;*/
 
-			case 'shadow_projection':
+			/*case 'shadow_projection':
 
 				console.log("Entered projection mode.");
 
@@ -1175,7 +1162,7 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 				});
 				goal.send();
 
-				break;
+				break;*/
 
 			case 'log':
 				checkInstruction(instr, ['message'], instructionAddr);
