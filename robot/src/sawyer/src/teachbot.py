@@ -142,6 +142,7 @@ class Module():
 			self.open_gripper()
 		except OSError as e:
 			rospy.logwarn('Failed to get gripper. No gripper attached on the robot. This may result in errors later.')
+		# print(self.gripper.get_ee_signal_value('grip'))
 
 		# Cuff
 		self.cuff = intera_interface.Cuff()

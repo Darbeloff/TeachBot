@@ -48,7 +48,7 @@ app.get('/cuffinteraction', function(req, res) {
   res.sendFile(path.join(__dirname + '/public/html/cuff_interaction.html'));
 })
 app.get('/test', function(req, res) {
-  res.sendFile(path.join(__dirname + '/public/html/test_module_page.html'));
+  res.sendFile(path.join(__dirname + '/public/html/test.html'));
 })
 app.get('/module1', function(req,res) {
 	res.sendFile(path.join(__dirname + '/public/html/1.html'));

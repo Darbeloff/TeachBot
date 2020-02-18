@@ -13,8 +13,8 @@ function getMousePos(canvas, evt) {
     };
 }
 
-image.style.display = 'none';
-canvas_container.style.display = 'initial';
+// image.style.display = 'none';
+canvas_obj.style.display = 'initial';
 var ctx = canvas_obj.getContext('2d');
 canvas_obj.addEventListener('mousemove', function(evt) {
     var mousePos = getMousePos(canvas_obj, evt);

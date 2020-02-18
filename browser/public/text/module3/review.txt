@@ -1,0 +1,7 @@
+Before jumping into new contents, let me briefly walk you through things you learned in previous modules to help you learn new concepts.
+Do you still remember what sequence is and why it is important? If I want to pick up this box and put it into the bin, I can't just do it in one step.
+First, I need to move my gripper right above the box.
+Then, I grab and pick up the box,
+And finally put it into the bin like this.
+As you saw, I moved to a sequence of positions in order to put the box into the bin.
+Today, we are going to learn a similar concept. Instead of just picking up boxes, I'm going to interact with external devices that are almost always present on a factory floor.

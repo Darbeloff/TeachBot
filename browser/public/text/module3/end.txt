@@ -1,0 +1,2 @@
+What I showed you today is a very simple case of how automated devices collaborate. There can be more devices involved in a process, or a human coworker in a real factory! The sequence of motions can be more complex too.
+That's it for today, well done!

@@ -1,0 +1,77 @@
+{"sections": [
+	{
+		"id": "intro",
+		"instructions": [
+			{
+				"type":"set_graphic_mode",
+				"mode":"canvas",
+			},
+			{
+				"//":"Welcome to module 3! Today, you will learn how I interface with other automated machinery on the factory floor, even when I'm not physically connected to it.",
+				"type":"play",
+				"audio_index":0,
+				"delay":true
+			},
+			{
+				"type":"proceed",
+				"to_section":"review"
+			}
+		]
+	},
+	{
+		"id": "review",
+		"instructions":[
+			{
+				"//":"Before jumping into new contents, let me briefly walk you through things you learned in previous modules to help you learn new concepts.",
+				"type":"play",
+				"audio_index":0,
+				"delay":true
+			},
+			{
+				"//":"Do you still remember what sequence is and why it is important? If I want to pick up this box and put it into the bin, I can't just do it in one step.",
+				"type":"play",
+				"audio_index":1,
+				"delay":true
+			},
+			{
+				"type":"proceed",
+				"to_section":"conveyor"
+			}
+		]
+	},
+	{
+		"id": "conveyor",
+		"instructions":[
+			{
+				"type":"proceed",
+				"to_section":"timing_based_coordination"
+			}
+		]
+	},
+	{
+		"id": "timing_based_coordination",
+		"instructions":[
+			{
+				"type":"proceed",
+				"to_section":"event_based_coordination"
+			}
+		]
+	},
+	{
+		"id": "event_based_coordination",
+		"instructions":[
+			{
+				"type":"proceed",
+				"to_section":"end"
+			}
+		]
+	},
+	{
+		"id":"end",
+		"instructions":[
+			{
+				"type":"pasue"
+			}
+		]
+	}
+]}

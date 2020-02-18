@@ -103,6 +103,15 @@ function Module(module_num, main, content_elements) {
 	});
 	this.endpoint.subscribe(self.endpointCallback);
 
+	if (this.module_num==3 || this.module_num=='test') {
+		this.gripperinfo = new ROSLIB.Topic({
+			ros: ros,
+			name: '/io/end_effector/stp_021804TP00051/state',
+			messageType: 'intera_core_msgs/IODeviceStatus'
+		});
+		this.gripperinfo.subscribe(self.gripperinfoCallback);
+	}
+
 	// Service Servers
 	var DevModeSrv = new ROSLIB.Service({
 		ros: ros,
@@ -190,6 +199,12 @@ function Module(module_num, main, content_elements) {
 		actionName: ROBOT + '/WaitAction'
 	})
 
+	this.AllowCuffInteractionAct = new ROSLIB.ActionClient({
+		ros: ros,
+		serverName: '/teachbot/AllowCuffInteraction',
+		actionName: ROBOT + '/AllowCuffInteractionAction'
+	});
+
 	// Initialize dictionary
 	this.dictionary = {};
 	this.getEndpoint();
@@ -255,6 +270,9 @@ Module.prototype.endpointCallback = function(msg) {
 	self.dictionary[`ENDPOINT_ORIENTATION_Y`] = msg.orientation.y;
 	self.dictionary[`ENDPOINT_ORIENTATION_Z`] = msg.orientation.z;
 	self.dictionary[`ENDPOINT_ORIENTATION_W`] = msg.orientation.w;
+}
+Module.prototype.gripperinfoCallback = function(msg) {
+	GP.GripperStatus(msg.signals);
 }
 
 Module.prototype.unsubscribeFrom = function(topic) {
@@ -527,26 +545,57 @@ Module.prototype.devRxCallback = function(req, resp) {
 /**
  * Coordinate transform from robot-space to 
  */
-Module.prototype.robot2canvas = async function(x, y, robot='sawyer') {
-	const Kx = 72.73;
-	const bx = 51.45;
-	const Ky = 157.89;
-	const by = -30;
+Module.prototype.robot2canvas = async function(x, y, robot='sawyer', calibrate=false) {
+	var solve2Dsoe = function (x1,x2,y1,y2) {
+		// [x1, 1] [k] = [y1]
+		// [x2, 1] [b]   [y2]
+		var U = [[x1 ,1] , [x2, 1]];
+		var y = [ [y1] , [y2] ];
+		var det = U[0][0]*U[1][1] - U[0][1]*U[1][0];
+		var invU = [[1/det, -1/det],[-U[1][0]/det, U[0][0]/det]];
+		var k = invU[0][0]*y[0][0] + invU[0][1]*y[1][0];
+		var b = invU[1][0]*y[0][0] + invU[1][1]*y[1][0];
+		return [k,b];
+	}
+	if (calibrate) {
+		// Change the arrays below to do the calibration.
+		r1 = [0,0];
+		r2 = [0,0];
+		c1 = [0,0];
+		c2 = [0,0];
+		sol1 = solve2Dsoe(r1[1],r2[1],c1[0],c2[0]);
+		sol2 = solve2Dsoe(r1[0],r2[0],c1[1],c2[1]);
+		console.log('Kx=' + sol1[0].toFixed(2) + ', bx=' +sol1[1].toFixed(2));
+		console.log('Ky=' + sol2[0].toFixed(2) + ', by=' +sol2[1].toFixed(2));
+		return 0;
+	} else {
+		const Kx = 74.62;
+		const bx = 50;
+		const Ky = 172.41;
+		const by = -34.48;
 
-	switch (robot) {
-		case 'sawyer':
-			x_canvas = (Kx * y + bx) * this.cw;
-			y_canvas = (Ky * x + by) * this.ch;
+		switch (robot) {
+			case 'sawyer':
+				x_canvas = (Kx * y + bx) * this.cw;
+				y_canvas = (Ky * x + by) * this.ch;
+				break;
 
-		default:
-			throw `Robot ${robot} not supported.`;
-	} 
-
-	return {
-		x: x_canvas,
-		y: y_canvas
-	};
+			default:
+				throw `Robot ${robot} not supported.`;
+		}
+		return {
+			x: x_canvas,
+			y: y_canvas
+		};
+	}
 }
+
+/**
+ * Conversion from Quaternion to Euler angles
+ */
+ Module.prototype.Quaternion2Euler = async function(x,y,z,w) {
+
+ }
 
 /**
  * Runs a command from the JSON file.
@@ -674,6 +723,19 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 				});
 				goal_AdjustPoseTo.send()
 
+				break;
+
+			case 'conveyor_belt':
+				if (this.drawings.filter(drawing => drawing.shape=='conveyor_belt').length==0) {
+					throw "Drawings array does not contain a conveyor belt! Use 'draw' command first.";
+				}
+				try {
+				 	eval('conveyor.'+instr.command);
+				} catch(error) {
+				 	console.error(error);
+				}
+
+				this.start(self.getNextAddress(instructionAddr));
 				break;
 
 			case 'initializeDisplay':

@@ -1,0 +1,4 @@
+Please put the box and bin away from the table. Press the scroll wheel when you are done.
+A conveyor belt is one of the most commonly used devices to transport goods and packages in a manufacturing factory. Here is what it looks like. I am going to use this equipment to teach you how I communicate with external devices.
+Instead of an actual conveyor, I have a virtual conveyor. It carries goods, represented by boxes, to m. My gripper is projected onto the table so that I can interact with these virtual boxes.
+My task is to pick it up from the belt, inspect it, and place in a designated area.

@@ -27,21 +27,35 @@
 	<script src="https://localhost:8000/js/utils/draw_spring.js"></script>
 	<script src="https://localhost:8000/js/utils/JSONcopy.js"></script>
 	<script src="https://localhost:8000/js/utils/sleep.js"></script>
+
+	<!-- TeachBot Module -->
+	<script type="text/javascript" src="https://localhost:8000/js/Module.js"></script>
+	<script src="https://localhost:8000/js/instructions/draw.js"></script>
+	<script src="https://localhost:8000/js/instructions/set_graphic_mode.js"></script>
+	<script src="https://localhost:8000/js/instructions/set_robot_mode.js"></script>
+	<script src="https://localhost:8000/js/instructions/wait.js"></script>
 </head>
 
 <body>
-	<!-- <img id="image" src="https://localhost:8000/images/Welcome.png" alt="Welcome" height = "90%"> -->
+	<div id="display_container">
+		<!-- Canvas -->
+		<canvas id="canvas_obj" style="display: none"></canvas>
+		
+		<!-- Welcome image -->
+		<img id="image" class="welcome" src="https://localhost:8000/images/Welcome.png" alt="Welcome" height = "90%">
 
-	<div id="canvas_container">
-		<canvas id="canvas_obj"></canvas>
 	</div>
 
 	<div id='adjustable'>Loading...</div>
 
 	<audio id="player"></audio>
 
-	<script type="text/javascript" src="https://localhost:8000/js/Module.js"></script>
+	<!-- Run JS Module -->
 	<script type ="text/javascript" src = 'https://localhost:8000/js/3.js'> </script>
+
+	<!-- Run JS for peripherals -->
+	<script type ="text/javascript" src = 'https://localhost:8000/js/ConveyorBelt.js'> </script>
+	<script type="text/javascript" src="https://localhost:8000/js/GripperProjection.js"></script>
 
 	<!-- Display Pointer Position -->
 	<!-- <script type="text/javascript" src="https://localhost:8000/js/utils/displayPointerPosition.js"></script> -->

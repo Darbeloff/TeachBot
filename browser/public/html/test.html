@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>test page</title>
+	<link rel="stylesheet" type="text/css" href="https://localhost:8000/css/main.css">
+	<link rel="stylesheet" type="text/css" href="https://localhost:8000/css/sawyer.css">
+
+	<!-- Structural Utilities -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script type="text/javascript" src='https://lib.smartsparrow.com/simcapi-js-3.0.6.min.js'></script>
+	<script src="https://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+	<script type="text/javascript" src="https://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
+	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/gh/jquery-textfill/jquery-textfill@0.6.0/source/jquery.textfill.min.js"></script>
+
+	<!-- TeachBot Utilities -->
+	<script src="https://localhost:8000/js/utils/arc3pt.js"></script>
+	<script src="https://localhost:8000/js/utils/display_choices.js"></script>
+	<script src="https://localhost:8000/js/utils/draw_ball.js"></script>
+	<script src="https://localhost:8000/js/utils/draw_bar.js"></script>
+	<script src="https://localhost:8000/js/utils/draw_goal.js"></script>
+	<script src="https://localhost:8000/js/utils/draw_pos_orien.js"></script>
+	<script src="https://localhost:8000/js/utils/draw_odometer.js"></script>
+	<script src="https://localhost:8000/js/utils/draw_rectangle.js"></script>
+	<script src="https://localhost:8000/js/utils/draw_spring.js"></script>
+	<script src="https://localhost:8000/js/utils/JSONcopy.js"></script>
+	<script src="https://localhost:8000/js/utils/sleep.js"></script>
+
+	<!-- TeachBot Module -->
+	<script type="text/javascript" src="https://localhost:8000/js/Module.js"></script>
+	<script src="https://localhost:8000/js/instructions/draw.js"></script>
+	<script src="https://localhost:8000/js/instructions/set_graphic_mode.js"></script>
+	<script src="https://localhost:8000/js/instructions/set_robot_mode.js"></script>
+	<script src="https://localhost:8000/js/instructions/wait.js"></script>
+</head>
+
+<body>
+
+	<div id="display_container">
+		<!-- Canvas -->
+		<canvas id="canvas_obj" style="border:1px solid #d3d3d3;"></canvas>
+		
+	</div>
+
+	<button onclick="conveyor.stop()">Stop</button>
+	<button onclick="conveyor.resume()">Resume</button>
+	<button onclick="conveyor.changeSpeed(0.1)">Down</button>
+	<button onclick="conveyor.changeSpeed(-0.1)">Up</button>
+	<button onclick="conveyor.setSpeed(3)">3</button>
+	<button onclick="conveyor.setSpeed(-3)">-3</button>
+	||
+	<button onclick="conveyor.addBox(true)">Add a box</button>
+	<button onclick="conveyor.pickupArea()">pickup area</button>
+	<button onclick="conveyor.ignorebox()">Ignore?</button>
+
+	<br>
+	<button onclick="openGripper(m)">Open</button>
+	<button onclick="closeGripper(m)">Close</button>
+	<button onclick="enableCuffInteraction()">allow cuff</button>
+	<button onclick="disableCuffInteraction()">disable cuff</button>
+
+	<div id='Euler' style="font-size: 20px">
+		angles not yet available.
+	</div>
+
+	<audio id="player"></audio>
+	<div id='adjustable' style="display: none"></div>
+
+	<!-- Run JS Module -->
+	<script type="text/javascript" src="https://localhost:8000/js/test.js"></script>
+
+	<!-- Module 3 device objects -->
+	<script type="text/javascript" src="https://localhost:8000/js/ConveyorBelt.js"></script>
+	<script type="text/javascript" src="https://localhost:8000/js/GripperProjection.js"></script>
+
+	<!-- Display Pointer Position -->
+	<!-- <script type="text/javascript" src="https://localhost:8000/js/utils/displayPointerPosition.js"></script> -->
+	
+</body>
+	
+</html>

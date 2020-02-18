@@ -104,6 +104,14 @@ Module.prototype.drawCanvas = function(timestamp) {
 				arc3pt(self.ctx, x1, y1, x2, y2, x3, y3, ccw);
 
 				break;
+
+			case 'conveyor_belt':
+				conveyor.update(m);
+				break;
+
+			case 'gripper_projection':
+				GP.update(m);
+				break;
 		}
 	});
 

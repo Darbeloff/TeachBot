@@ -1,0 +1,28 @@
+{"sections": [
+	{
+		"id": "intro",
+		"instructions": [
+			{
+				"//":"placeholder",
+				"type":"play",
+				"audio_index":0,
+				"delay":false
+			},
+			{
+				"type":"draw",
+				"shape":"conveyor_belt"
+			},
+			{
+				"type":"set_graphic_mode",
+				"mode":"canvas"
+			},
+			{
+				"type":"draw",
+				"shape":"gripper_projection"
+			},
+			{
+				"type": "pause"
+			}
+		]
+	}
+]}
