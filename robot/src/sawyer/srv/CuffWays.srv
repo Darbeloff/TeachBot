@@ -1,0 +1,7 @@
+#Send a request to make a waypoint for cuff interaction
+
+#Request
+bool request
+---
+#Response
+bool done

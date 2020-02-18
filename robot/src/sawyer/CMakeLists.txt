@@ -35,6 +35,7 @@ add_service_files(
   DevMode.srv
   SetRobotMode.srv
   ScrollWheelSubscription.srv
+  CuffWays.srv
 )
 
 add_action_files(
@@ -49,6 +50,7 @@ add_action_files(
   AdjustPoseTo.action
   PickUpBox.action
   AdjustPoseBy.action
+  ButtonSend.action
   Wait.action
 )
 

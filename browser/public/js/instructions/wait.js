@@ -13,99 +13,105 @@
  */
 Module.prototype.wait = async function(instr, instructionAddr) {
 	checkInstruction(instr, ['for'], instructionAddr);
-	if (VERBOSE) console.log('Waiting...');
+	if (VERBOSE) console.log(`Waiting for ${instr.for}...`);
 
-	switch (instr.for) {
-		case ('total effort'):
-			checkInstruction(instr, ['to_be', 'val'], instructionAddr);
+	return new Promise((resolve, reject) => {
+		switch (instr.for) {
+			case ('total effort'):
+				checkInstruction(instr, ['to_be', 'val'], instructionAddr);
 
-			var to_be = instr.to_be;
-			var val = eval(self.hashTokeyVal(instr.val));
-			function waitForTotalEffort() {
-				var totalEffort = 0;
-				for (let j=0; j<JOINTS; j++) {
-					totalEffort += self.dictionary[`EFFORT_${j}`];
+				var to_be = instr.to_be;
+				var val = eval(self.hashTokeyVal(instr.val));
+				function waitForTotalEffort() {
+					var totalEffort = 0;
+					for (let j=0; j<JOINTS; j++) {
+						totalEffort += self.dictionary[`EFFORT_${j}`];
+					}
+
+					switch (to_be) {
+						case ('<'):
+							if (!(totalEffort<val)) {
+								setTimeout(waitForTotalEffort, 100);
+								return;
+							} else { resolve(); }
+							break;
+
+						case ('<='):
+							if (!(totalEffort<=val)) {
+								setTimeout(waitForTotalEffort, 100);
+								return;
+							} else { resolve(); }
+							break;
+
+						case ('=='):
+							if (!(totalEffort==val)) {
+								setTimeout(waitForTotalEffort, 100);
+								return;
+							} else { resolve(); }
+							break;
+
+						case ('>='):
+							if (!(totalEffort>=val)) {
+								setTimeout(waitForTotalEffort, 100);
+								return;
+							} else { resolve(); }
+							break;
+
+						case ('>'):
+							if (!(totalEffort>val)) {
+								setTimeout(waitForTotalEffort, 100);
+								return;
+							} else { resolve(); }
+							break;
+
+						case ('!='):
+							if (!(totalEffort!=val)) {
+								setTimeout(waitForTotalEffort, 100);
+								return;
+							} else { resolve(); }
+							break;
+
+						default:
+							throw `Cannot wait for total effort to be ${to_be} ${instr.val}.`
+					}
 				}
 
-				switch (to_be) {
-					case ('<'):
-						if (!(totalEffort<val)) {
-							setTimeout(waitForTotalEffort, 100);
-							return;
-						}
-						break;
+				waitForTotalEffort();
+				break;
 
-					case ('<='):
-						if (!(totalEffort<=val)) {
-							setTimeout(waitForTotalEffort, 100);
-							return;
-						}
-						break;
+			case 'time':
+				checkInstruction(instr, ['s'], instructionAddr);
+				setTimeout(() => { resolve(); }, 1000*instr.s);
+				break;
 
-					case ('=='):
-						if (!(totalEffort==val)) {
-							setTimeout(waitForTotalEffort, 100);
-							return;
-						}
-						break;
-
-					case ('>='):
-						if (!(totalEffort>=val)) {
-							setTimeout(waitForTotalEffort, 100);
-							return;
-						}
-						break;
-
-					case ('>'):
-						if (!(totalEffort>val)) {
-							setTimeout(waitForTotalEffort, 100);
-							return;
-						}
-						break;
-
-					case ('!='):
-						if (!(totalEffort!=val)) {
-							setTimeout(waitForTotalEffort, 100);
-							return;
-						}
-						break;
-
-					default:
-						throw `Cannot wait for total effort to be ${to_be} ${instr.val}.`
+			case 'custom':
+				checkInstruction(instr, ['function'], instructionAddr);
+				
+				function waitForCustom() {
+					if (!eval(self.hashTokeyVal(instr.function))) {
+						setTimeout(waitForCustom, 100);
+					} else { resolve(); }
 				}
-			}
 
-			waitForTotalEffort();
-			break;
+				waitForCustom();
+				break;
 
-		case 'time':
-			checkInstruction(instr, ['s'], instructionAddr);
-			await sleep(1000*instr.s);
-			break;
+			case 'endpoint pos':
+				throw 'TODO: Add wait for endpoint pos functionality';
 
-		case 'custom':
-			checkInstruction(instr, ['function'], instructionAddr);
-			
-			function waitForCustom() {
-				if (!eval(self.hashTokeyVal(instr.function))) {
-					setTimeout(waitForCustom, 100);
-				}
-			}
+			case 'user input':
+				//TODO: Implement Albert's box code, preferably as a Promise
+				this.button_topic.subscribe(async function(message) {
+					console.log('here')
+					self.button_topic.unsubscribe();
+					self.button_topic.removeAllListeners();
+					resolve();
+				});
 
-			waitForCustom();
-			break;
+				break;
 
-		case 'endpoint pos':
-			throw 'TODO: Add wait for endpoint pos functionality';
-
-		case 'user input':
-			await new Promise((resolve, reject) )
-			throw 'TODO: Add wait for user input';
-
-		default:
-			throw `Wait for ${instr.for} unsupported`;
-	}
-
-	if (VERBOSE) console.log('Waiting done.');
-	return new Promise((resolve, reject) => { resolve(); })
+			default:
+				throw `Wait for "${instr.for}" unsupported`;
+		}
+	});
 };

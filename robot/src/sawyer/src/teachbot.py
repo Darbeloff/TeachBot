@@ -7,6 +7,8 @@ from enum import Enum
 from pygame import mixer
 import cv2
 import apriltag
+import serial
+import re
 # Intera
 import intera_interface
 from std_msgs.msg import (
@@ -83,21 +85,22 @@ class Module():
 		self.position_topic = rospy.Publisher('/teachbot/position', JointInfo, queue_size=1)
 		self.velocity_topic = rospy.Publisher('/teachbot/velocity', JointInfo, queue_size=1)
 		self.effort_topic = rospy.Publisher('/teachbot/effort', JointInfo, queue_size=1)
-		self.scroll_wheel_button_topic = rospy.Publisher('/teachbot/scroll_wheel_button_topic', Empty, queue_size = 10)
 		self.command_complete_topic = rospy.Publisher('/teachbot/command_complete', Empty, queue_size=1)
-		self.wheel_delta_topic = rospy.Publisher('/teachbot/wheel_delta', Int32, queue_size=10)
-		self.clicked = rospy.Publisher('/teachbot/scroll_wheel_pressed', Bool, queue_size=10)
 		self.endpoint_topic = rospy.Publisher('/teachbot/EndpointInfo', EndpointInfo, queue_size=10)
+		self.box_in_bin_topic = rospy.Publisher('/teachbot/box_in_bin', Bool, queue_size=1)
 
 		# Subscribing topics
 		rospy.Subscriber('/robot/joint_states', sensor_msgs.msg.JointState, self.forwardJointState)
 		rospy.Subscriber('/robot/limb/right/endpoint_state', intera_core_msgs.msg.EndpointState, self.forwardEndpointState)
 		rospy.Subscriber('/teachbot/camera', Bool, self.cb_camera)
+		rospy.Subscriber('/teachbot/allowCuffInteraction', Bool, self.cb_allowCuffInteraction)
+		rospy.Subscriber('/teachbot/button', String, self.cb_Button)
 
 		# Service Servers
 		rospy.Service('/teachbot/audio_duration', AudioDuration, self.rx_audio_duration)
 		rospy.Service('/teachbot/set_robot_mode', SetRobotMode, self.cb_SetRobotMode)
-		rospy.Service('/teachbot/wheel_subscription', ScrollWheelSubscription, self.cb_WheelSubscription)
+		rospy.Service('/teachbot/CuffWays', CuffWays, self.cb_CuffWays)
+
 		# Service Clients
 		self.DevModeSrv = rospy.ServiceProxy('/teachbot/dev_mode', DevMode)
 
@@ -285,28 +288,34 @@ class Module():
 		'''
 
 	def display_camera_callback(self, img_data):
+		rospy.sleep(0.5)
 		bridge = CvBridge()
 		try:
 			cv_image = bridge.imgmsg_to_cv2(img_data, 'bgr8')
+			# self.image_topic.publish(bridge.cv2_to_imgmsg(cv_image, 'bgr8'))
 		except CvBridgeError, err:
 			rospy.logerr(err)
 
-		img = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
-		detector = apriltag.Detector()
-		detections = detector.detect(img)
-		# rospy.loginfo(detections[0].corners)
+		try:
+			img = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
+			detector = apriltag.Detector()
+			detections = detector.detect(img)
+			centerApril = detections[0].center
 
-		cv2.line(cv_image, (int(detections[0].corners[0][0]),int(detections[0].corners[0][1])), (int(detections[0].corners[1][0]),int(detections[0].corners[1][1])), (255,255,51), 3)
-		cv2.line(cv_image, (int(detections[0].corners[1][0]),int(detections[0].corners[1][1])), (int(detections[0].corners[2][0]),int(detections[0].corners[2][1])), (255,255,51), 3)
-		cv2.line(cv_image, (int(detections[0].corners[3][0]),int(detections[0].corners[3][1])), (int(detections[0].corners[2][0]),int(detections[0].corners[2][1])), (255,255,51), 3)
-		cv2.line(cv_image, (int(detections[0].corners[3][0]),int(detections[0].corners[3][1])), (int(detections[0].corners[0][0]),int(detections[0].corners[0][1])), (255,255,51), 3)
+			cv2.line(cv_image, (int(detections[0].corners[0][0]),int(detections[0].corners[0][1])), (int(detections[0].corners[1][0]),int(detections[0].corners[1][1])), (255,255,51), 3)
+			cv2.line(cv_image, (int(detections[0].corners[1][0]),int(detections[0].corners[1][1])), (int(detections[0].corners[2][0]),int(detections[0].corners[2][1])), (255,255,51), 3)
+			cv2.line(cv_image, (int(detections[0].corners[3][0]),int(detections[0].corners[3][1])), (int(detections[0].corners[2][0]),int(detections[0].corners[2][1])), (255,255,51), 3)
+			cv2.line(cv_image, (int(detections[0].corners[3][0]),int(detections[0].corners[3][1])), (int(detections[0].corners[0][0]),int(detections[0].corners[0][1])), (255,255,51), 3)
+		except:
+			rospy.loginfo('No apriltag detected')
+			pass
 
 		gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
 		blurred = cv2.GaussianBlur(gray, (5,5), 0)
-		ret, thresh = cv2.threshold(blurred, 180, 255, cv2.THRESH_BINARY_INV)
+		ret, thresh = cv2.threshold(blurred, 140, 255, cv2.THRESH_BINARY_INV)
 
 		im2, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
-		
+
 		cnt = contours[0]
 		max_area = cv2.contourArea(cnt)
 
@@ -321,13 +330,30 @@ class Module():
 
 		cv2.drawContours(cv_image, [box], -1, (0,255,0), 3)
 
-		# a = sum(map(lambda x: x[0], box))/4
-		# b = sum(map(lambda x: x[1], box))/4
+		a = sum(map(lambda x: x[0], box))/4
+		b = sum(map(lambda x: x[1], box))/4
+		centerBin = (a,b)
 
-		#img = cv_image
-		# rospy.loginfo('Creating image')
 		cv2.imwrite('/home/albertgo/TeachBot/browser/public/images/cv_image.png', cv_image)
-		self.command_complete_topic.publish()
+
+
+		try:
+			distance = ((centerBin[0]-centerApril[0])**2+(centerBin[1]-centerApril[1])**2)**0.5
+			if distance < 80:
+				self.box_in_bin_topic.publish(True)
+				self.command_complete_topic.publish()
+				rospy.loginfo('Box is in bin')
+			else:
+				self.box_in_bin_topic.publish(False)
+				rospy.loginfo('Box out of bin')
+				self.command_complete_topic.publish()
+		except:
+			self.box_in_bin_topic.publish(False)
+			self.command_complete_topic.publish()
+			rospy.loginfo('No apriltag detected')
+
+	def addSeq(self, seq):
+		self.seqArr.append(seq.asDict())
 
 	## ROS PUBLISHERS ##
 	# Publishes message to ROSTopic to be receieved by JavaScript
@@ -380,10 +406,6 @@ class Module():
 		self.endpoint_topic.publish(endpoint_msg)
 
 	def rx_finished(self,data):
-		if self.navigator.button_string_lookup(data) == 'OFF':
-			self.finished = True
-			self.scroll_wheel_button_topic.publish()
-			self.clicked.publish(True)
 		if self.VERBOSE: rospy.loginfo('Rx from arm scroll wheel button: ' + self.navigator.button_string_lookup(data) + '. finished = ' + str(self.finished))
 
 	def rx_cheat_code(self,data):
@@ -465,6 +487,10 @@ class Module():
 		result_AdjustPoseTo.is_done = True
 		self.AdjustPoseToAct.set_succeeded(result_AdjustPoseTo)
 
+	def cb_Button(self, data):
+		self.finished = True
+		rospy.loginfo('Received: ' + str(self.finished))
+
 	def cb_Gripper(self,goal):
 
 		result_Gripper = GripperResult()
@@ -497,6 +523,7 @@ class Module():
 			valid_cameras = rp.get_camera_names()
 			camera = intera_interface.Cameras()
 			camera.stop_streaming('right_hand_camera')
+			self.command_complete_topic.publish()
 
 	# When the lower cuff button is pressed, allow 2D position movement.
 	def cb_cuff_lower(self, data):
@@ -513,6 +540,11 @@ class Module():
 		feedback = sawyer.msg.CuffInteractionFeedback()
 		feedback.mode = False
 		self.CuffInteractionAct.publish_feedback(feedback)
+
+	def cb_CuffWays(self, data):
+		waypoints.append(self.limb.joint_angles())
+		rospy.loginfo('Adding to waypoints')
+		return True
 
 	def unsubscribe_from_cuff_interaction(self):
 		self._unsubscribe_from(self.cuff, self.cuff_callback_ids)
@@ -608,8 +640,8 @@ class Module():
 						PASS = False,
 						ways = False
 						)
-					InteractionControlActCli.send_goal(goal_InteractionControl)
-					InteractionControlActCli.wait_for_result()
+					self.InteractionControlActCli.send_goal(goal_InteractionControl)
+					self.InteractionControlActCli.wait_for_result()
 
 					mixer.init()
 					mixer.music.load('safety4.mp3')
@@ -644,8 +676,8 @@ class Module():
 						PASS = False,
 						ways = False
 						)
-					InteractionControlActCli.send_goal(goal_InteractionControl)
-					InteractionControlActCli.wait_for_result()
+					self.InteractionControlActCli.send_goal(goal_InteractionControl)
+					self.InteractionControlActCli.wait_for_result()
 
 					mixer.init()
 					mixer.music.load('safety4.mp3')
@@ -692,7 +724,6 @@ class Module():
 			result.done = True
 			self.InteractionControlAct.set_succeeded(result)
 
-	# TODO: Deprecate
 	def cb_Wait(self, goal):
 
 		result_wait = sawyer.msg.WaitResult()
@@ -895,13 +926,6 @@ class Module():
 			startPose = self.limb.endpoint_pose()
 			rospy.sleep(1)
 		self.limb.position_mode()
-			
-	def cb_WheelSubscription(self, req):
-		if req.subscribe:
-			self.subscribe_to_wheel_move()
-		else:
-			self.unsubscribe_from_wheel_move()
-		return True
 
 class Mode(Enum):
 	POSITION = 1			# Fixed-position joint control.
@@ -917,7 +941,7 @@ if __name__ == '__main__':
 
 	BIAS_SHOULDER = -0.55#-0.5
 	BIAS_ELBOW = 0.4
-	BIAS_WRIST = 0.75
+	BIAS_WRIST = -0.15
 	#shoulder_wrist_bias = {shoulder: BIAS_SHOULDER, wrist: BIAS_WRIST}
 	#shoulder_wrist_thresh = {shoulder: 1.0, wrist: 0.5}
 
@@ -1058,35 +1082,7 @@ if __name__ == '__main__':
 	above_third_box_joint_arg     = [0.29264,-0.21117,-1.25342,1.56628,1.30664,1.24663,-1.04227]
 	above_fourth_box_joint_arg    = [0.49833,-0.21497,-1.28520,2.12842,1.45044,1.20956,-3.03918]
 
-	camera_pos                    = default # Temporary pose. This is not working yet.
-	# fail_init_joint_arg           = [1.033235,-0.629208007812,-1.01547070313,1.05442871094,-2.38241699219,-1.48850390625,-1.18359277344]
-	# fail_pickup_cart_arg          = [1.08375488281,0.175158203125,-1.53774609375,1.02942480469,-1.45563085938,-1.45510351563,1.86297558594]
-	# fail_above_pickup_cart_arg    = [1.06155175781,-0.26884765625,-1.4501015625,0.838840820312,-1.88630175781,-1.62122851562,1.9701875]
-
-	# success_init_joint_arg        = [1.05569238281,-0.176821289062,-1.62947851563,0.904107421875,-1.66179296875,-1.63658007812,0.266885742187]
-	# success_pickup_joint_arg      = [1.06658789062,0.264276367188,-1.62918945312,1.05704492187,-1.31784570312,-1.50530078125,0.266266601562]
-	# success_pickup_cart_arg       = [1.06658789062,0.264276367188,-1.62918945312,1.05704492187,-1.31784570312,-1.50530078125,0.266266601562]
-	# success_above_pickup_cart_arg = [1.05569238281,-0.176821289062,-1.62947851563,0.904107421875,-1.66179296875,-1.63658007812,0.266885742187]
-
-	# above_bin_cart_arg            = [0.935443359375,-0.182680664062,-1.34264160156,1.20748339844,-1.85780664063,-1.45737597656,3.1062734375]
-	# rotated_above_bin_cart_arg    = [0.938936523438,-0.166234375,-1.35050976563,1.20908984375,-1.8427265625,-1.403859375,1.51214648438]
-	# into_bin_cart_arg             = [0.943045898437,0.233333984375,-1.50463964844,1.30310449219,-1.3893203125,-1.43581445312,1.4121640625]
-	# hit_bin_joint_arg             = [0.291505873203,0.107424803078,-1.5040615797,0.564673841,-1.64092874527,-1.56688666344,3.12259268761]
-	
-	# into_second_bin_cart_arg      = [0.561075195313,0.2966484375,-1.81974609375,0.759317382813,-1.23418261719,-1.49326855469,0.08444140625]
-	# above_second_bin_cart_arg     = [0.5035625,0.0966318359375,-1.882125,0.744194335937,-1.22447363281,-1.62413378906,0.002185546875]
-
-	# above_second_bin_joint_arg    = [0.832271456718,0.251014649868,-1.81858205795,1.50893843174,-1.30731058121,-1.79992866516,2.6581864357]
-
-	# above_second_box_cart_arg     = [math.pi/2-0.729661132813,0.12510546875,-1.78256054688,1.094546875,-1.35895410156,-1.71990722656,4.66472753906]
-	
-	# above_third_box_cart_arg      = [0.317999023437,0.0488310546875,-1.646234375,-0.249951171875,-1.51264550781,-1.61024121094,-2.44349414062]
-	
-	# above_third_box_joint_res     = [0.3603066504, -0.0363896489143, -1.34424805641, -0.101894527674, -1.77538383007, -1.57726657391, 2.27713108]
-	# above_fourth_box_cart_arg     = [math.pi/2-1.482765625,0.17649609375,-2.27079101562,0.363586914062,-0.855272460937,-1.6052578125,1.5651328125]
-	
-	# low_fourth_box_joint_arg      = [0.0681884735823,0.202602535486,-1.48116016388,0.113159179688,-1.62357616425,-1.34329497814,3.34635257721]
-
-	# success_pickup_box1           = [1.033235,-0.629208007812,-1.01547070313,1.05442871094,-2.38241699219,-1.48850390625,0.38779632679]
+	camera_pos                    = [0.5832646484375, -1.301193359375, -0.193248046875, 2.0165146484375, 0.0075908203125, -0.75755078125, 0.3351982421875] # Temporary pose. This is not working yet.
+	camera_pos2					  = [0.21234375, 0.2708505859375, -1.70441796875, 1.7846484375, 1.9352724609375, -0.17507421875, -3.083966796875]
 
 	Module()

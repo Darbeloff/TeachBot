@@ -78,13 +78,13 @@
 				"location":"images/Welcome.png"
 			},
 			{
-				"//":"Just by looking, how many motors do you think I have in my arm? To input your answer, wait for me to move my arm. Next, turn the scroll wheel on my arm to scroll through numbers. Then press on the scroll wheel to select your answer.",
+				"//":"Just by looking, how many motors do you think I have in my arm? To input your answer, use the white buttons on the button box next to you to go up or down in value. Then press any colored button to submit your answer.",
 				"type":"play",
 				"audio_index":0,
 				"delay":false
 			},
 			{
-				"type":"scrollWheelInput",
+				"type":"numeric_input",
 				"skippable":false
 			},
 			{
@@ -140,7 +140,7 @@
 				"delay":false
 			},
 			{
-				"type":"scrollWheelInput",
+				"type":"numeric_input",
 				"store_answer_in":"wheelVal"
 			},
 			{
@@ -285,19 +285,17 @@
 				"joint_angles":"joint_dof_start"
 			},
 			{
-				"//":"But how do I tell where my arm is? How do I know how far I've rotated each motor? I'm going to unlock my shoulder. Try pushing my arm. I'll display how much I think you've turned it on the screen. When you're finished, press the scroll wheel button to let me know.",
+				"//":"But how do I tell where my arm is? How do I know how far I've rotated each motor? I'm going to unlock my shoulder. Try pushing my arm. I'll display how much I think you've turned it on the screen. When you're finished, press any button on the box to let me know.",
 				"type":"play",
 				"audio_index":3,
 				"delay":false
 			},
 			{
-				"type":"joint_move",
-				"joints":"shoulder",
-				"terminatingCondition":"lambda self: self.finished",
-				"resetPOS":"joint_dof_start",
-				"min_thresh":"1.0",
-				"bias":"BIAS_SHOULDER",
-				"listen":false
+				"type":"set_robot_mode",
+				"mode":"admittance ctrl",
+				"resetPos":"joint_dof_start",
+				"joints":[0],
+				"min_thresh":[1.0]
 			},
 			{
 				"type": "set_graphic_mode",
@@ -306,12 +304,24 @@
 			{
 				"type": "draw",
 				"shape": "bar",
-				"height_percent": "#POSITION_JOINT_0/3.14",
+				"height_percent": "#JOINT_POSITION_0/3.14",
 				"x": 4,
 				"y": 85,
 				"width": 9,
 				"max_height": 80,
 				"fillStyle": ["#7c2629"]
+			},
+			{
+				"type":"wait",
+				"for":"user input"
+			},
+			{
+				"type":"set_robot_mode",
+				"mode":"position"
+			},
+			{
+				"type":"set_graphic_mode",
+				"mode":"image"
 			},
 			{
 				"//":"Let me show you how I know. Please stand back.",
@@ -340,73 +350,96 @@
 				"type": "stopEncode"
 			},
 			{
-				"//":"Now I'm going to lock my shoulder and unlock my wrist. Try pushing my hand. When you're done, press the scroll wheel button.",
+				"type":"set_graphic_mode",
+				"mode":"image"
+			},
+			{
+				"//":"Now I'm going to lock my shoulder and unlock my wrist. Try pushing my hand. When you're done, press any button on the box.",
 				"type":"play",
 				"audio_index":6,
 				"delay":false
 			},
 			{
-				"type":"joint_move",
-				"joints":"wrist",
-				"terminatingCondition":"lambda self: self.finished",
-				"resetPOS":"joint_dof_start",
-				"min_thresh":"0.5",
-				"bias":"BIAS_WRIST",
-				"listen":false
+				"type":"set_robot_mode",
+				"mode":"admittance ctrl",
+				"resetPos":"joint_dof_start",
+				"joints":[5],
+				"min_thresh":[0.5]
 			},
 			{
-				"type":"initializeDisplay"
+				"type":"set_graphic_mode",
+				"mode":"canvas"
 			},
 			{
-				"type": "drawDynamic",
+				"type": "draw",
 				"shape": "bar",
-				"topics": {"position":["j5"]},
-				"x_ratio": [15],
-				"y_ratio": [85],
-				"width_ratio": [9],
-				"max_height_ratio": [80],
+				"height_percent": "#JOINT_POSITION_5/6.28+0.5",
+				"x": 19,
+				"y": 85,
+				"width": 9,
+				"max_height": 80,
 				"fillStyle": ["BlueViolet"]
 			},
 			{
-				"//":"So far I've only unlocked one motor at a time. Let's try unlocking both my shoulder and wrist motors. Push on my arm again and see what happens. When you're done, press the scroll wheel button.",
+				"type":"wait",
+				"for":"user input"
+			},
+			{
+				"type":"set_robot_mode",
+				"mode":"position"
+			},
+			{
+				"//":"So far I've only unlocked one motor at a time. Let's try unlocking both my shoulder and wrist motors. Push on my arm again and see what happens. When you're done, press any button on the box.",
 				"type":"play",
 				"audio_index":7,
 				"delay":false
 			},
 			{
-				"type":"joint_move",
-				"joints":"[shoulder,wrist]",
-				"terminatingCondition":"lambda self: self.finished",
-				"resetPOS":"joint_dof_start",
-				"min_thresh":"{shoulder: 1.0, wrist: 0.5}",
-				"bias":"{shoulder: BIAS_SHOULDER, wrist: BIAS_WRIST}",
-				"listen":false
+				"type":"set_robot_mode",
+				"mode":"admittance ctrl",
+				"resetPos":"joint_dof_start",
+				"joints":[0,5],
+				"min_thresh":[1.0,0.5]
 			},
 			{
-				"type":"initializeDisplay"
-			},
-			{
-				"type": "drawDynamic",
+				"type": "draw",
 				"shape": "bar",
-				"topics": {"position": ["j0","j5"]},
-				"x_ratio": [4, 13],
-				"y_ratio": [85, 85],
-				"width_ratio": [7, 7],
-				"max_height_ratio": [80, 80],
-				"fillStyle": ["#7c2629", "BlueViolet"]
+				"height_percent": "#JOINT_POSITION_0/3.14",
+				"x": 4,
+				"y": 85,
+				"width": 9,
+				"max_height": 80,
+				"fillStyle": ["#7c2629"]
 			},
 			{
-				"//":"Good! Now, before we go further, how many encoders do you think I have in my arm? Step back so I can move my arm for you to use the scroll wheel.",
+				"type":"wait",
+				"for":"time",
+				"s":1
+			},
+			{
+				"type":"wait",
+				"for":"user input"
+			},
+			{
+				"type":"set_robot_mode",
+				"mode":"position"
+			},
+			{
+				"type":"set_graphic_mode",
+				"mode":"image"
+			},
+			{
+				"//":"Good! Now, before we go further, how many encoders do you think I have in my arm? Step back so I can reset my position. Again, use the white buttons on the box to change the number.",
 				"type":"play",
 				"audio_index":8,
 				"delay":true
 			},
 			{
 				"type":"goToJointAngles",
-				"joint_angles":"joint_buttons"
+				"joint_angles":"default"
 			},
 			{
-				"type":"scrollWheelInput",
+				"type":"numeric_input",
 				"store_answer_in":"wheelVal"
 			},
 			{
@@ -428,48 +461,101 @@
 						"delay":true
 					},
 					{
-						"type":"scrollWheelInput"
+						"type":"numeric_input",
+						"store_answer_in":"wheelVal"
 					}
 				]
 			},
 			{
-				"//":"Now grab and move my arm again. I've unlocked all of my motors, so my arm might drift around a little. Go ahead and grab it anyway while watching the projection to see what I sense as you move each motor. When you're done, press the scroll wheel button.",
+				"//":"Now grab and move my arm again. I've unlocked all of my motors, so my arm might drift around a little. Go ahead and grab it anyway while watching the projection to see what I sense as you move each motor. When you're done, press any button on the box.",
 				"type":"play",
 				"audio_index":11,
 				"delay":false
 			},
 			{
-				"type":"interaction_control",
-				"position_only":false,
+				"type":"set_robot_mode",
+				"mode":"interaction ctrl",
 				"orientation_x":true,
 				"orientation_y":true,
 				"orientation_z":true,
 				"position_x":true,
 				"position_y":true,
-				"position_z":true,
-				"in_end_point_frame":false,
-				"PASS":false,
-				"ways":false
+				"position_z":true
 			},
 			{
-				"type":"initializeDisplay"
+				"type":"set_graphic_mode",
+				"mode":"canvas",
+				"clear":true
 			},
 			{
-				"type": "drawDynamic",
-				"shape": "bar",
-				"topics": {"position": ["j0","j1","j2","j3","j4","j5","j6"]},
-				"x_ratio": [4,18,32,46,60,74,88],
-				"y_ratio": [80,80,80,80,80,80,80],
-				"width_ratio": [9,9,9,9,9,9,9],
-				"max_height_ratio": [70,70,70,70,70,70,70],
-				"fillStyle": ["#7c2629", "#7c2629", "#7c2629", "#7c2629", "#7c2629", "#7c2629", "#7c2629"],
-				"label": ["Joint 1","Joint 2","Joint 3","Joint 4","Joint 5","Joint 6","Joint 7"]
+				"type":"set",
+				"key":"j",
+				"val":0
+			},
+			{
+				"type":"log",
+				"message":"#JOINT_POSITION"
+			},
+			{
+				"type":"log",
+				"message":"#JOINT_POSITION[0]"
+			},
+			{
+				"type":"log",
+				"message":"#JOINT_POSITION_0"
+			},
+			{
+				"type":"wait",
+				"for":"user input"
+			},
+			{
+				"type":"draw",
+				"shape":"bar",
+				"height_percent": "#JOINT_POSITION[0]/3.14",
+				"x": 4,
+				"y": 80,
+				"width": 9,
+				"max_height": 70,
+				"fillStyle": ["#7c2629"]
+			},
+			{
+				"type":"while",
+				"conditional":"#j<JOINTS",
+				"instructions":[
+					{
+						"type":"draw",
+						"shape":"bar",
+						"height_percent": "#JOINT_POSITION[#j]/3.14",
+						"x": "4+14*#j",
+						"y": 80,
+						"width": 9,
+						"max_height": 70,
+						"fillStyle": ["#7c2629"]
+					},
+					{
+						"type":"set",
+						"key":"j",
+						"val":"#j+1"
+					}
+				]
+			},
+			{
+				"type":"wait",
+				"for":"user input"
+			},
+			{
+				"type":"set_robot_mode",
+				"mode":"position"
 			},
 			{
 				"//":"Using my encoders, I can measure the angles of all seven of my motors. Please stand back so I can reset my position.",
 				"type":"play",
 				"audio_index":12,
 				"delay":true
+			},
+			{
+				"type":"goToJointAngles",
+				"joint_angles":"default"
 			},
 			{
 				"type":"proceed",
@@ -673,7 +759,7 @@
 				"joint_angles":"joint_dot_3_init"
 			},
 			{
-				"//":"Let's try another. If I want to move to this point, how many movements will I have to make if I can only move one motor at a time? Just like before, I'm going to unlock my elbow motor for you to push my hand toward the point. If you want to switch to moving my wrist motor, press the scroll wheel button.",
+				"//":"Let's try another. If I want to move to this point, how many movements will I have to make if I can only move one motor at a time? Just like before, I'm going to unlock my elbow motor for you to push my hand toward the point. If you want to switch to moving my wrist motor, press any button on the box.",
 				"type":"play",
 				"audio_index":10,
 				"delay":false
@@ -689,7 +775,7 @@
 				"wait":true
 			},
 			{
-				"//":"Now I've locked my elbow and unlocked my wrist. You can switch back and forth at any time by pressing the scroll wheel button.",
+				"//":"Now I've locked my elbow and unlocked my wrist. You can switch back and forth at any time by pressing any button on the box.",
 				"type":"play",
 				"audio_index":11,
 				"delay":false
@@ -886,7 +972,7 @@
 				"delay":true
 			},
 			{
-				"//":"Grab my hand and see how large my range of motion is. I've unlocked all my motors, so my arm might drift around again. Go ahead and grab it anyway. When you're done, press the scroll wheel button.",
+				"//":"Grab my hand and see how large my range of motion is. I've unlocked all my motors, so my arm might drift around again. Go ahead and grab it anyway. When you're done, press any button on the box.",
 				"type":"play",
 				"audio_index":20,
 				"delay":false
@@ -1134,7 +1220,7 @@
 				"store_answer_in":"wait_output"
 			},
 			{
-				"//":"Watch the projection as you push my arm. I've put up a little display showing how far you've pushed my arm and how much force I'm using to push back. The further you push my arm, the harder I tell my motors to push back. It should feel a little bit like a rubber band: the more you displace it, the harder it will want to spring back into its original position. When you're done, press the scroll wheel button.",
+				"//":"Watch the projection as you push my arm. I've put up a little display showing how far you've pushed my arm and how much force I'm using to push back. The further you push my arm, the harder I tell my motors to push back. It should feel a little bit like a rubber band: the more you displace it, the harder it will want to spring back into its original position. When you're done, press any button on the box.",
 				"type":"play",
 				"audio_index":9,
 				"delay":false
@@ -1148,14 +1234,14 @@
 				"type":"projection"
 			},
 			{
-				"//":"Before, I was using the feedback from my encoders to go somewhere new. Now, I'm using feedback to stay in one place. What am I using to know when my arm is moving?",
+				"//":"Before, I was using the feedback from my encoders to go somewhere new. Now, I'm using feedback to stay in one place. What am I using to know when my arm is moving? Please stand back so I can reset my arm position.",
 				"type":"play",
 				"audio_index":10,
 				"delay":false
 			},
 			{
 				"type":"goToJointAngles",
-				"joint_angles":"joint_buttons"
+				"joint_angles":"default"
 			},
 			{
 				"type":"multiple_choice",
@@ -1163,10 +1249,10 @@
 			},
 			{
 				"type":"if",
-				"conditional":"#wheelVal==3",
+				"conditional":"#wheelVal==5",
 				"if_true":[
 					{
-						"//":"That's right! I measured my arm positions, and created a force to push my arm back. Please stand back so I can reset my arm position.",
+						"//":"That's right! I measured my arm positions, and created a force to push my arm back.",
 						"type":"play",
 						"audio_index":11,
 						"delay":true
@@ -1174,7 +1260,7 @@
 				],
 				"if_false":[
 					{
-						"//":"Do you remember pushing my arm and I knew how far I moved?",
+						"//":"Not quite. Do you remember pushing my arm and I knew how far I moved?",
 						"type":"play",
 						"audio_index":12,
 						"delay":true
@@ -1185,10 +1271,10 @@
 					},
 					{
 						"type":"if",
-						"conditional":"#wheelVal==3",
+						"conditional":"#wheelVal==5",
 						"if_true":[
 							{
-								"//":"That's right! I measured my arm positions, and created a force to push my arm back. Please stand back so I can reset my arm position.",
+								"//":"That's right! I measured my arm positions, and created a force to push my arm back.",
 								"type":"play",
 								"audio_index":11,
 								"delay":true
@@ -1204,10 +1290,6 @@
 						]
 					}
 				]
-			},
-			{
-				"type":"goToJointAngles",
-				"joint_angles":"default"
 			},
 			{
 				"type":"proceed",
@@ -1232,7 +1314,7 @@
 				"joint_angles":"default"
 			},
 			{
-				"//":"Let's try an example. I'm going to show you a series of arm positions. After each one, I'll unlock my arm and ask you to move it to that position and press the scroll wheel button.",
+				"//":"Let's try an example. I'm going to show you a series of arm positions. After each one, I'll unlock my arm and ask you to move it to that position and press any button on the box.",
 				"type":"play",
 				"audio_index":1,
 				"delay":true
@@ -1242,7 +1324,7 @@
 				"location": "images/hokeypokey_out.png"
 			},
 			{
-				"//":"Start by pulling my arm so it's extended all the way and matches the image on the projector. When it's in the right position, press the scroll wheel button and I'll record the position as a waypoint.",
+				"//":"Start by pulling my arm so it's extended all the way and matches the image on the projector. When it's in the right position, press any button on the box and I'll record the position as a waypoint.",
 				"type":"play",
 				"audio_index":2,
 				"delay":false
@@ -1262,7 +1344,7 @@
 				"wait":true
 			},
 			{
-				"//":"Good! Now, push my arm in so it's close to my torso. When it's in the right position, press the scroll wheel button.",
+				"//":"Good! Now, push my arm in so it's close to my torso. When it's in the right position, press any button on the box.",
 				"type":"play",
 				"audio_index":3,
 				"delay":false
@@ -1286,7 +1368,7 @@
 				"wait":true
 			},
 			{
-				"//":"Now pull my arm back out and press the scroll wheel button.",
+				"//":"Now pull my arm back out and press any button on the box.",
 				"type":"play",
 				"audio_index":4,
 				"delay":false
@@ -1310,7 +1392,7 @@
 				"wait":true
 			},
 			{
-				"//":"Now rotate my torso this way and press the scroll wheel button.",
+				"//":"Now rotate my torso this way and press any button on the box.",
 				"type":"play",
 				"audio_index":5,
 				"delay":false
@@ -1334,7 +1416,7 @@
 				"wait":true
 			},
 			{
-				"//":"Finally, rotate my torso that way and press the scroll wheel button.",
+				"//":"Finally, rotate my torso that way and press any button on the box.",
 				"type":"play",
 				"audio_index":6,
 				"delay":false

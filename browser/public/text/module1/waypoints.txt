@@ -1,10 +1,10 @@
 The final lesson of the day is about waypoints. Just like how your phone or computer can save pictures and music in its memory, I use my memory to remember different arm positions. Specifically, whenever you move my arm, I read all of my encoders so that, if I want to, I can return to this exact position. I call that remembered position a "waypoint." Please stand back so I can reset my position.
-Let's try an example. I'm going to show you a series of arm positions. After each one, I'll unlock my arm and ask you to move it to that position and press the scroll wheel button.
-Start by pulling my arm so it's extended all the way and matches the image on the projector. When it's in the right position, press the scroll wheel button and I'll record the position as a waypoint.
-Good! Now, push my arm in so it's close to my torso. When it's in the right position, press the scroll wheel button.
-Now pull my arm back out and press the scroll wheel button.
-Now rotate my torso this way and press the scroll wheel button.
-Finally, rotate my torso that way and press the scroll wheel button.
+Let's try an example. I'm going to show you a series of arm positions. After each one, I'll unlock my arm and ask you to move it to that position and press any button on the box.
+Start by pulling my arm so it's extended all the way and matches the image on the projector. When it's in the right position, press any button on the box button and I'll record the position as a waypoint.
+Good! Now, push my arm in so it's close to my torso. When it's in the right position, press any button on the box.
+Now pull my arm back out and press any button on the box.
+Now rotate my torso this way and press any button on the box.
+Finally, rotate my torso that way and press any button on the box.
 Great job! Now, I'll play back each waypoint. As I move from one waypoint to another, do the same motion with your arm.
 First, you put my arm in.
 You put my arm out.

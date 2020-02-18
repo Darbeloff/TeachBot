@@ -8,8 +8,8 @@ How many motors will I need to use to reach this new point? When you think you k
 I only needed to use one motor, but it was my elbow, not my wrist. 
 With my wrist motor, I could move along this curve, 
 But with my elbow motor, I can move along this curve. 
-Let's try another. If I want to move to this point, how many movements will I have to make if I can only move one motor at a time? Just like before, I'm going to unlock my elbow motor for you to push my hand toward the point. If you want to switch to moving my wrist motor, press the scroll wheel button.
-Now I've locked my elbow and unlocked my wrist. You can switch back and forth at any time by pressing the scroll wheel button.
+Let's try another. If I want to move to this point, how many movements will I have to make if I can only move one motor at a time? Just like before, I'm going to unlock my elbow motor for you to push my hand toward the point. If you want to switch to moving my wrist motor, press any button on the box.
+Now I've locked my elbow and unlocked my wrist. You can switch back and forth at any time by pressing any button on the box.
 Great! Now let me try.
 I took two steps to get there.
 First, I moved this motor, 
@@ -18,5 +18,5 @@ I can also travel in four steps
 or eight steps. 
 Notice how, the more steps I take, the shorter each step is and the less time I spend using my wrist before switching to my elbow. If I keep increasing the number of steps, eventually there won't be any time at all between when I am using my wrist and when I am using my elbow, like this. 
 By combining all of the motions I can make with just one of my motors, I can move my hand freely through a large space!
-Grab my hand and see how large my range of motion is. I've unlocked all my motors, so my arm might drift around again. Go ahead and grab it anyway. When you're done, press the scroll wheel button.
+Grab my hand and see how large my range of motion is. I've unlocked all my motors, so my arm might drift around again. Go ahead and grab it anyway. When you're done, press any button on the box.
 Please stand back so that I can reset my position.

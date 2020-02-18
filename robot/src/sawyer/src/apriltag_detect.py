@@ -44,8 +44,10 @@ class Camera():
 		self.heights = []
 		self.widths = []
 
-		# self.limb.go_to_joint_angles([0.314609375, 0.19108984375, -1.9322587890625, 1.64379296875, 1.7396455078125, 0.37216796875, 0.183701171875])
-
+		#Camera pos 1
+		# self.limb.go_to_joint_angles([0.5832646484375, -1.301193359375, -0.193248046875, 2.0165146484375, 0.0075908203125, -0.75755078125, 0.3351982421875])
+		#Camera pos 2
+		self.limb.go_to_joint_angles([0.21234375, 0.2708505859375, -1.70441796875, 1.7846484375, 1.9352724609375, -0.17507421875, -3.083966796875])
 		# rospy.sleep(3)
 
 		self.start()
@@ -66,24 +68,26 @@ class Camera():
 		except CvBridgeError, err:
 			rospy.logerr(err)
 
-		img = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
-		detector = apriltag.Detector()
-		detections = detector.detect(img)
-		# rospy.loginfo(detections[0].corners)
+		try:
+			img = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
+			detector = apriltag.Detector()
+			detections = detector.detect(img)
+			# rospy.loginfo(detections[0])
+			centerApril = detections[0].center
 
-		cv2.line(cv_image, (int(detections[0].corners[0][0]),int(detections[0].corners[0][1])), (int(detections[0].corners[1][0]),int(detections[0].corners[1][1])), (255,255,51), 3)
-		cv2.line(cv_image, (int(detections[0].corners[1][0]),int(detections[0].corners[1][1])), (int(detections[0].corners[2][0]),int(detections[0].corners[2][1])), (255,255,51), 3)
-		cv2.line(cv_image, (int(detections[0].corners[3][0]),int(detections[0].corners[3][1])), (int(detections[0].corners[2][0]),int(detections[0].corners[2][1])), (255,255,51), 3)
-		cv2.line(cv_image, (int(detections[0].corners[3][0]),int(detections[0].corners[3][1])), (int(detections[0].corners[0][0]),int(detections[0].corners[0][1])), (255,255,51), 3)
+			cv2.line(cv_image, (int(detections[0].corners[0][0]),int(detections[0].corners[0][1])), (int(detections[0].corners[1][0]),int(detections[0].corners[1][1])), (255,255,51), 3)
+			cv2.line(cv_image, (int(detections[0].corners[1][0]),int(detections[0].corners[1][1])), (int(detections[0].corners[2][0]),int(detections[0].corners[2][1])), (255,255,51), 3)
+			cv2.line(cv_image, (int(detections[0].corners[3][0]),int(detections[0].corners[3][1])), (int(detections[0].corners[2][0]),int(detections[0].corners[2][1])), (255,255,51), 3)
+			cv2.line(cv_image, (int(detections[0].corners[3][0]),int(detections[0].corners[3][1])), (int(detections[0].corners[0][0]),int(detections[0].corners[0][1])), (255,255,51), 3)
+		except:
+			rospy.loginfo('No apriltag detected')
+			pass
 
 		gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
 		blurred = cv2.GaussianBlur(gray, (5,5), 0)
-		ret, thresh = cv2.threshold(blurred, 180, 255, cv2.THRESH_BINARY_INV)
-
-		# ret2, thresh2 = cv2.threshold(blurred, 50, 255, cv2.THRESH_BINARY_INV)
+		ret, thresh = cv2.threshold(blurred, 100, 255, cv2.THRESH_BINARY_INV)
 
 		im2, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
-		# im3, contours3, hierarchy3 = cv2.findContours(thresh2, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
 
 		cnt = contours[0]
 		max_area = cv2.contourArea(cnt)
@@ -99,23 +103,20 @@ class Camera():
 
 		cv2.drawContours(cv_image, [box], -1, (0,255,0), 3)
 
-		# cnt2 = contours3[0]
-		# max_area2 = cv2.contourArea(cnt2)
-
-		# for contour in contours3:
-		# 	if cv2.contourArea(contour) >= max_area2:
-		# 		cnt2 = contour
-		# 		max_area2 = cv2.contourArea(contour)
-
-		# rect2 = cv2.minAreaRect(cnt2)
-		# box2 = cv2.boxPoints(rect2)
-		# box2 = np.int0(box2)
-
-		# cv2.drawContours(cv_image, [box2], -1, (255,255,51), 3)
-
 		a = sum(map(lambda x: x[0], box))/4
-		# b = sum(map(lambda x: x[1], box))/4
+		b = sum(map(lambda x: x[1], box))/4
+		centerBin = (a,b)
 
+		try:
+			distance = ((centerBin[0]-centerApril[0])**2+(centerBin[1]-centerApril[1])**2)**0.5
+
+			if distance < 56:
+				rospy.loginfo('yay!')
+			else: 
+				rospy.loginfo(distance)
+		except:
+			rospy.loginfo('sad')
+			pass
 		# cv2.circle(cv_image, (a,b), 8, (255,0,0), -1)
 
 		cv2.imwrite('/home/albertgo/TeachBot/browser/public/images/test.png', cv_image)
@@ -125,16 +126,6 @@ class Camera():
 		# cv2.imshow('binary', thresh)
 		
 		cv2.waitKey(5)
-		
-		# msg = Image()
-		# msg.height       = img_data.height
-		# msg.width        = img_data.width
-		# msg.encoding     = img_data.encoding
-		# msg.is_bigendian = img_data.is_bigendian
-		# msg.step         = img_data.step
-		# msg.data         = img_data.data 
-
-		#self.image_topic.publish(msg)
 
 	def start(self):
 		rp = intera_interface.RobotParams()

@@ -1,0 +1,5 @@
+#Determines which button was pressed and waits for response
+
+string button
+---
+string response

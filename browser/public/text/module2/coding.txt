@@ -1,3 +1,7 @@
-Please put box 3 back to it's original position and put bin 1 on the stand. Press the scroll wheel when done.
-Now that you've mastered putting boxes into bins, you are now going to program me yourself to put the box in the bin.
-Displayed on my screen is a series of options you can choose from to put the box into the bin. Use the scroll wheel button to move up and down the list and press the scroll wheel button to select the task you want to do.
+Please put boxes 1, 3, and 4 off to the side. Press any button on the box when done.
+This next segment will help you practice programming the robot yourself.
+Displayed on my screen is a series of options you can choose from to put the box into the bin. Press the desired button to do a specific task.
+Once you have gotten the box into the bin, press any button on the box when done.
+Please stand back so I can see if you succesfully completed the task.
+Great job! You are a programminge expert!
+Ooops! Not quite. Please put box 3 back into its designated position and try again.

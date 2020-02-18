@@ -1,14 +1,14 @@
 Now that you've mastered picking up objects with a gripper, let's try placing this box into a bin. It may seem like a simple task, but I can't do it in just one motion. If I try to move the box straight into the bin, I'll collide with the side of the bin, like this.
-Can you move the bin back where it was? When it's ready, press the scroll wheel button.
-Now let’s try moving this 3rd box into the first bin. 
+Can you move the bin back where it was? When it's ready, press any button on the box.
+Now let’s try moving the 2nd box into the first bin. 
 This time, instead of trying to move the box straight into the bin, I'll add a couple of steps in the middle. Help me set up a series of waypoints so that I can put the box into the bin. 
-First, can you move my hand so its position is over the box and the gripper is in the correct orientation? Use the gray and white buttons on my wrist to switch between position and orientation modes. Press the scroll wheel to continue.
-Next, lower, my hand so that the box is in between the gripper. Make sure the gripper is low enough so that it can get a good grasp of the box. Press the scroll wheel to continue.
-Now, lift my hand high enough so that the box higher than the bin. Press the scroll wheel to continue.
-Next, move my hand so it is directly over Bin 1 and the gripper is in the correct orientation. Use the gray and white buttons on my wrist to switch between position and orientation modes. Press the scroll wheel button to continue.
-Finally, lower my hand so that is just above the bin. Make sure the hand is low enough so that when it drops Box 3, it doesn't drop too far, but high enough so that my grippers don't hit the side of the box. Then, press the scroll wheel button to open my gripper.
+First, can you move my hand so its position is over the box and the gripper is in the correct orientation? Use the red and green buttons on the side of the box to switch between position and orientation modes. Press any button on the top of the box when you're done.
+Next, lower, my hand so that the box is in between the gripper. Make sure the gripper is low enough so that it can get a good grasp of the box. Press any button on the box to continue.
+Now, lift my hand high enough so that the box higher than the bin. Press any button on the box to continue.
+Next, move my hand so it is directly over Bin 1 and the gripper is in the correct orientation. Use the red and green buttons on the side of the box to switch between position and orientation modes. Press any button on the top of the box to continue.
+Finally, lower my hand so that is just above the bin. Make sure the hand is low enough so that when it drops Box 2, it doesn't drop too far, but high enough so that my grippers don't hit the side of the box. Then, press any button on the box to open my gripper.
 Please stand back so I can reset my position to be over Box 4.
-Can you please put Box 3 back into its designated position? Press the scroll wheel button once you've done so.
-Now, I'm going to place Box 3 into Bin 1 based on the waypoints you set up for me! 
+Can you please put Box 2 back into its designated position? Press any button on the box once you've done so.
+Now, I'm going to place Box 2 into Bin 1 based on the waypoints you set up for me! 
 Oops, I couldn’t pick it up like that. This time, try to get the entire width of the box in my grasp. You can use the buttons on my wrist to switch back and forth between position and orientation.
 Great job! Please stand back so I can readjust.

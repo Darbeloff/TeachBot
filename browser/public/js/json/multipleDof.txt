@@ -1,0 +1,2 @@
+You have now mastered putting boxes into bins with one and two degrees of freedom. Now you will put box 3 into the bin on the ramp.
+Help me create a series of waypoints so that I can put the box into the bin.

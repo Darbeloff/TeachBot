@@ -7,8 +7,8 @@ here is position B,
 and here is position C.
 I compare my encoder reading at my current position, C, against the destination encoder position, B. If C is smaller than B, I push right. If C is longer than B, I push left. The 'feedback' from my encoders helps me decide which way to go to get to my destination. Now, please stand back.
 But that's only one demonstration of feedback. Let me show you another one. Try gently pushing down on my arm. Can you notice the difference?
-Watch the projection as you push my arm. I've put up a little display showing how far you've pushed my arm and how much force I'm using to push back. The further you push my arm, the harder I tell my motors to push back. It should feel a little bit like a rubber band: the more you displace it, the harder it will want to spring back into its original position. When you're done, press the scroll wheel button.
-Before, I was using the feedback from my encoders to go somewhere new. Now, I'm using feedback to stay in one place. What am I using to know when my arm is moving?
-That's right! I measured my arm positions, and created a force to push my arm back. Please stand back so I can reset my arm position.
-Do you remember pushing my arm and I knew how far I moved?
-Sorry, that is incorrect. The correct answer is encoders.
+Watch the projection as you push my arm. I've put up a little display showing how far you've pushed my arm and how much force I'm using to push back. The further you push my arm, the harder I tell my motors to push back. It should feel a little bit like a rubber band: the more you displace it, the harder it will want to spring back into its original position. When you're done, press any button on the box.
+Before, I was using the feedback from my encoders to go somewhere new. Now, I'm using feedback to stay in one place. What am I using to know when my arm is moving? Please stand back so I can reset my arm position.
+That's right! I measured my arm positions, and created a force to push my arm back. 
+Not quite. Do you remember pushing my arm and I knew how far I moved?
+Sorry, that is incorrect. The correct answer is encoders. 

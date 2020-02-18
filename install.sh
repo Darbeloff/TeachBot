@@ -39,6 +39,8 @@ elif [ $ver -eq 16 ] ; then
 	echo "source /opt/ros/kinetic/setup.bash" >> ~/.bashrc
 fi
 source ~/.bashrc
+sudo usermod -a -G dialout $USER
+sudo chmod 666 /dev/ttyACM0
 
 # apt-get dependencies
 curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -

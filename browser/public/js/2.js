@@ -12,7 +12,7 @@ var ch = m.ch;
 /**************************
  *   Main Functionality   *
  **************************/
-var start_seq = 'intro';
+var start_seq = 'multipleDof';
 async function main() {
     m.displayOff();
     // canvas_container.style.display = 'initial';

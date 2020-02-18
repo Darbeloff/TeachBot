@@ -4,6 +4,7 @@ const JOINTS = 7;                         // Numer of joints in Sawyer arm
 const VERBOSE = true;                     // Whether or not to print everything
 const BUTTON = {'back': 0, 'show': 1, 'circle': 2, 'square': 3, 'triangle': 4};
 const ROBOT = 'sawyer';
+const ARDUINO = 'button_box';
 
 /**
  * A learning module for TeachBot.
@@ -34,6 +35,7 @@ function Module(module_num, main, content_elements) {
 	this.drawings = [];														// Array of objects to draw on the canvas.
 	this.graphic_mode = 'image';											// Current graphic mode. See: set_graphic_mode().
 	this.canvas_frame_req;													// Animation frame request. See: set_graphic_mode().
+	this.button = 'none';
 	
 	// Initialize self to module for use in event callbacks
 	self = this;
@@ -54,30 +56,22 @@ function Module(module_num, main, content_elements) {
 	})
 
 	// Subscribing topics
+	this.box_bin = new ROSLIB.Topic({
+		ros: ros,
+		name: '/teachbot/box_in_bin',
+		messageType: 'std_msgs/Bool'
+	});
+	this.button_topic = new ROSLIB.Topic({
+		ros: ros,
+		name: '/teachbot/button',
+		messageType: 'std_msgs/String'
+	});
 	this.command_complete = new ROSLIB.Topic({
 		// Deprecated, but still used by 'camera' and 'camera_off'
 		ros: ros,
 		name: '/teachbot/command_complete',
 		messageType: 'std_msgs/Empty'
 	})
-	this.wheel_delta_topic = new ROSLIB.Topic({
-		ros: ros,
-		name: '/teachbot/wheel_delta',
-		messageType: 'std_msgs/Int32'
-	})
-	this.scroll_wheel_button_receiver = new ROSLIB.Topic({
-		// Deprecated, but still used by 'scrollWheelInput'
-		ros: ros,
-		name: '/teachbot/scroll_wheel_button_topic',
-		messageType: 'std_msgs/Empty'
-	})
-	this.pressed = new ROSLIB.Topic({
-		// Deprecated, but still used by 'drawDynamic', 'interaction_projection', 'pressed_button', 'projection', and 'scrollWheelInput'
-		ros: ros,
-		name: '/teachbot/scroll_wheel_pressed',
-		messageType: 'std_msgs/Bool'
-	});
-
 	this.position = new ROSLIB.Topic({
 		ros: ros,
 		name: '/teachbot/position',
@@ -119,6 +113,12 @@ function Module(module_num, main, content_elements) {
 		serviceType: ROBOT + '/DevMode'
 	});
 	DevModeSrv.advertise(this.devRxCallback);
+	var ButtonReceiverSrv = new ROSLIB.Service({
+		ros: ros,
+		name: '/teachbot/buttons',
+		serviceType: ARDUINO + '/ButtonInfo'
+	});
+	ButtonReceiverSrv.advertise(this.buttonCallback);
 
 	// Service Clients
 	this.SetRobotModeSrv = new ROSLIB.Service({
@@ -126,15 +126,15 @@ function Module(module_num, main, content_elements) {
 		name: '/teachbot/set_robot_mode',
 		serviceType: 'SetRobotMode'
 	});
+	this.CuffWaysSrv = new ROSLIB.Service({
+		ros: ros,
+		name: '/teachbot/CuffWays',
+		serviceType: 'CuffWays'
+	});
 	this.UpdateAudioDurationSrv = new ROSLIB.Service({
 		ros: ros,
 		name: '/teachbot/audio_duration',
 		serviceType: 'AudioDuration'
-	});
-	this.ScrollWheelSubscriptionSrv = new ROSLIB.Service({
-		ros: ros,
-		name: '/teachbot/wheel_subscription',
-		serviceType: 'ScrollWheelSubscription'
 	});
 
 	// Actions
@@ -148,16 +148,6 @@ function Module(module_num, main, content_elements) {
 		serverName: '/teachbot/GoToJointAngles',
 		actionName: ROBOT + '/GoToJointAnglesAction'
 	});
-	/*this.JointMoveAct = new ROSLIB.ActionClient({
-		ros: ros,
-		serverName: '/teachbot/JointMove',
-		actionName: ROBOT + '/JointMoveAction'
-	});
-	this.InteractionControlAct = new ROSLIB.ActionClient({
-		ros: ros,
-		serverName: '/teachbot/InteractionControl',
-		actionName: ROBOT + '/InteractionControlAction'
-	});*/
 	this.AdjustPoseToAct = new ROSLIB.ActionClient({
 		ros: ros,
 		serverName: '/teachbot/AdjustPoseTo',
@@ -188,11 +178,11 @@ function Module(module_num, main, content_elements) {
 		serverName: '/teachbot/AdjustPoseBy',
 		actionName: ROBOT + '/AdjustPoseByAction'
 	});
-	/*this.JointImpedanceAct = new ROSLIB.ActionClient({
+	this.ButtonPressAct = new ROSLIB.ActionClient({
 		ros: ros,
-		serverName: '/teachbot/JointImpedance',
-		actionName: ROBOT + '/JointImpedanceAction'
-	});*/
+		serverName: '/teachbot/ButtonSend',
+		actionName: ROBOT + '/ButtonSendAction'
+	})
 	this.WaitAct =  new ROSLIB.ActionClient({
 		ros: ros,
 		serverName: '/teachbot/Wait',
@@ -207,6 +197,7 @@ function Module(module_num, main, content_elements) {
 
 	// Initialize dictionary
 	this.dictionary = {};
+	this.dictionary['JOINT_POSITION'] = [];
 	this.getEndpoint();
 
 	/*********************
@@ -250,6 +241,7 @@ function Module(module_num, main, content_elements) {
 Module.prototype.positionCallback = function(msg) {
 	for (let j=0; j<Object.keys(msg).length; j++) {
 		self.dictionary[`JOINT_POSITION_${j}`] = msg[`j${j}`];
+		self.dictionary[`JOINT_POSITION`][j] = msg[`j${j}`];
 	}
 }
 Module.prototype.velocityCallback = function(msg) {
@@ -275,7 +267,7 @@ Module.prototype.gripperinfoCallback = function(msg) {
 	GP.GripperStatus(msg.signals);
 }
 
-Module.prototype.unsubscribeFrom = function(topic) {
+/*Module.prototype.unsubscribeFrom = function(topic) {
 	topic.unsubscribe();
 	topic.removeAllListeners();
 	switch (topic.name) {
@@ -292,7 +284,7 @@ Module.prototype.unsubscribeFrom = function(topic) {
 			topic.subscribe(self.endpointCallback);
 			break;
 	}
-}
+}*/
 
 /**
  * Loads text and audio.
@@ -391,6 +383,21 @@ Module.prototype.play = async function(audioFile, duration, text) {
 }
 
 /**
+ * Adjusts the text size to fit in the text box.
+ *
+ * Adjusts the font until the text fills the most space possible in the text box or the maximum font size is reached.
+ *
+ * @param {string}	[max_font_size='64px']	The maximum allowable font size.
+ */
+Module.prototype.adjust_text = function(max_font_size='64px') {
+	var resize_me = document.getElementById('adjustable');
+	resize_me.style.fontSize = max_font_size;
+	while (resize_me.scrollHeight > this.textBoxMaxHeight && parseInt(resize_me.style.fontSize)>2){
+		resize_me.style.fontSize = parseInt(resize_me.style.fontSize) - 1 + 'px';
+	}
+}
+
+/**
  * Format a GoToJointAngles goal for sending.
  *
  * When the returned object is sent, the robot should move to the position specified.
@@ -422,20 +429,6 @@ Module.prototype.getGoToGoal = function(joint_angles, speed_ratio=0, wait=false)
 	});
 }
 
-/*Module.prototype.getJointMoveGoal = function(joints, terminatingCondition, resetPOS, min_thresh, bias, tol = 0) {
-	return new ROSLIB.Goal({
-		actionClient: self.JointMoveAct,
-		goalMessage: {
-			joints: self.hashTokeyVal(joints),
-			terminatingCondition: self.hashTokeyVal(terminatingCondition),
-			resetPOS: self.hashTokeyVal(resetPOS),
-			min_thresh: self.hashTokeyVal(min_thresh),
-			bias: self.hashTokeyVal(bias),
-			tol: tol
-		}
-	});
-}*/
-
 Module.prototype.pub_angle = function(angle) {
 	
 	var req = new ROSLIB.Message({
@@ -443,7 +436,6 @@ Module.prototype.pub_angle = function(angle) {
 	});
 
 	this.joint_angle.publish(req);
-
 }
 
 Module.prototype.getEndpoint = function(){
@@ -457,22 +449,6 @@ Module.prototype.getEndpoint = function(){
 		self.dictionary['orientation_w'] = message.orientation.w;
 		//console.log(self.dictionary)	
 	});
-}
-
-
-/**
- * Adjusts the text size to fit in the text box.
- *
- * Adjusts the font until the text fills the most space possible in the text box or the maximum font size is reached.
- *
- * @param {string}	[max_font_size='64px']	The maximum allowable font size.
- */
-Module.prototype.adjust_text = function(max_font_size='64px') {
-	var resize_me = document.getElementById('adjustable');
-	resize_me.style.fontSize = max_font_size;
-	while (resize_me.scrollHeight > this.textBoxMaxHeight && parseInt(resize_me.style.fontSize)>2){
-		resize_me.style.fontSize = parseInt(resize_me.style.fontSize) - 1 + 'px';
-	}
 }
 
 /**
@@ -590,12 +566,49 @@ Module.prototype.robot2canvas = async function(x, y, robot='sawyer', calibrate=f
 	}
 }
 
+  
 /**
- * Conversion from Quaternion to Euler angles
+ * Detects if button was pressed
+ * If the switch value changes, it toggles development mode
+ *
+ * Callback for the ButtonReceiverSrv service.
+ * Turns development mode on if the message is 'On', off if 'Off'.
+ * Also detects if a button was pressed and changes the value of this.button
+ *
+ * @param {object}	req 	ROS message in the form of a string
+ * @param {object}  resp    A string confirming that the button was received
  */
- Module.prototype.Quaternion2Euler = async function(x,y,z,w) {
+Module.prototype.buttonCallback = function(req, resp) {
+	switch (req.button) {
+		case 'Off':
+			self.devMode = false
+			for (let s=0; s<self.sections.length; s++) {
+				self.sections[s]._audio_duration = self.sections[s]._audio_duration_copy.slice();
+			}
+			resp['response'] = 'Exiting dev mode';
+			if (VERBOSE) console.log('Exiting dev mode.');
+			break;
 
- }
+		case 'On':
+			self.devMode = true
+			for (let s=0; s<self.sections.length; s++) {
+				for (let d=0; d<self.sections[s]._audio_duration.length; d++) {
+				self.sections[s]._audio_duration[d] = 0;
+				}
+			}
+			resp['response'] = 'Entering dev mode';
+			if (VERBOSE) console.log('Entering dev mode.');
+			break;
+
+		default:
+			self.button = parseInt(req.button)
+			resp['response'] = 'Button pressed';
+	}
+
+    
+    return true;
+}
+
 
 /**
  * Runs a command from the JSON file.
@@ -658,6 +671,7 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 			case 'pause':
 
 				console.log("module paused here.")
+				// self.start(self.getNextAddress(instructionAddr));
 
 				break;
 
@@ -831,19 +845,33 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 					}
 				};
 
-				this.pressed.subscribe(async function(message) {
-					if (VERBOSE) console.log('Pressed: ' + message.data);
-					if (message.data == true) {
-						for (topic in instr.topics){
-							eval('self.'+topic+'.unsubscribe();');
-							eval('self.'+topic+'.removeAllListeners();');
-						}
-						self.pressed.unsubscribe();
-						self.pressed.removeAllListeners();
-						self.displayOff();
-						self.start(self.getNextAddress(instructionAddr));
+				this.button_topic.subscribe(async function(message) {
+					if (VERBOSE) console.log('Received indication to advance');
+					for (topic in instr.topics){
+						eval('self.'+topic+'.unsubscribe();');
+						eval('self.'+topic+'.removeAllListeners();');
+					
+					self.button_topic.unsubscribe();
+					self.button_topic.removeAllListeners();
+					self.displayOff();
+					self.start(self.getNextAddress(instructionAddr));
 					}
 				});
+
+				break;
+
+			case 'buttons':
+				var goal_ButtonPress = new ROSLIB.Goal({
+					actionClient: this.ButtonPressAct,
+					goalMessage:{press: true}
+				});
+
+				goal_ButtonPress.on('result', function(result) {
+					if (VERBOSE) console.log(self.button)
+					self.start(self.getNextAddress(instructionAddr));
+				});
+
+				goal_ButtonPress.send();
 
 				break;
 
@@ -856,10 +884,25 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 
 				this.camera.publish(req);
 
-				this.command_complete.subscribe(function(message) {
-					self.command_complete.unsubscribe();
-					self.command_complete.removeAllListeners();
-					self.start(self.getNextAddress(instructionAddr));
+				this.box_bin.subscribe(async function(message) {
+                	if (VERBOSE) console.log('Box success: ' + message.data);
+					if (message.data == true) {
+						wheel_val = 1
+						if (instr.hasOwnProperty('store_answer_in')) {
+							self.dictionary[instr.store_answer_in] = wheel_val;
+						}
+						self.box_bin.unsubscribe();
+						self.box_bin.removeAllListeners();
+						self.start(self.getNextAddress(instructionAddr));
+					} else{
+						wheel_val = 2
+						if (instr.hasOwnProperty('store_answer_in')) {
+							self.dictionary[instr.store_answer_in] = wheel_val;
+						}
+						self.box_bin.unsubscribe();
+						self.box_bin.removeAllListeners();
+						self.start(self.getNextAddress(instructionAddr));
+					}
 				});
 
 				break;
@@ -867,19 +910,31 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 			case 'camerabw_graphic':
 
 				var cv_image_url = DIR + 'images/cv_1.png';
+				var bw_image = new Image();
 
-				image.src = cv_image_url;
-				
-				this.start(this.getNextAddress(instructionAddr));
+				bw_image.onload = function() {
+					console.log('Displaying camera')
+		            self.ctx.drawImage(bw_image, 300, 10, self.ctx.canvas.width*.7, self.ctx.canvas.height)
+
+		            self.start(self.getNextAddress(instructionAddr));
+				};
+
+				bw_image.src = cv_image_url;
 
 				break;
 
 			case 'camera_color_graphic':
 				var cv_image_url = DIR + 'images/cv_2.png';
+				var color_image = new Image();
 
-				image.src = cv_image_url;
-				
-				this.start(this.getNextAddress(instructionAddr));
+				color_image.onload = function() {
+					console.log('Displaying camera')
+		            self.ctx.drawImage(color_image, 300, 10, self.ctx.canvas.width*.7, self.ctx.canvas.height)
+
+		            self.start(self.getNextAddress(instructionAddr));
+				};
+
+				color_image.src = cv_image_url;
 
 				break;
 
@@ -941,34 +996,105 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 				var position_bw_url = DIR + 'images/position_bw.png';
 				var position_color_url = DIR + 'images/position_color.png';
 
-				var goal = new ROSLIB.Goal({
-					actionClient: this.CuffInteractionAct,
+				// var goal = new ROSLIB.Goal({
+				// 	actionClient: this.CuffInteractionAct,
+				// 	goalMessage: {
+				// 		terminatingCondition: instr.terminatingCondition,
+				// 		ways: instr.ways
+				// 	}
+				// });
+
+				// goal.on('feedback', function(feedback) {
+				// 	var POSITION = true;
+				// 	var ORIENTATION = false;
+				// 	if (feedback.mode === POSITION) {
+				// 		if (VERBOSE) console.log('Position Mode');
+				// 		draw_pos_orien(self.ctx,3,300,400,position_color_url,position_bw_url, orient_color_url, orient_bw_url,'pos');
+				// 	} else if (feedback.mode === ORIENTATION) {
+				// 		if (VERBOSE) console.log('Orientation Mode');
+				// 		draw_pos_orien(self.ctx,3,300,400,position_color_url,position_bw_url, orient_color_url, orient_bw_url,'orien');
+				// 	}
+				// });
+
+				// goal.on('result', function(result) {
+				// 	if (VERBOSE) console.log('Exited cuff interaction.');
+				// 	self.ctx.clearRect(3, 300, 403, 1100)
+				// 	self.start(self.getNextAddress(instructionAddr));
+				// });
+
+				// goal.send();
+
+				var goal_pos = new ROSLIB.Goal({
+				actionClient: self.InteractionControlAct,
+				goalMessage: {
+					position_only: false,
+					position_x: true,
+					position_y: true,
+					position_z: false,
+					orientation_x: false,
+					orientation_y: false,
+					orientation_z: false,
+					in_end_point_frame: false,
+					PASS: true,
+					ways: false
+				}
+				});
+
+				var goal_orient = new ROSLIB.Goal({
+					actionClient: self.InteractionControlAct,
 					goalMessage: {
-						terminatingCondition: instr.terminatingCondition,
-						ways: instr.ways
+						position_only: false,
+						position_x: false,
+						position_y: false,
+						position_z: false,
+						orientation_x: false,
+						orientation_y: false,
+						orientation_z: true,
+						in_end_point_frame: true,
+						PASS: true,
+						ways: false
 					}
 				});
 
-				goal.on('feedback', function(feedback) {
-					var POSITION = true;
-					var ORIENTATION = false;
-					if (feedback.mode === POSITION) {
-						if (VERBOSE) console.log('Position Mode');
+				this.button_topic.subscribe(async function(message) {
+					var value = parseInt(message.data)
+					if (value == 6){
 						draw_pos_orien(self.ctx,3,300,400,position_color_url,position_bw_url, orient_color_url, orient_bw_url,'pos');
-					} else if (feedback.mode === ORIENTATION) {
-						if (VERBOSE) console.log('Orientation Mode');
+						if (VERBOSE) console.log('Entering position mode');	
+						goal_pos.send()
+					} else if (value == 7){
 						draw_pos_orien(self.ctx,3,300,400,position_color_url,position_bw_url, orient_color_url, orient_bw_url,'orien');
+						if (VERBOSE) console.log('Entering orientation mode');	
+						goal_orient.send()
+					} else{
+						if (VERBOSE) console.log('Received indication to advance');	
+						if (instr.ways == true) {
+							self.CuffWaysSrv.callService(new ROSLIB.ServiceRequest({request: true}), result => {return})
+						}
+						self.ctx.clearRect(3, 300, 403, 1100)		
+						self.button_topic.unsubscribe();
+						self.button_topic.removeAllListeners();
+						self.start(self.getNextAddress(instructionAddr));
 					}
 				});
 
-				goal.on('result', function(result) {
-					if (VERBOSE) console.log('Exited cuff interaction.');
-					self.ctx.clearRect(3, 300, 403, 1100)
-					self.start(self.getNextAddress(instructionAddr));
-				});
+				break;
 
-				goal.send();
+			case 'drawBin':
+				checkInstruction(instr, ['number'], instructionAddr);
+				var binW = 17*this.cw;
+				var binH = 13*this.ch;
+				switch (instr.number) {
+					case 1:
+						// this.ctx.strokeRect(56*this.cw, 40*this.ch, binW, binH);
+						this.ctx.strokeRect(62*this.cw, 40*this.ch, binW, binH);
+						break;
+					case 2:
+						this.ctx.strokeRect(83*this.cw, 33*this.cw, binW, binH);
+						break;
+				}
 
+				this.start(this.getNextAddress(instructionAddr));
 				break;
 
 			case 'drawPosOrien':
@@ -983,10 +1109,31 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 
 				break;
 
+			case 'drawRamp':
+				checkInstruction(instr, ['number'], instructionAddr);
+				console.log('Drawing ramp')
+				var binW = 21*this.cw;
+				var binH = 19*this.ch;
+				switch (instr.number) {
+					case 1:
+						// this.ctx.strokeRect(56*this.cw, 40*this.ch, binW, binH);
+						this.ctx.rotate(-0.48)
+						this.ctx.strokeRect(18*this.cw, 60*this.ch, binH, binW);
+						this.ctx.rotate(0.48)
+						break;
+				}
+
+				this.start(this.getNextAddress(instructionAddr));
+				break;
+
 			case 'encode':
+<<<<<<< HEAD
 				self.displayOff();
 				canvas_obj.style.display = 'initial';
 				this.ctx.clearRect(0,0,100*this.cw,100*this.ch);
+=======
+				this.set_graphic_mode({mode: 'canvas', custom: true}, instructionAddr);
+>>>>>>> origin
 				var encoder_moving_part_url = DIR + 'images/moving_part.png';
 				var encoder_still_part_url = DIR + 'images/still_part.png';
 				var encoder_motor_url = DIR + 'images/motor_body.png';
@@ -998,10 +1145,10 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 				break;
 
 			case 'stopEncode':
-			// this is a temporary command to separate clearInterval from drawing command.
-			// It needs to be deleted eventually.
+				// TODO: This is a temporary command to separate clearInterval from drawing command. It needs to be deleted eventually.
 				clearInterval(encoder);
 				this.start(self.getNextAddress(instructionAddr));
+
 				break;
 
 			case 'gripper':
@@ -1091,65 +1238,12 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 
 				break;
 
-			/*case 'interaction_control':
-				checkInstruction(instr, ["position_only","orientation_x","orientation_y","orientation_z","position_x","position_y","position_z", "in_end_point_frame", "PASS", "ways"], instructionAddr);
-
-				var orient_bw_url = DIR + 'images/orientation_bw.png';
-				var orient_color_url = DIR + 'images/orientation_color.png';
-				var position_bw_url = DIR + 'images/position_bw.png';
-				var position_color_url = DIR + 'images/position_color.png';
-
-				var goal = new ROSLIB.Goal({
-					actionClient: self.InteractionControlAct,
-					goalMessage: {
-						position_only: instr.position_only,
-						position_x: instr.position_x,
-						position_y: instr.position_y,
-						position_z: instr.position_z,
-						orientation_x: instr.orientation_x,
-						orientation_y: instr.orientation_y,
-						orientation_z: instr.orientation_z,
-						in_end_point_frame: instr.in_end_point_frame,
-						PASS: instr.PASS,
-						ways: instr.ways
-					}
-				});
-
-				if (instr.hasOwnProperty('wait') && instr.wait) {
-					goal.on('result', function(result) {
-						self.ctx.clearRect(3, 300, 403, 1100);
-						self.start(self.getNextAddress(instructionAddr));
-					});
-					goal.send();
-				} else {
-					goal.send();
-					this.start(self.getNextAddress(instructionAddr));
-				}
-
-				break;*/
-
 			case 'wait':
 				this.wait(instr, instructionAddr).then((msg) => {
+					if (VERBOSE) console.log(`Done waiting.`)
 					this.start(self.getNextAddress(instructionAddr));
 				});
-				
-				/*
-				var goal = new ROSLIB.Goal({
-					actionClient: this.WaitAct,
-					goalMessage:{ 
-						what: instr.what,
-						timeout: instr.timeout 
-					}
-				});
 
-				goal.on('result', result => {
-					if (instr.hasOwnProperty('store_answer_in')) {
-							self.dictionary[instr.store_answer_in] = result.success;
-						}
-					self.start(self.getNextAddress(instructionAddr));
-				});
-				goal.send();
-				*/
 				break;
 
 			/*case 'joint_impedance':
@@ -1229,28 +1323,33 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 			case 'log':
 				checkInstruction(instr, ['message'], instructionAddr);
 
-				console.log(instr.message);
+				console.log(this.hashTokeyVal(instr.message));
 
 				this.start(this.getNextAddress(instructionAddr));
 				break;
 
 			case 'multiple_choice':
 				var currentGraphicMode = this.graphic_mode;
-				this.set_graphic_mode({"mode":"multiple_choice"}, instructionAddr);
+				// TODO: this.set_graphic_mode({"mode":"multiple_choice"}, instructionAddr);
+				this.displayOff();
+				canvas_container.style.display = 'initial';
+				var multi_choice_url = DIR + 'images/button_box.JPG';
+				var arrow_url = DIR + 'image/Arrow.png';
 
-				var goal = new ROSLIB.Goal({
-					actionClient: this.MultipleChoiceAct,
-					goalMessage: {on: true}
+				display_choices(m.ctx, ['Motors','Buttons','Cameras','Encoders'], multi_choice_url);
+
+				var goal_ButtonPress = new ROSLIB.Goal({
+					actionClient: this.ButtonPressAct,
+					goalMessage:{press: true}
 				});
 
-				goal.on('result', function(result) {
-					if (VERBOSE) console.log('Button pressed:' + result.answer);
-					self.dictionary[instr.store_answer_in] = result.answer;
-					self.set_graphic_mode(currentGraphicMode, instructionAddr);
+				goal_ButtonPress.on('result', function(result) {
+					if (VERBOSE) console.log(self.button)
+					self.dictionary[instr.store_answer_in] = String(self.button);
 					self.start(self.getNextAddress(instructionAddr));
 				});
 
-				goal.send();
+				goal_ButtonPress.send();
 
 				break;
 
@@ -1298,22 +1397,49 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 				break;
 
 			case 'programming_choices':
-				this.ctx.font = "60px Arial";
-				this.ctx.fillText("Close Gripper", 10, 50);
+				this.displayOff();
+                canvas_container.style.display = 'initial';
+                var multi_choice_url = DIR + 'images/button_box.JPG';
+				var arrow_url = DIR + 'image/Arrow.png';
 
+                display_choices(m.ctx, ['Open Gripper','Close Gripper','Move'], multi_choice_url);
 
-				this.start(this.getNextAddress(instructionAddr));
+                var req = new ROSLIB.Message({
+					data: true
+				});
+
+                this.multiple_choice.publish(req);
+
+                this.wheel_delta_topic.subscribe(async function(message) {
+					if (VERBOSE) console.log('Button pressed:' + message.data);
+					wheel_val = message.data
+					if (instr.hasOwnProperty('store_answer_in')) {
+						self.dictionary[instr.store_answer_in] = wheel_val;
+					}
+					
+				});
+
+				this.pressed.subscribe(async function(message) {
+                	if (VERBOSE) console.log('Pressed: ' + message.data);
+					if (message.data == true) {
+						self.wheel_delta_topic.unsubscribe();
+						self.wheel_delta_topic.removeAllListeners();
+						self.pressed.unsubscribe();
+						self.pressed.removeAllListeners();
+						self.displayOff(true);
+						self.start(self.getNextAddress(instructionAddr));
+					}
+				});
 
 				break;
 
+
 			case 'pressed_button':
-				this.pressed.subscribe(async function(message) {
+				this.button_topic.subscribe(async function(message) {
 					if (VERBOSE) console.log('Pressed: ' + message.data);
-					if (message.data == true) {
-						self.pressed.unsubscribe();
-						self.pressed.removeAllListeners();
-						self.start(self.getNextAddress(instructionAddr));
-					}
+					self.button_topic.unsubscribe();
+					self.button_topic.removeAllListeners();
+					self.start(self.getNextAddress(instructionAddr));
 				});
 
 				break;
@@ -1334,17 +1460,14 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 					draw_goal(self.ctx, 100, message.j1*400+100)
 				});
 
-				this.pressed.subscribe(async function(message) {
-					if (VERBOSE) console.log('Pressed: ' + message.data);
-					if (message.data == true) {
-						self.position.unsubscribe();
-						self.position.removeAllListeners();
-						self.pressed.unsubscribe();
-						self.pressed.removeAllListeners();
-						self.displayOff();
-						self.start(self.getNextAddress(instructionAddr));
-					}
-					
+				this.button_topic.subscribe(async function(message) {
+					if (VERBOSE) console.log('Received indication to advance');
+					self.position.unsubscribe();
+					self.position.removeAllListeners();
+					self.button_topic.unsubscribe();
+					self.button_topic.removeAllListeners();
+					self.displayOff();
+					self.start(self.getNextAddress(instructionAddr));
 				});
 
 				break;
@@ -1369,35 +1492,9 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 
 				break;
 
-			case 'scrollWheelInput':
-				var currentGraphicMode = this.graphic_mode;
-				this.set_graphic_mode({'mode': 'scroll wheel'}, instructionAddr);
-
-				var goal = this.getGoToGoal('joint_buttons')
-				goal.on('result', function(result) {
-					self.ScrollWheelSubscriptionSrv.callService(new ROSLIB.ServiceRequest({subscribe: true}), result => {
-						self.wheel_delta_topic.subscribe(async function(message) {
-							if (VERBOSE) console.log('Rx: ' + message.data);
-								wheel_val+= message.data;
-						});
-
-						self.scroll_wheel_button_receiver.subscribe(async function(message) {
-							if (VERBOSE) console.log('Scroll wheel button pressed.');
-							if (instr.hasOwnProperty('store_answer_in')) {
-								self.dictionary[instr.store_answer_in] = wheel_val;
-							}
-							self.wheel_delta_topic.unsubscribe();
-							self.wheel_delta_topic.removeAllListeners();
-							self.scroll_wheel_button_receiver.unsubscribe();
-							self.scroll_wheel_button_receiver.removeAllListeners();
-							cancel_odometer();
-							self.set_graphic_mode(currentGraphicMode, instructionAddr);
-							self.start(self.getNextAddress(instructionAddr));
-						});
-					});
-				});
-				goal.send();
-
+			case 'numeric_input':
+				this.numeric_input(instr, instructionAddr);
+				
 				break;
 
 			case 'set':
@@ -1425,22 +1522,18 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 
 
 			case 'show_camera':
-				// this.displayOff();
-				// var cv_image = new Image();
-
-				// cv_image.onload = function() {
-				// 	console.log('Displaying camera')
-		  //           self.ctx.drawImage(cv_image, 20, 70)
-
-		  //           self.start(self.getNextAddress(instructionAddr));
-				// };
-				// cv_image.src = DIR + 'images/cv_image.png';
 
 				var cv_image_url = DIR + 'images/cv_image.png';
+				var cv_image = new Image();
 
-				image.src = cv_image_url;
-				
-				this.start(this.getNextAddress(instructionAddr));
+				cv_image.onload = function() {
+					console.log('Displaying camera')
+		            self.ctx.drawImage(cv_image, 300, 10, self.ctx.canvas.width*.75, self.ctx.canvas.height*.95)
+
+		            self.start(self.getNextAddress(instructionAddr));
+				};
+
+				cv_image.src = cv_image_url;
 
 				break;
 
@@ -1487,7 +1580,11 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 Module.prototype.hashTokeyVal = function(str) {
 	switch (typeof str) {
 		case 'string':
-			return str.replace(/#[a-z_0-9]+/gi, key => this.dictionary[key.substring(1)].toString());
+			try {
+				return str.replace(/#[a-z_0-9]+/gi, key => this.dictionary[key.substring(1)].toString());
+			} catch (error) {
+				throw `Hash reference(s) in "${str}" not defined.`
+			}
 		default:
 			return str;
 	}

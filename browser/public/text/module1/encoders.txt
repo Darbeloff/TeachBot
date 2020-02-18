@@ -1,13 +1,13 @@
 Like most of my human coworkers, I also have a shoulder, an elbow, and a wrist. For simplicity, I'll call this one my shoulder,
 this one my elbow,
 and this one my wrist.
-But how do I tell where my arm is? How do I know how far I've rotated each motor? I'm going to unlock my shoulder. Try pushing my arm. I'll display how much I think you've turned it on the screen. When you're finished, press the scroll wheel button to let me know.
+But how do I tell where my arm is? How do I know how far I've rotated each motor? I'm going to unlock my shoulder. Try pushing my arm. I'll display how much I think you've turned it on the screen. When you're finished, press any button on the box to let me know.
 Let me show you how I know. Please stand back.
 This device is called an encoder. Every motor in my arm has one. These encoders can measure the angles of each of my motors.
-Now I'm going to lock my shoulder and unlock my wrist. Try pushing my hand. When you're done, press the scroll wheel button.
-So far I've only unlocked one motor at a time. Let's try unlocking both my shoulder and wrist motors. Push on my arm again and see what happens. When you're done, press the scroll wheel button.
-Good! Now, before we go further, how many encoders do you think I have in my arm? Step back so I can move my arm for you to use the scroll wheel.
+Now I'm going to lock my shoulder and unlock my wrist. Try pushing my hand. When you're done, press any button on the box.
+So far I've only unlocked one motor at a time. Let's try unlocking both my shoulder and wrist motors. Push on my arm again and see what happens. When you're done, press any button on the box.
+Good! Now, before we go further, how many encoders do you think I have in my arm? Step back so I can reset my position. Again, use the white buttons on the box to change the number.
 Good job!
 Not quite. If I have one encoder for every motor, how many encoders do I have?
-Now grab and move my arm again. I've unlocked all of my motors, so my arm might drift around a little. Go ahead and grab it anyway while watching the projection to see what I sense as you move each motor. When you're done, press the scroll wheel button.
+Now grab and move my arm again. I've unlocked all of my motors, so my arm might drift around a little. Go ahead and grab it anyway while watching the projection to see what I sense as you move each motor. When you're done, press any button on the box.
 Using my encoders, I can measure the angles of all seven of my motors. Please stand back so I can reset my position.

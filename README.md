@@ -114,6 +114,11 @@ Run the TeachBot ROS Node
 $ rosrun sawyer teachbot.py
 ```
 
+Run the Button Box ROS Node
+```
+$ rosrun button_box button.py
+```
+
 ## Load Modules in Firefox
 Open Firefox and go to the url https://localhost:8000
 
