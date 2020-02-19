@@ -1,0 +1,7 @@
+## Play Safety Audio File
+
+# Request
+string filename
+---
+# Response
+bool done

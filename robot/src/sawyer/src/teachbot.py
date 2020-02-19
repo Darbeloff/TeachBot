@@ -103,6 +103,7 @@ class Module():
 
 		# Service Clients
 		self.DevModeSrv = rospy.ServiceProxy('/teachbot/dev_mode', DevMode)
+		self.PlayAudioSrv = rospy.ServiceProxy('/teachbot/PlayAudio', PlayAudio)
 
 		# Actions
 		self.AllowCuffInteractionAct = actionlib.SimpleActionServer('/teachbot/AllowCuffInteraction', AllowCuffInteractionAction, execute_cb=self.cb_AllowCuffInteraction, auto_start=True)
@@ -192,18 +193,12 @@ class Module():
 			rospy.loginfo('oops outside safety zone')
 			self.limb.position_mode()
 			rospy.loginfo('position_mode entered')
-			mixer.init()
-			mixer.music.load('safety1.mp3')
-			mixer.music.play()
-			#playsound('safety1.mp3')
+			self.PlayAudioSrv('safety1.mp3')
 			rospy.loginfo('Audio file played')
 			rospy.sleep(6.5)
 			resetFn(self)
 			rospy.loginfo('reset position done')
-			mixer.init()
-			mixer.music.load('safety2.mp3')
-			mixer.music.play()
-			#playsound('safety2.mp3')
+			self.PlayAudioSrv('safety2.mp3')
 			rospy.loginfo('Audio file 2 played')
 			returnFn(self)
 			rospy.loginfo('Ready to be moved again')

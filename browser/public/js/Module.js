@@ -119,6 +119,12 @@ function Module(module_num, main, content_elements) {
 		serviceType: ARDUINO + '/ButtonInfo'
 	});
 	ButtonReceiverSrv.advertise(this.buttonCallback);
+	var PlayAudioSrv = new ROSLIB.Service({
+		ros: ros,
+		name: '/teachbot/PlayAudio',
+		messageType: ROBOT + '/PlayAudio'
+	});
+	PlayAudioSrv.advertise(this.playAudioCallback);
 
 	// Service Clients
 	this.SetRobotModeSrv = new ROSLIB.Service({
@@ -197,8 +203,7 @@ function Module(module_num, main, content_elements) {
 
 	// Initialize dictionary
 	this.dictionary = {};
-	this.dictionary['JOINT_POSITION'] = [];
-	this.getEndpoint();
+	//this.getEndpoint();
 
 	/*********************
 	 *   HTML Elements   *
@@ -241,7 +246,6 @@ function Module(module_num, main, content_elements) {
 Module.prototype.positionCallback = function(msg) {
 	for (let j=0; j<Object.keys(msg).length; j++) {
 		self.dictionary[`JOINT_POSITION_${j}`] = msg[`j${j}`];
-		self.dictionary[`JOINT_POSITION`][j] = msg[`j${j}`];
 	}
 }
 Module.prototype.velocityCallback = function(msg) {
@@ -437,7 +441,7 @@ Module.prototype.pub_angle = function(angle) {
 
 	this.joint_angle.publish(req);
 }
-
+/*
 Module.prototype.getEndpoint = function(){
 	this.endpoint.subscribe(function(message) { 
 		self.dictionary['position_x'] = message.position.x;
@@ -450,7 +454,7 @@ Module.prototype.getEndpoint = function(){
 		//console.log(self.dictionary)	
 	});
 }
-
+*/
 /**
  * Whether all page resources are loaded.
  * 
@@ -516,6 +520,19 @@ Module.prototype.devRxCallback = function(req, resp) {
 	resp['success'] = true;
     resp['message'] = 'Set successfully';
     return true;
+}
+
+/**
+ *
+ */
+Module.prototype.playAudioCallback = function(req, resp) {
+	player.src = DIR + 'audio/' + req.filename;
+	let audio = new Audio();
+	audio.addEventListener('canplaythrough', function() {
+		player.play();
+	}, false);
+	audio.src = player.src;
+	return true;
 }
 
 /**
@@ -751,14 +768,14 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 
 				this.start(self.getNextAddress(instructionAddr));
 				break;
-
+/*
 			case 'initializeDisplay':
 				this.displayOff();
 				canvas_obj.style.display = 'initial';
 				this.ctx.clearRect(0,0,100*this.cw,100*this.ch);
 				this.start(self.getNextAddress(instructionAddr));
 				break;
-
+*/
 			case 'draw':
 				this.draw(instr, instructionAddr);
 				break;
@@ -1466,7 +1483,7 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 				});
 
 				break;
-
+/*
 			case "refresh":
 				m.displayOff(true);
 
@@ -1486,7 +1503,7 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 				this.start(this.getNextAddress(instructionAddr));
 
 				break;
-
+*/
 			case 'numeric_input':
 				this.numeric_input(instr, instructionAddr);
 				
@@ -1515,7 +1532,6 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 				this.start(this.getNextAddress(instructionAddr));
 				break;
 
-
 			case 'show_camera':
 
 				var cv_image_url = DIR + 'images/cv_image.png';
@@ -1531,7 +1547,7 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 				cv_image.src = cv_image_url;
 
 				break;
-
+/*
 			case 'update':
 
 				this.getEndpoint()
@@ -1539,7 +1555,7 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 				this.start(this.getNextAddress(instructionAddr));
 
 				break; 
-
+*/
 			case 'while':
 				checkInstruction(instr, ['conditional'], instructionAddr);
 		

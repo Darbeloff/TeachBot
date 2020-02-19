@@ -100,7 +100,6 @@ Module.prototype.wait = async function(instr, instructionAddr) {
 				throw 'TODO: Add wait for endpoint pos functionality';
 
 			case 'user input':
-				//TODO: Implement Albert's box code, preferably as a Promise
 				this.button_topic.subscribe(async function(message) {
 					console.log('here')
 					self.button_topic.unsubscribe();

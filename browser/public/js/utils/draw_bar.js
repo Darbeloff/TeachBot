@@ -23,11 +23,11 @@ function draw_bar_new(ctx_in, x, y, width, max_height, height_percent, fillStyle
     ctx_in.strokeStyle = '#FFFFFF';
     ctx_in.lineWidth = 5;
     ctx_in.stroke();
-
+    /* TODO: Fix label
     if(label!==null){
         fontSize = parseInt(/([0-9]+)px/g.exec(ctx_in.font)[1]);
         ctx_in.textAlign = label_align=="center" ? "center" : label_align;
         ctx_in.fillText(label, x+width/2, y+1.2*fontSize);
     }
-
+    */
  }

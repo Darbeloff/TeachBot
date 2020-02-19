@@ -488,56 +488,81 @@
 				"clear":true
 			},
 			{
-				"type":"set",
-				"key":"j",
-				"val":0
-			},
-			{
-				"type":"log",
-				"message":"#JOINT_POSITION"
-			},
-			{
-				"type":"log",
-				"message":"#JOINT_POSITION[0]"
-			},
-			{
-				"type":"log",
-				"message":"#JOINT_POSITION_0"
-			},
-			{
-				"type":"wait",
-				"for":"user input"
-			},
-			{
 				"type":"draw",
 				"shape":"bar",
-				"height_percent": "#JOINT_POSITION[0]/3.14",
+				"height_percent": "#JOINT_POSITION_0/6.28+0.5",
 				"x": 4,
 				"y": 80,
 				"width": 9,
 				"max_height": 70,
-				"fillStyle": ["#7c2629"]
+				"fillStyle": ["#7c2629"],
+				"label":"Joint 1"
 			},
 			{
-				"type":"while",
-				"conditional":"#j<JOINTS",
-				"instructions":[
-					{
-						"type":"draw",
-						"shape":"bar",
-						"height_percent": "#JOINT_POSITION[#j]/3.14",
-						"x": "4+14*#j",
-						"y": 80,
-						"width": 9,
-						"max_height": 70,
-						"fillStyle": ["#7c2629"]
-					},
-					{
-						"type":"set",
-						"key":"j",
-						"val":"#j+1"
-					}
-				]
+				"type":"draw",
+				"shape":"bar",
+				"height_percent": "#JOINT_POSITION_1/6.28+0.5",
+				"x": 18,
+				"y": 80,
+				"width": 9,
+				"max_height": 70,
+				"fillStyle": ["#7c2629"],
+				"label":"Joint 2"
+			},
+			{
+				"type":"draw",
+				"shape":"bar",
+				"height_percent": "#JOINT_POSITION_2/6.28+0.5",
+				"x": 32,
+				"y": 80,
+				"width": 9,
+				"max_height": 70,
+				"fillStyle": ["#7c2629"],
+				"label":"Joint 3"
+			},
+			{
+				"type":"draw",
+				"shape":"bar",
+				"height_percent": "#JOINT_POSITION_3/6.28+0.5",
+				"x": 46,
+				"y": 80,
+				"width": 9,
+				"max_height": 70,
+				"fillStyle": ["#7c2629"],
+				"label":"Joint 4"
+			},
+			{
+				"type":"draw",
+				"shape":"bar",
+				"height_percent": "#JOINT_POSITION_4/6.28+0.5",
+				"x": 60,
+				"y": 80,
+				"width": 9,
+				"max_height": 70,
+				"fillStyle": ["#7c2629"],
+				"label":"Joint 5"
+			},
+			{
+				"type":"draw",
+				"shape":"bar",
+				"height_percent": "#JOINT_POSITION_5/6.28+0.5",
+				"x": 74,
+				"y": 80,
+				"width": 9,
+				"max_height": 70,
+				"fillStyle": ["#7c2629"],
+				"label":"Joint 6"
+			},
+			{
+				"type":"draw",
+				"shape":"bar",
+				"height_percent": "#JOINT_POSITION_6/6.28",
+				"x": 88,
+				"y": 80,
+				"width": 9,
+				"max_height": 70,
+				"fillStyle": ["#7c2629"],
+				"label":"Joint 7"
 			},
 			{
 				"type":"wait",
@@ -567,7 +592,9 @@
 		"id":"2dPosition",
 		"instructions":[
 			{
-				"type":"reset"
+				"type":"set_graphic_mode",
+				"mode":"canvas",
+				"clear":true
 			},
 			{
 				"//":"Now let's talk about why I have so many motors.",
@@ -587,7 +614,7 @@
 				"delay":true
 			},
 			{
-				"type":"drawShape",
+				"type":"draw",
 				"shape":"arc",
 				"x1":99,
 				"y1":66,
@@ -613,13 +640,17 @@
 				"delay":true
 			},
 			{
-				"type":"drawShape",
+				"type":"set_graphic_mode",
+				"mode":"canvas",
+				"clear":true
+			},
+			{
+				"type":"draw",
 				"shape":"ball",
-				"x_ratio": 62,
-				"y_ratio": 83,
-				"r_ratio": 10,
-				"fillStyle": "#7c2629",
-				"clearRec": true
+				"cx": 62,
+				"cy": 83,
+				"r": 10,
+				"fillStyle": "#7c2629"
 			},
 			{
 				"//":"I'll need to move another motor, too!",
@@ -638,7 +669,7 @@
 				"delay":true
 			},
 			{
-				"type":"drawShape",
+				"type":"draw",
 				"shape":"arc",
 				"x1":99,
 				"y1":66,
@@ -660,13 +691,17 @@
 				"delay":true
 			},
 			{
-				"type":"drawShape",
+				"type":"set_graphic_mode",
+				"mode":"canvas",
+				"clear":true
+			},
+			{
+				"type":"draw",
 				"shape":"ball",
-				"x_ratio": 65,
-				"y_ratio": 50,
-				"r_ratio": 10,
-				"fillStyle": "#7c2629",
-				"clearRec": true
+				"cx": 65,
+				"cy": 50,
+				"r": 10,
+				"fillStyle": "#7c2629"
 			},
 			{
 				"//":"How many motors will I need to use to reach this new point? When you think you know the answer, push my arm to the point to see if you were right.",
@@ -675,13 +710,16 @@
 				"delay":false
 			},
 			{
-				"type":"joint_move",
-				"joints":"elbow",
-				"terminatingCondition":"lambda self : self.limb.joint_angle(elbow)<joint_dot_2[3]",
-				"resetPOS":"kinematics_init_pos",
-				"min_thresh":"1.0",
-				"bias":"BIAS_SHOULDER",
-				"listen":true
+				"type":"set_robot_mode",
+				"mode":"admittance ctrl",
+				"joints":[3],
+				"resetPos":"kinematics_init_pos",
+				"min_thresh":[1.0]
+			},
+			{
+				"type":"wait",
+				"for":"custom",
+				"function":"#JOINT_POSITION_3<-2.2"
 			},
 			{
 				"//":"I only needed to use one motor, but it was my elbow, not my wrist.",
@@ -700,7 +738,7 @@
 				"delay":true
 			},
 			{
-				"type":"drawShape",
+				"type":"draw",
 				"shape":"arc",
 				"x1":76,
 				"y1":36,
@@ -726,7 +764,7 @@
 				"delay":true
 			},
 			{
-				"type":"drawShape",
+				"type":"draw",
 				"shape":"arc",
 				"x1":93,
 				"y1":98,
@@ -746,11 +784,16 @@
 				"joint_angles":"joint_ortho_kin"
 			},
 			{
-				"type":"drawShape",
+				"type":"set_graphic_mode",
+				"mode":"canvas",
+				"clear":true
+			},
+			{
+				"type":"draw",
 				"shape":"ball",
-				"x_ratio": 93,
-				"y_ratio": 86,
-				"r_ratio": 10,
+				"cx": 93,
+				"cy": 86,
+				"r": 10,
 				"fillStyle": "#7c2629",
 				"clearRec": true
 			},
@@ -765,14 +808,19 @@
 				"delay":false
 			},
 			{
-				"type":"joint_move",
-				"joints":"elbow",
-				"terminatingCondition":"lambda self : self.finished",
-				"resetPOS":"joint_dot_3_init",
-				"min_thresh":"1.0",
-				"bias":"BIAS_SHOULDER",
-				"listen":false,
-				"wait":true
+				"type":"set_robot_mode",
+				"mode":"admittance ctrl",
+				"joints":[3],
+				"resetPos":"joint_dot_3_init",
+				"min_thresh":[1.0]
+			},
+			{
+				"type":"wait",
+				"for":"user input"
+			},
+			{
+				"type":"set_robot_mode",
+				"mode":"position"
 			},
 			{
 				"//":"Now I've locked my elbow and unlocked my wrist. You can switch back and forth at any time by pressing any button on the box.",
@@ -796,11 +844,8 @@
 				"val":0.05
 			},
 			{
-				"type":"update"
-			},
-			{
 				"type":"while",
-				"conditional":"Math.abs(#position_x-#x)>0.03 || Math.abs(#position_y-(#y))>0.03 || Math.abs(#position_z-#z)>0.03",
+				"conditional":"Math.abs(#ENDPOINT_POSITION_X-#x)>0.03 || Math.abs(#ENDPOINT_POSITION_Y-(#y))>0.03 || Math.abs(#ENDPOINT_POSITION_Z-#z)>0.03",
 				"instructions":[
 					{
 						"type":"joint_move",
@@ -812,9 +857,6 @@
 						"listen":true
 					},
 					{
-						"type":"update"
-					},
-					{
 						"type":"joint_move",
 						"joints":"elbow",
 						"terminatingCondition":"lambda self : self.endpoints_equal(self.limb.endpoint_pose(),dot_3,0.05) or self.finished",
@@ -822,9 +864,6 @@
 						"min_thresh":"0.8",
 						"bias":"BIAS_SHOULDER",
 						"listen":true
-					},
-					{
-						"type":"update"
 					}
 				]
 			},
