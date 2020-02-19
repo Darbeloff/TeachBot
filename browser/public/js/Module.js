@@ -1127,13 +1127,8 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 				break;
 
 			case 'encode':
-<<<<<<< HEAD
-				self.displayOff();
-				canvas_obj.style.display = 'initial';
-				this.ctx.clearRect(0,0,100*this.cw,100*this.ch);
-=======
 				this.set_graphic_mode({mode: 'canvas', custom: true}, instructionAddr);
->>>>>>> origin
+
 				var encoder_moving_part_url = DIR + 'images/moving_part.png';
 				var encoder_still_part_url = DIR + 'images/still_part.png';
 				var encoder_motor_url = DIR + 'images/motor_body.png';

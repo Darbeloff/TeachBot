@@ -56,29 +56,17 @@ Module.prototype.set_graphic_mode = function(instr, instructionAddr) {
 
 			break;
 
-<<<<<<< HEAD
-		case 'multiple_choice':
-=======
 		case 'multiple choice':
->>>>>>> origin
 			canvas_obj.style.display = 'initial';
 			display_choices(m.ctx, ['Motors','Buttons','Cameras','Encoders','Wheels'], DIR + 'images/sized_cuff.png');
 
 			break;
 
-<<<<<<< HEAD
-		case 'scroll wheel':
-			canvas_obj.style.display = 'initial';
-			run_odometer = true;
-			canvas_obj.width = canvas_obj.width;
-			init_odometer(this.ctx);
-=======
 		case 'numeric input':
 			canvas_obj.style.display = 'initial';
 			wheel_val = 0
 			draw_odometer(m.ctx, odometer_url, wheel_val);
 			//canvas_obj.width = canvas_obj.width;
->>>>>>> origin
 
 			break;
 
