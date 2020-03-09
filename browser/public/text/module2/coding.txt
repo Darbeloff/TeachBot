@@ -1,7 +1,11 @@
 Please put boxes 1, 3, and 4 off to the side. Press any button on the box when done.
 This next segment will help you practice programming the robot yourself.
-Displayed on my screen is a series of options you can choose from to put the box into the bin. Press the desired button to do a specific task.
-Once you have gotten the box into the bin, press any button on the box when done.
-Please stand back so I can see if you succesfully completed the task.
-Great job! You are a programminge expert!
-Ooops! Not quite. Please put box 3 back into its designated position and try again.
+I am about to display a series of options you can choose from to create a series of steps to put the box into the bin. Press the desired button to do a specific task. You can choose actions more than once. Once you press an action it will be added to a list displayed in the top left corner.
+To remove an action from the list, simply press the white button with the minus on it. Once you have gotten the box into the bin, press the red button on the box to continue.
+To enter free mode, press the yellow button. Then, to set a waypoint, press any button on the box.
+Please stand back so I can reset my position. 
+Can you please put Box 2 in its original position? Press any button on the box once you've done so.
+I am going to run through program you set up for me.
+Let's see if you successfully put the box into the bin.
+Great job! You are a programming expert!
+Ooops! Not quite. Please put Box 2 back into its designated position and try again. When you're ready, press any button on the box.

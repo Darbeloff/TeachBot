@@ -1,10 +1,11 @@
 You have now mastered putting boxes into bins with one and two degrees of freedom. Will you now help me put Box 3 into the bin on the ramp? 
-Before we get started, can you put Box 3 back into its designated position and put bin1 on the stand? Press any button on the box when you've done so.
+Before we get started, can you put Box 2 back into its designated position and put Bin 1 on the stand? Press any button on the box when you've done so.
 Great! Similarly to last time, can you help me create a series of waypoints so that I can put Box 3 into the bin?
-First, can you move my hand so its position is over the box and the gripper is in the correct orientation? Use the red and green buttons on the side of the box to switch between position and orientation modes. Press any button on the top of the box to continue.
+First, can you move my hand so its position is over Box 3 and the gripper is in the correct orientation? Use the red and green buttons on the side of the box to switch between position and orientation modes. Press any button on the top of the box to continue.
 Next, lower, my hand so that the box is in between the gripper. Make sure the gripper is low enough so that it can get a good grasp of the box. Press any button on the box to continue.
 Now, lift my hand high enough so that the box higher than the bin. Press any button on the box to continue.
-Finally, move my hand so it is in the optimal position and orientation to place the box into the bin. Make sure the hand is low enough so that when it drops Box 3, it doesn't drop too far, but high enough so that my grippers don't hit the side of the box. Press any button on the box to continue.
+Next, move my hand so that it is above Bin 1 and the gripper is in the correct orientation and is positioned in the same angle as the bin.
+Finally, lower my hand so the box is placed in the bin. Make sure the hand is low enough so that when it drops Box 3, it doesn't drop too far, but high enough so that my grippers don't hit the side of the box. Press any button on the box to continue.
 Please stand back so I can reset my position to be over Box 4.
 Can you please put Box 3 back into its designated position? Press any button on the box once you've done so.
 Now I am going to go through the series of waypoints you set up for me and check to see if you successfully put box three into the bin.

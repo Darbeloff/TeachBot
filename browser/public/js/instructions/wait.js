@@ -21,7 +21,16 @@ Module.prototype.wait = async function(instr, instructionAddr) {
 				checkInstruction(instr, ['to_be', 'val'], instructionAddr);
 
 				var to_be = instr.to_be;
-				var val = eval(self.hashTokeyVal(instr.val));
+				var percent = eval(self.hashTokeyVal(instr.val))/100;
+				var thresh = 0;
+				for (let i=0; i<JOINTS; i++) {
+						thresh += self.dictionary[`EFFORT_${i}`];
+					}
+
+				var val = thresh+thresh*percent
+
+				self.dictionary['wait_output'] = false;
+
 				function waitForTotalEffort() {
 					var totalEffort = 0;
 					for (let j=0; j<JOINTS; j++) {
@@ -33,7 +42,12 @@ Module.prototype.wait = async function(instr, instructionAddr) {
 							if (!(totalEffort<val)) {
 								setTimeout(waitForTotalEffort, 100);
 								return;
-							} else { resolve(); }
+							} else { 
+								if (instr.hasOwnProperty('store_answer_in')){
+									self.dictionary['wait_output'] = true
+								}
+								resolve(); 
+							}
 							break;
 
 						case ('<='):
@@ -61,7 +75,12 @@ Module.prototype.wait = async function(instr, instructionAddr) {
 							if (!(totalEffort>val)) {
 								setTimeout(waitForTotalEffort, 100);
 								return;
-							} else { resolve(); }
+							} else { 
+								if (instr.hasOwnProperty('store_answer_in')){
+									self.dictionary['wait_output'] = true
+								}
+								resolve(); 
+							}
 							break;
 
 						case ('!='):
@@ -86,6 +105,14 @@ Module.prototype.wait = async function(instr, instructionAddr) {
 
 			case 'custom':
 				checkInstruction(instr, ['function'], instructionAddr);
+
+				this.button_topic.subscribe(async function(message) {
+					console.log('changing dict value')
+					var value = parseInt(message.data)
+					self.dictionary['lastButton'] = value
+					self.button_topic.unsubscribe();
+					self.button_topic.removeAllListeners();
+				});
 				
 				function waitForCustom() {
 					if (!eval(self.hashTokeyVal(instr.function))) {

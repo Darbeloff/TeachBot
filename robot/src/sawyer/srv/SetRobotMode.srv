@@ -3,6 +3,9 @@
 # Request: new mode
 string mode
 
+# Position Ctrl Parameters
+bool ways
+
 # Custom Ctrl Parameters for Admittance and Impedance Ctrl
 int32[] joints			# List of joints to control. Joints not in this list are fixed if in admittance ctrl mode and stiff if in impedance ctrl mode.
 string resetPos			# Name of pose to which to return if arm exits safety zone.

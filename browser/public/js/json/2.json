@@ -3,57 +3,62 @@
 		"id": "intro",
 		"instructions": [
 			{
-				"type":"initializeDisplay"
+				"type":"set_graphic_mode",
+				"mode":"image"
 			},
 			{
-				"type":"drawShape",
-				"shape":"rectangle",
-				"x_ratio":76,
-				"y_ratio":69,
-				"w_ratio":11,
-				"h_ratio":10
+				"type": "set_graphic_mode",
+				"mode": "canvas"
 			},
 			{
-				"type":"drawShape",
+				"type":"draw",
 				"shape":"rectangle",
-				"x_ratio":57.9,
-				"y_ratio":69,
-				"w_ratio":11,
-				"h_ratio":10,
+				"x":76,
+				"y":69,
+				"width":11,
+				"height":10
+			},
+			{
+				"type":"draw",
+				"shape":"rectangle",
+				"x":57.8,
+				"y":69,
+				"width":11,
+				"height":10,
 				"rotate":90
 			},
 			{
-				"type":"drawShape",
+				"type":"draw",
 				"shape":"rectangle",
-				"x_ratio":40.9,
-				"y_ratio":69,
-				"w_ratio":11,
-				"h_ratio":10,
+				"x":40.8,
+				"y":69,
+				"width":11,
+				"height":10,
 				"rotate":90
 			},
 			{
-				"type":"drawShape",
+				"type":"draw",
 				"shape":"rectangle",
-				"x_ratio":41.5,
-				"y_ratio":33.8,
-				"w_ratio":11,
-				"h_ratio":10
+				"x":41.5,
+				"y":33.8,
+				"width":11,
+				"height":10
 			},
 			{
-				"type":"drawShape",
+				"type":"draw",
 				"shape":"rectangle",
-				"x_ratio":66,
-				"y_ratio":33,
-				"w_ratio":17,
-				"h_ratio":13
+				"x":66,
+				"y":33,
+				"width":17,
+				"height":13
 			},
 			{
-				"type":"drawShape",
+				"type":"draw",
 				"shape":"rectangle",
-				"x_ratio":19,
-				"y_ratio":63,
-				"w_ratio":17,
-				"h_ratio":19
+				"x":19,
+				"y":67,
+				"width":17,
+				"height":19
 			},
 			{
 				"//":"0: Today, we will be learning about the gripper. Many of today's activities will involve the boxes and bins on the table.",
@@ -104,7 +109,8 @@
 				"grip":false
 			},
 			{
-				"type":"pressed_button"
+				"type":"wait",
+				"for":"user input"
 			},
 			{
 				"type":"proceed",
@@ -191,18 +197,22 @@
 				"conditional":"#p===false",
 				"instructions":[
 					{
-						"type":"interaction_control",
-						"position_only":false,
+						"type":"set_robot_mode",
+						"mode":"interaction ctrl",
 						"orientation_x":false,
 						"orientation_y":false,
 						"orientation_z":true,
 						"position_x":false,
 						"position_y":false,
-						"position_z":false,
-						"in_end_point_frame":true,
-						"PASS":true,
-						"ways":false,
-						"wait":true
+						"position_z":false
+					},
+					{
+						"type":"wait",
+						"for":"user input"
+					},
+					{
+						"type":"set_robot_mode",
+						"mode":"position"
 					},
 					{
 						"//":"3: Alright. Let’s see.",
@@ -273,18 +283,22 @@
 				"conditional":"#p===false",
 				"instructions":[
 					{
-						"type":"interaction_control",
-						"position_only":false,
+						"type":"set_robot_mode",
+						"mode":"interaction ctrl",
 						"orientation_x":false,
 						"orientation_y":false,
 						"orientation_z":false,
 						"position_x":false,
 						"position_y":true,
-						"position_z":false,
-						"in_end_point_frame":false,
-						"PASS":true,
-						"ways":false,
-						"wait":true
+						"position_z":false
+					},
+					{
+						"type":"wait",
+						"for":"user input"
+					},
+					{
+						"type":"set_robot_mode",
+						"mode":"position"
 					},
 					{
 						"//":"3: Alright. Let’s see.",
@@ -348,7 +362,8 @@
 				"amount":"Module.Z_TABLE+Module.BOX_HEIGHT+0.04"
 			},
 			{
-				"type":"pos_orient"
+				"type":"set_graphic_mode",
+				"mode":"pos_orient"
 			},
 			{
 				"//":"8: Now, help me pick up Box 4. If you press the red button on the side of the box, you can change my arm's position. If you press the green button on the box, you can change my arm's orientation. Feel free to switch between the two modes to figure out the difference between the position and orientation. When you're ready for me to pick up Box 4, press any button on the top of the box.",
@@ -367,7 +382,6 @@
 				"instructions":[
 					{
 						"type":"cuff_interaction",
-						"terminatingCondition":"lambda self: self.finished",
 						"ways":false
 					},
 					{
@@ -459,10 +473,11 @@
 				"delay":false
 			},
 			{
-				"type":"pressed_button"
+				"type":"wait",
+				"for":"user input"
 			},
 			{
-				"//":"2: Now let’s try moving the 2nd box into the bin.",
+				"//":"2: Now let’s try moving Box 2 into Bin 1.",
 				"type":"play",
 				"audio_index":2,
 				"delay": true
@@ -474,17 +489,17 @@
 				"delay":true
 			},
 			{
-				"type":"pos_orient"
+				"type":"set_graphic_mode",
+				"mode":"pos_orient"
 			},
 			{
-				"//":"4: First, can you move my hand so its position is over the box and the gripper is in the correct orientation? Use the red and green buttons on the side of the box to switch between position and orientation modes. Press any button on the top of the box when you're done.",
+				"//":"4: First, can you move my hand so its position is over Box 2 and the gripper is in the correct orientation? Use the red and green buttons on the side of the box to switch between position and orientation modes. Press any button on the top of the box when you're done.",
 				"type":"play",
 				"audio_index":4,
 				"delay":false
 			},
 			{
 				"type":"cuff_interaction",
-				"terminatingCondition":"lambda self: self.finished",
 				"ways": true
 			},
 			{
@@ -494,18 +509,24 @@
 				"delay":false
 			},
 			{
-				"type":"interaction_control",
-				"position_only":false,
+				"type":"set_robot_mode",
+				"mode":"interaction ctrl",
 				"orientation_x":false,
 				"orientation_y":false,
 				"orientation_z":false,
 				"position_x":false,
 				"position_y":false,
 				"position_z":true,
-				"in_end_point_frame":true,
-				"PASS":true,
-				"ways":true,
-				"wait":true
+				"in_end_point_frame":true
+			},
+			{
+				"type":"wait",
+				"for":"user input"
+			},
+			{
+				"type":"set_robot_mode",
+				"mode":"position",
+				"ways":true
 			},
 			{
 				"type":"gripper",
@@ -518,21 +539,28 @@
 				"delay":false
 			},
 			{
-				"type":"interaction_control",
-				"position_only":false,
+				"type":"set_robot_mode",
+				"mode":"interaction ctrl",
 				"orientation_x":false,
 				"orientation_y":false,
 				"orientation_z":false,
 				"position_x":false,
 				"position_y":false,
 				"position_z":true,
-				"in_end_point_frame":true,
-				"PASS":true,
-				"ways":true,
-				"wait":true
+				"in_end_point_frame":true
 			},
 			{
-				"type":"pos_orient"
+				"type":"wait",
+				"for":"user input"
+			},
+			{
+				"type":"set_robot_mode",
+				"mode":"position",
+				"ways":true
+			},
+			{
+				"type":"set_graphic_mode",
+				"mode":"pos_orient"
 			},
 			{
 				"//":"7: Next, move my hand so it is directly over Bin 1 and the gripper is in the correct orientation. Use the red and green buttons on the side of the box to switch between position and orientation modes. Press any button on the top of the box to continue..",
@@ -542,7 +570,6 @@
 			},
 			{
 				"type":"cuff_interaction",
-				"terminatingCondition":"lambda self: self.finished",
 				"ways": true
 			},
 			{
@@ -552,18 +579,24 @@
 				"delay":false
 			},
 			{
-				"type":"interaction_control",
-				"position_only":false,
+				"type":"set_robot_mode",
+				"mode":"interaction ctrl",
 				"orientation_x":false,
 				"orientation_y":false,
 				"orientation_z":false,
 				"position_x":false,
 				"position_y":false,
 				"position_z":true,
-				"in_end_point_frame":true,
-				"PASS":true,
-				"ways":true,
-				"wait":true
+				"in_end_point_frame":true
+			},
+			{
+				"type":"wait",
+				"for":"user input"
+			},
+			{
+				"type":"set_robot_mode",
+				"mode":"position",
+				"ways":true
 			},
 			{
 				"type":"gripper",
@@ -592,7 +625,8 @@
 				"delay":false
 			},
 			{
-				"type":"pressed_button"
+				"type":"wait",
+				"for":"user input"
 			},
 			{
 				"//":"11: Now, I'm going to place Box 2 into Bin 1 based on the waypoints you set up for me!",
@@ -638,7 +672,7 @@
 				"type":"adjustPoseTo",
 				"geometry":"position",
 				"axis":"z",
-				"amount":"Module.Z_TABLE+Module.BOX_HEIGHT+0.07"
+				"amount":"Module.Z_TABLE+Module.BOX_HEIGHT+0.15"
 			},
 			{
 				"type":"proceed",
@@ -649,9 +683,6 @@
 	{
 		"id": "camera",
 		"instructions":[
-			{
-				"type":"reset"
-			},
 			{
 				"type":"goToJointAngles",
 				"joint_angles":"camera_pos"
@@ -675,7 +706,8 @@
 				"delay":true
 			},
 			{
-				"type":"camerabw_graphic"
+				"type":"set_graphic_mode",
+				"mode":"camerabw_graphic"
 			},
 			{
 				"//":"4: Then, I detect the Apriltag and the contours of the bin and trace them with different colors.",
@@ -684,19 +716,14 @@
 				"delay":true
 			},
 			{
-				"type":"reset"
-			},
-			{
-				"type":"camera_color_graphic"
+				"type":"set_graphic_mode",
+				"mode":"camera_color_graphic"
 			},
 			{
 				"//":"5: The green box traces the perimeter of the bin and the blue dot indicates the center of the bin.",
 				"type":"play",
 				"audio_index":4,
 				"delay":true
-			},
-			{
-				"type":"reset"
 			},
 			{
 				"type":"camera"
@@ -711,7 +738,8 @@
 				"delay":true
 			},
 			{
-				"type":"show_camera"
+				"type":"set_graphic_mode",
+				"mode":"show_camera"
 			},
 			{
 				"type":"proceed",
@@ -733,66 +761,73 @@
 				"joint_angles":"above_fourth_box_joint_arg"
 			},
 			{
-				"type":"reset"
+				"type":"set_graphic_mode",
+				"mode":"image"
 			},
 			{
-				"type":"drawShape",
-				"shape":"rectangle",
-				"x_ratio":76,
-				"y_ratio":69,
-				"w_ratio":11,
-				"h_ratio":10
+				"type": "set_graphic_mode",
+				"mode": "canvas",
+				"clear": true
 			},
 			{
-				"type":"drawShape",
+				"type":"draw",
 				"shape":"rectangle",
-				"x_ratio":57.9,
-				"y_ratio":69,
-				"w_ratio":11,
-				"h_ratio":10,
+				"x":76,
+				"y":69,
+				"width":11,
+				"height":10
+			},
+			{
+				"type":"draw",
+				"shape":"rectangle",
+				"x":57.8,
+				"y":69,
+				"width":11,
+				"height":10,
 				"rotate":90
 			},
 			{
-				"type":"drawShape",
+				"type":"draw",
 				"shape":"rectangle",
-				"x_ratio":40.9,
-				"y_ratio":69,
-				"w_ratio":11,
-				"h_ratio":10,
+				"x":40.8,
+				"y":69,
+				"width":11,
+				"height":10,
 				"rotate":90
 			},
 			{
-				"type":"drawShape",
+				"type":"draw",
 				"shape":"rectangle",
-				"x_ratio":41.5,
-				"y_ratio":33.8,
-				"w_ratio":11,
-				"h_ratio":10
+				"x":41.5,
+				"y":33.8,
+				"width":11,
+				"height":10
 			},
 			{
-				"type":"drawShape",
+				"type":"draw",
 				"shape":"rectangle",
-				"x_ratio":66,
-				"y_ratio":33,
-				"w_ratio":17,
-				"h_ratio":13
+				"x":66,
+				"y":33,
+				"width":17,
+				"height":13
 			},
 			{
-				"type":"drawShape",
+				"type":"draw",
 				"shape":"rectangle",
-				"x_ratio":19,
-				"y_ratio":67,
-				"w_ratio":17,
-				"h_ratio":19
+				"x":19,
+				"y":67,
+				"width":17,
+				"height":19
 			},
 			{
-				"//":"2:Before we get started, can you put Box 3 back into its designated position and put bin1 on the stand? Press any button on the box when you've done so.",
+				"//":"2:Before we get started, can you put Box 2 back into its designated position and put Bin 1 on the stand? Press any button on the box when you've done so.",
 				"type":"play",
 				"audio_index":1,
 				"delay":false
 			},
 			{
-				"type":"pressed_button"
+				"type":"wait",
+				"for":"user input"
 			},
 			{
 				"//":"3: Great! Similarly to last time, can you help me create a series of waypoints so that I can put the Box 3 into the bin?",
@@ -810,14 +845,17 @@
 				"conditional":"#p===false",
 				"instructions":[
 					{
-						"//":"4: First, can you move my hand so its position is over the box and the gripper is in the correct orientation? Use the red and green buttons on the side of the box to switch between position and orientation modes. Press any button on the top of the box to continue.",
+						"//":"4: First, can you move my hand so its position is over Box 3 and the gripper is in the correct orientation? Use the red and green buttons on the side of the box to switch between position and orientation modes. Press any button on the top of the box to continue.",
 						"type":"play",
 						"audio_index":3,
 						"delay":false
 					},
 					{
+						"type":"set_graphic_mode",
+						"mode":"pos_orient"
+					},
+					{
 						"type":"cuff_interaction",
-						"terminatingCondition":"lambda self: self.finished",
 						"ways": true
 					},
 					{
@@ -827,18 +865,24 @@
 						"delay":false
 					},
 					{
-						"type":"interaction_control",
-						"position_only":false,
+						"type":"set_robot_mode",
+						"mode":"interaction ctrl",
 						"orientation_x":false,
 						"orientation_y":false,
 						"orientation_z":false,
 						"position_x":false,
 						"position_y":false,
 						"position_z":true,
-						"in_end_point_frame":true,
-						"PASS":true,
-						"ways":true,
-						"wait":true
+						"in_end_point_frame":true
+					},
+					{
+						"type":"wait",
+						"for":"user input"
+					},
+					{
+						"type":"set_robot_mode",
+						"mode":"position",
+						"ways":true
 					},
 					{
 						"type":"gripper",
@@ -851,47 +895,83 @@
 						"delay":false
 					},
 					{
-						"type":"interaction_control",
-						"position_only":false,
+						"type":"set_robot_mode",
+						"mode":"interaction ctrl",
 						"orientation_x":false,
 						"orientation_y":false,
 						"orientation_z":false,
 						"position_x":false,
 						"position_y":false,
 						"position_z":true,
-						"in_end_point_frame":true,
-						"PASS":true,
-						"ways":true,
-						"wait":true
+						"in_end_point_frame":true
 					},
 					{
-						"//":"7: Finally, move my hand so it is in the optimal position and orientation to place the box into the bin. Make sure the hand is low enough so that when it drops Box 3, it doesn't drop too far, but high enough so that my grippers don't hit the side of the box. Press any button on the box to continue.",
+						"type":"wait",
+						"for":"user input"
+					},
+					{
+						"type":"set_robot_mode",
+						"mode":"position",
+						"ways":true
+					},
+					{
+						"//":"7: Next, move my hand so that it is above Bin 1 and the gripper is in the correct orientation and is positioned in the same angle as the bin.",
 						"type":"play",
 						"audio_index":6,
 						"delay":false
 					},
 					{
-						"type":"interaction_control",
-						"position_only":false,
+						"type":"set_robot_mode",
+						"mode":"interaction ctrl",
 						"orientation_x":true,
 						"orientation_y":true,
 						"orientation_z":true,
 						"position_x":true,
 						"position_y":true,
-						"position_z":true,
-						"in_end_point_frame":false,
-						"PASS":true,
-						"ways":true,
-						"wait":true
+						"position_z":true
+					},
+					{
+						"type":"wait",
+						"for":"user input"
+					},
+					{
+						"type":"set_robot_mode",
+						"mode":"position",
+						"ways":true
+					},
+					{
+						"//":"8: Finally, lower my hand so the box is placed in the bin. Make sure the hand is low enough so that when it drops Box 3, it doesn't drop too far, but high enough so that my grippers don't hit the side of the box. Press any button on the box to continue.",
+						"type":"play",
+						"audio_index":7,
+						"delay":false
+					},
+					{
+						"type":"set_robot_mode",
+						"mode":"interaction ctrl",
+						"orientation_x":true,
+						"orientation_y":true,
+						"orientation_z":true,
+						"position_x":true,
+						"position_y":true,
+						"position_z":true
+					},
+					{
+						"type":"wait",
+						"for":"user input"
+					},
+					{
+						"type":"set_robot_mode",
+						"mode":"position",
+						"ways":true
 					},
 					{
 						"type":"gripper",
 						"grip":false
 					},
 					{
-						"//":"8: Please stand back so I can reset my position to be over Box 4.",
+						"//":"9: Please stand back so I can reset my position to be over Box 4.",
 						"type":"play",
-						"audio_index":7,
+						"audio_index":8,
 						"delay":true
 					},
 					{
@@ -901,26 +981,23 @@
 						"amount":"0.15"
 					},
 					{
-						"type":"goToCartesianPose",
-						"position":"None",
-						"orientation":"None",
-						"relative_pose":"None",
-						"joint_angles":"above_fourth_box_joint_arg",
-						"endpoint_pose":"None"
+						"type":"goToJointAngles",
+						"joint_angles":"above_fourth_box_joint_arg"
 					},
 					{
-						"//":"9: Can you please put Box 3 back into its designated position? Press the scroll wheel button once you've done so.",
+						"//":"10: Can you please put Box 3 back into its designated position? Press the scroll wheel button once you've done so.",
 						"type":"play",
-						"audio_index":8,
+						"audio_index":9,
 						"delay":false
 					},
 					{
-						"type":"pressed_button"
+						"type":"wait",
+						"for":"user input"
 					},
 					{
-						"//":"10: Now I am going to go through the series of waypoints you set up for me and check to see if you successfully put box three into the bin.",
+						"//":"11: Now I am going to go through the series of waypoints you set up for me and check to see if you successfully put box three into the bin.",
 						"type":"play",
-						"audio_index":9,
+						"audio_index":10,
 						"delay":true
 					},
 					{
@@ -934,6 +1011,10 @@
 					{
 						"type":"gripper",
 						"grip":true
+					},
+					{
+						"type":"goToJointAngles",
+						"joint_angles":"waypoints.pop(0)"
 					},
 					{
 						"type":"goToJointAngles",
@@ -959,9 +1040,9 @@
 						"joint_angles":"camera_pos2"
 					},
 					{
-						"//":"11: Let's see if you successfully put the box into the bin.",
+						"//":"12: Let's see if you successfully put the box into the bin.",
 						"type":"play",
-						"audio_index":10,
+						"audio_index":11,
 						"delay":true
 					},
 					{
@@ -983,13 +1064,14 @@
 						],
 						"if_false":[
 							{
-								"//":"13: Ooops! Not quite. Please put box 3 back into its designated position and help me set a new series of waypoints. When you're ready please press any button on the box.",
+								"//":"14: Ooops! Not quite. Please put box 3 back into its designated position and help me set a new series of waypoints. When you're ready please press any button on the box.",
 								"type":"play",
-								"audio_index":12,
+								"audio_index":13,
 								"delay":true
 							},
 							{
-								"type":"pressed_button"
+								"type":"wait",
+								"for":"user input"
 							},
 							{
 								"type":"goToJointAngles",
@@ -1000,13 +1082,10 @@
 				]
 			},
 			{
-				"//":"12:Great job! You have fully mastered putting boxes into bins.",
+				"//":"13:Great job! You have fully mastered putting boxes into bins.",
 				"type":"play",
-				"audio_index":11,
+				"audio_index":12,
 				"delay":true
-			},
-			{
-				"type":"pause"
 			},
 			{
 				"type":"proceed",
@@ -1022,47 +1101,220 @@
 				"joint_angles":"above_fourth_box_joint_arg"
 			},
 			{
-				"type":"reset"
+				"type":"set_graphic_mode",
+				"mode":"image"
 			},
 			{
-				"type":"drawShape",
+				"type":"set_graphic_mode",
+				"mode":"canvas",
+				"clear":true
+			},
+			{
+				"type":"draw",
 				"shape":"rectangle",
-				"x_ratio":57.9,
-				"y_ratio":69,
-				"w_ratio":11,
-				"h_ratio":10,
+				"x":57.8,
+				"y":69,
+				"width":11,
+				"height":10,
 				"rotate":90
 			},
 			{
-				"type":"drawShape",
+				"type":"draw",
 				"shape":"rectangle",
-				"x_ratio":19,
-				"y_ratio":67,
-				"w_ratio":17,
-				"h_ratio":19
+				"x":19,
+				"y":67,
+				"width":17,
+				"height":19
 			},
 			{
-				"//":"0: Please put boxes 1, 3, and 4 off to the side. Press any button on the box when done.",
+				"//":"1: Please put boxes 1, 3, and 4 off to the side. Press any button on the box when done.",
 				"type":"play",
 				"audio_index":0,
 				"delay": false
 			},
 			{
-				"type":"pressed_button"
+				"type":"wait",
+				"for":"user input"
 			},
 			{
-				"//":"1: This next segment will help you practice programming the robot yourself.",
+				"//":"2: This next segment will help you practice programming the robot yourself.",
 				"type":"play",
 				"audio_index":1,
 				"delay": true
 			},
 			{
-				"type":"programming_choices"
-			},
-			{
-				"//":"2: Displayed on my screen is a series of options you can choose from to put the box into the bin. Press the desired button to do a specific task.",
+				"//":"3: I am about to display a series of options you can choose from to create a series of steps to put the box into the bin. Press the desired button to do a specific task. You can choose actions more than once. Once you press an action it will be added to a list displayed in the top left corner.",
 				"type":"play",
 				"audio_index":2,
+				"delay": true
+			},
+			{
+				"//":"4: To remove an action from the list, simply press the white button with the minus on it. Once you have gotten the box into the bin, press the white button with a plus on the box to continue.",
+				"type":"play",
+				"audio_index":3,
+				"delay": true
+			},
+			{
+				"//":"5: To enter free mode, press the yellow button. Then, to set a waypoint, press any button on the box.",
+				"type":"play",
+				"audio_index":4,
+				"delay": false
+			},
+			{
+				"type":"set",
+				"key":"p",
+				"val":false
+			},
+			{
+				"type":"while",
+				"conditional":"#p===false",
+				"instructions":[
+					{
+						"type":"set_graphic_mode",
+						"mode":"image"
+					},
+					{
+						"type":"programming_choices"
+					},
+					{
+						"//":"6: Please stand back so I can reset my position. ",
+						"type":"play",
+						"audio_index":5,
+						"delay": true
+					},
+					{
+						"type":"set_graphic_mode",
+						"mode":"canvas",
+						"clear":true
+					},
+					{
+						"type":"draw",
+						"shape":"rectangle",
+						"x":58,
+						"y":69,
+						"width":11,
+						"height":10,
+						"rotate":90
+					},
+					{
+						"type":"draw",
+						"shape":"rectangle",
+						"x":19,
+						"y":67,
+						"width":17,
+						"height":19
+					},
+					{
+						"type":"adjustPoseBy",
+						"geometry":"position",
+						"axis":"z",
+						"amount":"0.15"
+					},
+					{
+						"type":"goToJointAngles",
+						"joint_angles":"above_fourth_box_joint_arg"
+					},
+					{
+						"//":"7: Can you please put Box 2 in its original position? Press any button on the box once you've done so. ",
+						"type":"play",
+						"audio_index":6,
+						"delay": false
+					},
+					{
+						"type":"wait",
+						"for":"user input"
+					},
+					{
+						"//":"8: I am going to run through program you set up for me.",
+						"type":"play",
+						"audio_index":7,
+						"delay": true
+					},
+					{
+						"type":"set",
+						"key":"q",
+						"val":false
+					},
+					{
+						"type":"while",
+						"conditional":"#q===false",
+						"instructions":[
+							{
+								"type":"complete_program"
+							}
+						]
+					},
+					{
+						"type":"goToJointAngles",
+						"joint_angles":"camera_pos2"
+					},
+					{
+						"//":"9: Let's see if you successfully put the box into the bin.",
+						"type":"play",
+						"audio_index":8,
+						"delay":true
+					},
+					{
+						"type":"camera",
+						"store_answer_in":"wheelVal"
+					},
+					{
+						"type":"camera_off"
+					},
+					{
+						"type":"if",
+						"conditional":"#wheelVal==1",
+						"if_true":[
+							{
+								"type":"set",
+								"key":"p",
+								"val":true
+							}
+						],
+						"if_false":[
+							{
+								"//":"11: Ooops! Not quite. Please put box 2 back into its designated position and try again. When you're ready, press any button on the box.",
+								"type":"play",
+								"audio_index":10,
+								"delay":true
+							},
+							{
+								"type":"wait",
+								"for":"user input"
+							},
+							{
+								"type":"goToJointAngles",
+								"joint_angles":"above_fourth_box_joint_arg"
+							}
+						]
+					}
+				]
+			},
+			{
+				"//":"10:Great job! You are a programming expert!",
+				"type":"play",
+				"audio_index":9,
+				"delay":true
+			},
+			{
+				"type":"proceed",
+				"to_section":"end"
+			}
+		]
+	},
+	{
+		"id":"end",
+		"instructions":[
+			{
+				"//":"1: You have learned a lot today! You successfully put multiple boxes into bins in multiple degrees of freedom, learned how my camera works, and programmed me yourself!",
+				"type":"play",
+				"audio_index":0,
+				"delay": true
+			},
+			{
+				"//":"2: Congratulations! You have completed Module 2.",
+				"type":"play",
+				"audio_index":1,
 				"delay": true
 			}
 		]

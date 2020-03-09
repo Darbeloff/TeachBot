@@ -50,6 +50,7 @@ add_action_files(
   AdjustPoseTo.action
   PickUpBox.action
   AdjustPoseBy.action
+  JointImpedance.action
   ButtonSend.action
   Wait.action
 )

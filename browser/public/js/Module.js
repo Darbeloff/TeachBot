@@ -1,10 +1,10 @@
 // Constants
 const DIR = 'https://localhost:8000/';    // Directory containing resources
-const JOINTS = 6;                         // Numer of joints in Sawyer arm
+const JOINTS = 7;                         // Numer of joints in Sawyer arm
 const VERBOSE = true;                     // Whether or not to print everything
 const BUTTON = {'back': 0, 'show': 1, 'circle': 2, 'square': 3, 'triangle': 4};
 // const ROBOT = 'sawyer';
-const ROBOT = 'ur';
+const ROBOT = 'sawyer';
 const ARDUINO = 'button_box';
 
 /**
@@ -37,6 +37,8 @@ function Module(module_num, main, content_elements) {
 	this.graphic_mode = 'image';											// Current graphic mode. See: set_graphic_mode().
 	this.canvas_frame_req;													// Animation frame request. See: set_graphic_mode().
 	this.button = 'none';
+	this.program = [];
+	this.free_mode = false
 	
 	// Initialize self to module for use in event callbacks
 	self = this;
@@ -67,6 +69,7 @@ function Module(module_num, main, content_elements) {
 		name: '/teachbot/button',
 		messageType: 'std_msgs/String'
 	});
+	// this.button_topic.subscribe(self.buttontopicCallback)
 	this.command_complete = new ROSLIB.Topic({
 		// Deprecated, but still used by 'camera' and 'camera_off'
 		ros: ros,
@@ -229,6 +232,11 @@ function Module(module_num, main, content_elements) {
 }
 
 // Callbacks
+Module.prototype.buttontopicCallback = function(msg) {
+	var value = parseInt(msg.data)
+	console.log('Changing dict value')
+	self.dictionary['lastButton'] = value;
+}
 Module.prototype.positionCallback = function(msg) {
 	for (let j=0; j<Object.keys(msg).length; j++) {
 		self.dictionary[`JOINT_POSITION_${j}`] = msg[`j${j}`];
@@ -712,48 +720,11 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 				goal_AdjustPoseTo.send()
 
 				break;
-/*
-			case 'initializeDisplay':
-				this.displayOff();
-				canvas_container.style.display = 'initial';
-				this.ctx.clearRect(0,0,100*this.cw,100*this.ch);
-				this.start(self.getNextAddress(instructionAddr));
-				break;
-*/
+
 			case 'draw':
 				this.draw(instr, instructionAddr);
 				break;
-/*
-			case 'drawShape':
-				checkInstruction(instr, ['shape'], instructionAddr);
 
-				if (instr.shape=='ball') {
-					if (instr.hasOwnProperty('clearRec')){this.ctx.clearRect(0,0,100*this.cw,100*this.ch);};
-					var x_ball = instr.x_ratio*this.cw;
-					var y_ball = instr.y_ratio*this.ch;
-					var r_ball = instr.r_ratio*this.ch;
-					if (instr.hasOwnProperty('label')) {
-						this.ctx.font = Math.round(instr.labelsize_ratio*this.cw) + 'px Raleway';
-						draw_ball(this.ctx, x_ball, y_ball, r_ball, instr.fillStyle, instr.label);
-					} else{
-						draw_ball(this.ctx, x_ball, y_ball, r_ball, instr.fillStyle);
-					}
-				} else if (instr.shape=='arc') {
-					canvas_container.style.display = 'initial';
-					arc3pt(this.ctx,instr.x1*this.cw,instr.y1*this.ch,instr.x2*this.cw,instr.y2*this.ch,instr.x3*this.cw,instr.y3*this.ch,instr.ccw);
-				} else if (instr.shape=='bar') {
-					draw_bar_new(this.ctx, instr.x_ratio*this.cw, instr.y_ratio*this.ch, instr.width_ratio*this.cw, instr.max_height_ratio*this.ch, instr.height_percent, instr.fillStyle, instr.label);
-				} else if (instr.shape=='rectangle') {
-					if (instr.hasOwnProperty('label')){
-						draw_rectangle(this.ctx, instr.x_ratio*this.cw, instr.y_ratio*this.ch, instr.w_ratio*this.cw, instr.h_ratio*this.ch, instr.rotate, instr.label)
-					} else {
-						draw_rectangle(this.ctx, instr.x_ratio*this.cw, instr.y_ratio*this.ch, instr.w_ratio*this.cw, instr.h_ratio*this.ch, instr.rotate)
-					}
-				}
-				this.start(self.getNextAddress(instructionAddr));
-
-				break;
-*/
 			case 'LOG':
 				console.log(Object.keys(instr.aDict))
 				for (var key in (instr.aDict)) {
@@ -761,64 +732,6 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 				}
 
 				this.start(this.getNextAddress(instructionAddr));
-				break;
-
-			case 'draw_dynamic':
-				
-
-				for (var topic in instr.topics) {				// Loop through all topics.
-					var values = instr.topics[topic];
-					if (topic == 'position') {					// Check what type of topics it is.
-						this.position.subscribe(async function(message) {
-							if (instr.shape == 'bar') {
-								/** 
-								 *  The line below needs to be fixed.
-								 *  When multiple topics are fed, it clears previous topics.
-								 *  Not an issue for now.
-								 */
-								self.ctx.clearRect(0,0,100*self.cw,100*self.ch);
-								self.ctx.font = Math.round(3*self.cw) + 'px Raleway';
-								for (let i=0;i<values.length;i++){		// Loop through every element and update the graph
-									var joint = values[i]
-									if (VERBOSE) console.log('Received: ' + joint + ': ' + eval('message.'+joint));
-									var x = instr.x_ratio[i]*self.cw;
-									var y = instr.y_ratio[i]*self.ch;
-									var width = instr.width_ratio[i]*self.cw;
-									var max_height = instr.max_height_ratio[i]*self.ch;
-									var height_percent;
-									if (joint == 'j6') {
-										height_percent = (eval('message.'+joint)+1.5*Math.PI)/(3*Math.PI);
-									} else {
-										height_percent = (eval('message.'+joint)+Math.PI)/(2*Math.PI);
-									}
-									if (instr.hasOwnProperty('label')) {
-										draw_bar_new(self.ctx, x, y, width, max_height, height_percent, instr.fillStyle[i], instr.label[i]);
-									} else{
-										draw_bar_new(self.ctx, x, y, width, max_height, height_percent, instr.fillStyle[i]);
-									};
-								};
-							} else if (instr.shape == 'ball'){
-								// Placeholder, doing nothing for now.
-							};
-						});
-					} else if (topic == 'velocity'){
-						// placeholder for another topic. Also serves as an example of what a topic can be.
-					}
-				};
-
-				this.button_topic.subscribe(async function(message) {
-					if (VERBOSE) console.log('Received indication to advance');
-					for (topic in instr.topics){
-						eval('self.'+topic+'.unsubscribe();');
-						eval('self.'+topic+'.removeAllListeners();');
-					
-					self.button_topic.unsubscribe();
-					self.button_topic.removeAllListeners();
-					self.displayOff();
-					self.start(self.getNextAddress(instructionAddr));
-					}
-				});
-
 				break;
 
 			case 'buttons':
@@ -949,88 +862,103 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 
 				break;
 
+			case 'complete_program':
+
+
+				action = self.program[0]
+				console.log(self.program[0])
+
+				if (self.program[0] == 'Open Gripper'){
+					var goal_Gripper2 = new ROSLIB.Goal({
+						actionClient: this.GripperAct,
+						goalMessage:{grip: false}
+					});
+					goal_Gripper2.on('result', function(result){
+						console.log('Completed program')
+						self.program.shift()
+						if (self.program.length == 0){
+							self.dictionary['q'] = true;
+						}
+						self.start(self.getNextAddress(instructionAddr));
+					});
+					goal_Gripper2.send();
+				} else if (self.program[0] == 'Close Gripper'){
+					var goal_Gripper1 = new ROSLIB.Goal({
+						actionClient: this.GripperAct,
+						goalMessage:{grip: true}
+					});
+					goal_Gripper1.on('result', function(result){
+						console.log('Completed program')
+						self.program.shift()
+						if (self.program.length == 0){
+							self.dictionary['q'] = true;
+						}
+						self.start(self.getNextAddress(instructionAddr));
+					});
+					goal_Gripper1.send();
+				} else {
+					var goal;
+					goal = this.getGoToGoal('waypoints.pop(0)', 0.25);
+					goal.on('result', function(result) {
+						console.log('Completed program')
+						self.program.shift()
+						if (self.program.length == 0){
+							self.dictionary['q'] = true;
+						}
+						self.start(self.getNextAddress(instructionAddr));
+					});
+					goal.send();
+				}
+
+			break;
+
 			case 'cuff_interaction':
-				checkInstruction(instr, ['terminatingCondition', 'ways'], instructionAddr);
+				checkInstruction(instr, ['ways'], instructionAddr);
 
 				var orient_bw_url = DIR + 'images/orientation_bw.png';
 				var orient_color_url = DIR + 'images/orientation_color.png';
 				var position_bw_url = DIR + 'images/position_bw.png';
 				var position_color_url = DIR + 'images/position_color.png';
 
-				// var goal = new ROSLIB.Goal({
-				// 	actionClient: this.CuffInteractionAct,
-				// 	goalMessage: {
-				// 		terminatingCondition: instr.terminatingCondition,
-				// 		ways: instr.ways
-				// 	}
-				// });
-
-				// goal.on('feedback', function(feedback) {
-				// 	var POSITION = true;
-				// 	var ORIENTATION = false;
-				// 	if (feedback.mode === POSITION) {
-				// 		if (VERBOSE) console.log('Position Mode');
-				// 		draw_pos_orien(self.ctx,3,300,400,position_color_url,position_bw_url, orient_color_url, orient_bw_url,'pos');
-				// 	} else if (feedback.mode === ORIENTATION) {
-				// 		if (VERBOSE) console.log('Orientation Mode');
-				// 		draw_pos_orien(self.ctx,3,300,400,position_color_url,position_bw_url, orient_color_url, orient_bw_url,'orien');
-				// 	}
-				// });
-
-				// goal.on('result', function(result) {
-				// 	if (VERBOSE) console.log('Exited cuff interaction.');
-				// 	self.ctx.clearRect(3, 300, 403, 1100)
-				// 	self.start(self.getNextAddress(instructionAddr));
-				// });
-
-				// goal.send();
-
-				var goal_pos = new ROSLIB.Goal({
-				actionClient: self.InteractionControlAct,
-				goalMessage: {
-					position_only: false,
-					position_x: true,
-					position_y: true,
-					position_z: false,
-					orientation_x: false,
-					orientation_y: false,
-					orientation_z: false,
-					in_end_point_frame: false,
-					PASS: true,
-					ways: false
-				}
-				});
-
-				var goal_orient = new ROSLIB.Goal({
-					actionClient: self.InteractionControlAct,
-					goalMessage: {
-						position_only: false,
-						position_x: false,
-						position_y: false,
-						position_z: false,
-						orientation_x: false,
-						orientation_y: false,
-						orientation_z: true,
-						in_end_point_frame: true,
-						PASS: true,
-						ways: false
-					}
-				});
-
 				this.button_topic.subscribe(async function(message) {
 					var value = parseInt(message.data)
 					if (value == 6){
 						draw_pos_orien(self.ctx,3,300,400,position_color_url,position_bw_url, orient_color_url, orient_bw_url,'pos');
 						if (VERBOSE) console.log('Entering position mode');	
-						goal_pos.send()
+						self.set_robot_mode({
+							'mode':'interaction ctrl', 
+							'position_only':false, 
+							'position_x': true,
+							'position_y': true,
+							'position_z': false,
+							'orientation_x': false,
+							'orientation_y': false,
+							'orientation_z': false,
+							'in_end_point_frame': false}, instructionAddr);
 					} else if (value == 7){
 						draw_pos_orien(self.ctx,3,300,400,position_color_url,position_bw_url, orient_color_url, orient_bw_url,'orien');
 						if (VERBOSE) console.log('Entering orientation mode');	
-						goal_orient.send()
+						self.set_robot_mode({
+							'mode':'interaction ctrl', 
+							'position_only':false, 
+							'position_x': false,
+							'position_y': false,
+							'position_z': false,
+							'orientation_x': false,
+							'orientation_y': false,
+							'orientation_z': true,
+							'in_end_point_frame': true}, instructionAddr);
 					} else{
 						if (VERBOSE) console.log('Received indication to advance');	
+					
 						if (instr.ways == true) {
-							self.CuffWaysSrv.callService(new ROSLIB.ServiceRequest({request: true}), result => {return})
+							// self.CuffWaysSrv.callService(new ROSLIB.ServiceRequest({request: true}), result => {return})
+							self.set_robot_mode({
+							'mode':'position', 
+							'ways':true}, instructionAddr);
+						} else {
+							self.set_robot_mode({
+							'mode':'position'}, instructionAddr);
 						}
 						self.ctx.clearRect(3, 300, 403, 1100)		
 						self.button_topic.unsubscribe();
@@ -1041,21 +969,19 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 
 				break;
 
-			case 'drawBin':
-				checkInstruction(instr, ['number'], instructionAddr);
-				var binW = 17*this.cw;
-				var binH = 13*this.ch;
-				switch (instr.number) {
-					case 1:
-						// this.ctx.strokeRect(56*this.cw, 40*this.ch, binW, binH);
-						this.ctx.strokeRect(62*this.cw, 40*this.ch, binW, binH);
-						break;
-					case 2:
-						this.ctx.strokeRect(83*this.cw, 33*this.cw, binW, binH);
-						break;
-				}
+				this.button_topic.subscribe(async function(message) {
+					if (VERBOSE) console.log('Received indication to advance');
+					for (topic in instr.topics){
+						eval('self.'+topic+'.unsubscribe();');
+						eval('self.'+topic+'.removeAllListeners();');
+					
+					self.button_topic.unsubscribe();
+					self.button_topic.removeAllListeners();
+					self.displayOff();
+					self.start(self.getNextAddress(instructionAddr));
+					}
+				});
 
-				this.start(this.getNextAddress(instructionAddr));
 				break;
 
 			case 'drawPosOrien':
@@ -1070,22 +996,6 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 
 				break;
 
-			case 'drawRamp':
-				checkInstruction(instr, ['number'], instructionAddr);
-				console.log('Drawing ramp')
-				var binW = 21*this.cw;
-				var binH = 19*this.ch;
-				switch (instr.number) {
-					case 1:
-						// this.ctx.strokeRect(56*this.cw, 40*this.ch, binW, binH);
-						this.ctx.rotate(-0.48)
-						this.ctx.strokeRect(18*this.cw, 60*this.ch, binH, binW);
-						this.ctx.rotate(0.48)
-						break;
-				}
-
-				this.start(this.getNextAddress(instructionAddr));
-				break;
 
 			case 'encode':
 				this.set_graphic_mode({mode: 'canvas', custom: true}, instructionAddr);
@@ -1201,22 +1111,6 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 
 				break;
 
-			/*case 'joint_impedance':
-				checkInstruction(instr, ["terminatingCondition","tics"], instructionAddr);
-
-				var goal = new ROSLIB.Goal({
-					actionClient: this.JointImpedanceAct,
-					goalMessage: {
-						terminatingCondition: this.hashTokeyVal(instr.terminatingCondition),
-						tics: instr.tics
-					}
-				});
-				goal.send();
-
-				this.start(self.getNextAddress(instructionAddr));
-
-				break;*/
-
 			/*case 'joint_move':
 				checkInstruction(instr, ["joints","terminatingCondition","resetPOS","min_thresh","bias","listen"], instructionAddr);
 
@@ -1283,15 +1177,7 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 				this.start(this.getNextAddress(instructionAddr));
 				break;
 
-			case 'multiple_choice':
-				var currentGraphicMode = this.graphic_mode;
-				// TODO: this.set_graphic_mode({"mode":"multiple_choice"}, instructionAddr);
-				this.displayOff();
-				canvas_container.style.display = 'initial';
-				var multi_choice_url = DIR + 'images/button_box.JPG';
-				var arrow_url = DIR + 'image/Arrow.png';
-
-				display_choices(m.ctx, ['Motors','Buttons','Cameras','Encoders'], multi_choice_url);
+			case 'multiple_choice_action':
 
 				var goal_ButtonPress = new ROSLIB.Goal({
 					actionClient: this.ButtonPressAct,
@@ -1339,56 +1225,6 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 				this.start(this.getNextAddress(instructionAddr));
 				break;
 
-			case 'pos_orient':
-				var orient_bw_url = DIR + 'images/orientation_bw.png';
-				var orient_color_url = DIR + 'images/orientation_color.png';
-				var position_bw_url = DIR + 'images/position_bw.png';
-				var position_color_url = DIR + 'images/position_color.png';
-
-				draw_pos_orien(self.ctx,3,300,400,position_color_url,position_bw_url, orient_color_url, orient_bw_url)
-
-				this.start(this.getNextAddress(instructionAddr));
-
-				break;
-
-			case 'programming_choices':
-				this.displayOff();
-                canvas_container.style.display = 'initial';
-                var multi_choice_url = DIR + 'images/button_box.JPG';
-				var arrow_url = DIR + 'image/Arrow.png';
-
-                display_choices(m.ctx, ['Open Gripper','Close Gripper','Move'], multi_choice_url);
-
-                var req = new ROSLIB.Message({
-					data: true
-				});
-
-                this.multiple_choice.publish(req);
-
-                this.wheel_delta_topic.subscribe(async function(message) {
-					if (VERBOSE) console.log('Button pressed:' + message.data);
-					wheel_val = message.data
-					if (instr.hasOwnProperty('store_answer_in')) {
-						self.dictionary[instr.store_answer_in] = wheel_val;
-					}
-					
-				});
-
-				this.pressed.subscribe(async function(message) {
-                	if (VERBOSE) console.log('Pressed: ' + message.data);
-					if (message.data == true) {
-						self.wheel_delta_topic.unsubscribe();
-						self.wheel_delta_topic.removeAllListeners();
-						self.pressed.unsubscribe();
-						self.pressed.removeAllListeners();
-						self.displayOff(true);
-						self.start(self.getNextAddress(instructionAddr));
-					}
-				});
-
-				break;
-
-
 			case 'pressed_button':
 				this.button_topic.subscribe(async function(message) {
 					if (VERBOSE) console.log('Pressed: ' + message.data);
@@ -1406,33 +1242,73 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 
 				break;
 
-			case 'projection':
+			case 'programming_choices':
 				this.displayOff();
-				canvas_container.style.display = 'initial';
+                canvas_container.style.display = 'initial';
+                var multi_choice_url = DIR + 'images/new_button_box.JPG';
+				var program_url = DIR + 'images/program_rect.png';
+				this.free_mode = false
 
-				this.position.subscribe(async function(message) {
-					if (VERBOSE) console.log(message.j1);
-					draw_goal(self.ctx, 100, message.j1*400+100)
-				});
+                display_choices(m.ctx, ['Open Gripper','Close Gripper','Free Mode', 'Done', 'Remove Choice'], multi_choice_url);
 
 				this.button_topic.subscribe(async function(message) {
-					if (VERBOSE) console.log('Received indication to advance');
-					self.position.unsubscribe();
-					self.position.removeAllListeners();
-					self.button_topic.unsubscribe();
-					self.button_topic.removeAllListeners();
-					self.displayOff();
-					self.start(self.getNextAddress(instructionAddr));
+                	if (VERBOSE) console.log('Pressed: ' + message.data);
+                	value = parseInt(message.data)
+					if (value == 5 && self.free_mode == false) {
+						console.log(self.program)
+						self.button_topic.unsubscribe();
+						self.button_topic.removeAllListeners();
+						self.displayOff(true);
+						self.start(self.getNextAddress(instructionAddr));
+					} else if (value == 2 && self.free_mode == false){
+						self.program.push('Open Gripper')
+						var goal_Gripper = new ROSLIB.Goal({
+							actionClient: self.GripperAct,
+							goalMessage:{grip: false}
+						});
+						goal_Gripper.on('result', function(result){
+							display_choices(m.ctx, ['Open Gripper','Close Gripper','Free Mode', 'Done', 'Remove Choice'], multi_choice_url, code=true, self.program, 10, 80);
+						});
+						goal_Gripper.send();
+					} else if (value == 3 && self.free_mode == false){
+						self.program.push('Close Gripper')
+						var goal_Gripper = new ROSLIB.Goal({
+							actionClient: self.GripperAct,
+							goalMessage:{grip: true}
+						});
+						goal_Gripper.on('result', function(result){
+							display_choices(m.ctx, ['Open Gripper','Close Gripper','Free Mode', 'Done', 'Remove Choice'], multi_choice_url, code=true, self.program, 10, 80);
+						});
+						goal_Gripper.send();
+					} else if (value == 4 && self.free_mode == false){
+						console.log('entering free mode')
+						self.program.push('Waypoint')
+						self.set_robot_mode({
+							'mode':'interaction ctrl', 
+							'position_only':false, 
+							'position_x': true,
+							'position_y': true,
+							'position_z': true,
+							'orientation_x': true,
+							'orientation_y': true,
+							'orientation_z': true,
+							'in_end_point_frame': false}, instructionAddr);
+					
+						self.ctx.clearRect(0,0,100*self.cw,100*self.ch);
+						canvas_container.style.display = 'initial';
+						self.free_mode = true
+					} else if (value == -1 && self.free_mode == false){
+						self.program.pop()
+						display_choices(m.ctx, ['Open Gripper','Close Gripper','Free Mode', 'Done', 'Remove Choice'], multi_choice_url, code=true, self.program, 10, 80);
+					} else if (self.free_mode == true){
+						console.log('entering position mode')
+						display_choices(m.ctx, ['Open Gripper','Close Gripper','Free Mode', 'Done', 'Remove Choice'], multi_choice_url, code=true, self.program, 10, 80);
+						self.set_robot_mode({
+							'mode':'position', 
+							'ways':true}, instructionAddr);
+						self.free_mode = false
+					}
 				});
-
-				break;
-/*
-			case "refresh":
-				m.displayOff(true);
-
-				image.style.display = 'initial';
-
-				this.start(this.getNextAddress(instructionAddr));
 
 				break;
 
@@ -1446,7 +1322,7 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 				this.start(this.getNextAddress(instructionAddr));
 
 				break;
-*/
+
 			case 'numeric_input':
 				this.numeric_input(instr, instructionAddr);
 				
@@ -1468,6 +1344,11 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 			case 'set_graphic_mode':
 				this.set_graphic_mode(instr, instructionAddr);
 				this.start(this.getNextAddress(instructionAddr));
+				// this.set_graphic_mode(instr, instructionAddr).then((msg) => {
+				// 	if (VERBOSE) console.log(`Done setting graphics.`)
+				// 	this.start(self.getNextAddress(instructionAddr));
+				// });
+
 				break;
 
 			case 'set_robot_mode':

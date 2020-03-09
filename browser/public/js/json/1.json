@@ -134,7 +134,7 @@
 				]
 			},
 			{
-				"//":"How many motors did you count?",
+				"//":"How many motors did you count? Use the white buttons on the button box next to you to go up or down in value. Then, press any colored button to submit your answer.",
 				"type":"play",
 				"audio_index":3,
 				"delay":false
@@ -429,7 +429,7 @@
 				"mode":"image"
 			},
 			{
-				"//":"Good! Now, before we go further, how many encoders do you think I have in my arm? Step back so I can reset my position. Again, use the white buttons on the box to change the number.",
+				"//":"Good! Now, before we go further, how many encoders do you think I have in my arm? Step back so I can reset my position. Again, use the white buttons on the box to change the number. Then, press any colored button to submit your answer.",
 				"type":"play",
 				"audio_index":8,
 				"delay":true
@@ -455,7 +455,7 @@
 				],
 				"if_false":[
 					{
-						"//":"Not quite. If I have one encoder for every motor, how many encoders do I have?",
+						"//":"Not quite. If I have one encoder for every motor, how many encoders do I have? Use the white buttons on the box to change the number. Then, press any colored button to submit your answer.",
 						"type":"play",
 						"audio_index":10,
 						"delay":true
@@ -722,6 +722,10 @@
 				"function":"#JOINT_POSITION_3<-2.2"
 			},
 			{
+				"type":"set_robot_mode",
+				"mode":"position"
+			},
+			{
 				"//":"I only needed to use one motor, but it was my elbow, not my wrist.",
 				"type":"play",
 				"audio_index":7,
@@ -844,28 +848,61 @@
 				"val":0.05
 			},
 			{
+				"type":"set",
+				"key":"lastButton",
+				"val":-3
+			},
+			{
 				"type":"while",
 				"conditional":"Math.abs(#ENDPOINT_POSITION_X-#x)>0.03 || Math.abs(#ENDPOINT_POSITION_Y-(#y))>0.03 || Math.abs(#ENDPOINT_POSITION_Z-#z)>0.03",
 				"instructions":[
 					{
-						"type":"joint_move",
-						"joints":"wrist",
-						"terminatingCondition":"lambda self : self.endpoints_equal(self.limb.endpoint_pose(),dot_3,0.05) or self.finished",
-						"resetPOS":"joint_dot_3_init",
-						"min_thresh":"0.8",
-						"bias":"BIAS_WRIST",
-						"listen":true
+						"type":"set_robot_mode",
+						"mode":"admittance ctrl",
+						"joints":[5],
+						"resetPos":"joint_dot_3_init",
+						"min_thresh":[0.5]
 					},
 					{
-						"type":"joint_move",
-						"joints":"elbow",
-						"terminatingCondition":"lambda self : self.endpoints_equal(self.limb.endpoint_pose(),dot_3,0.05) or self.finished",
-						"resetPOS":"joint_dot_3_init",
-						"min_thresh":"0.8",
-						"bias":"BIAS_SHOULDER",
-						"listen":true
+						"type":"wait",
+						"for":"custom",
+						"function":"(Math.abs(#ENDPOINT_POSITION_X-#x)<0.03 && Math.abs(#ENDPOINT_POSITION_Y-(#y))<0.03 && Math.abs(#ENDPOINT_POSITION_Z-#z)<0.03) || (#lastButton >-2)"
+					},
+					{
+						"type":"set",
+						"key":"lastButton",
+						"val":-3
+					},
+					{
+						"type":"set_robot_mode",
+						"mode":"position"
+					},
+					{
+						"type":"set_robot_mode",
+						"mode":"admittance ctrl",
+						"joints":[3],
+						"resetPos":"joint_dot_3_init",
+						"min_thresh":[1.0]
+					},
+					{
+						"type":"wait",
+						"for":"custom",
+						"function":"(Math.abs(#ENDPOINT_POSITION_X-#x)<0.03 && Math.abs(#ENDPOINT_POSITION_Y-(#y))<0.03 && Math.abs(#ENDPOINT_POSITION_Z-#z)<0.03) || (#lastButton >-2)"
+					},
+					{
+						"type":"set",
+						"key":"lastButton",
+						"val":-3
+					},
+					{
+						"type":"set_robot_mode",
+						"mode":"position"
 					}
 				]
+			},
+			{
+				"type":"set_robot_mode",
+				"mode":"position"
 			},
 			{
 				"//":"Great! Now let me try.",
@@ -1017,18 +1054,22 @@
 				"delay":false
 			},
 			{
-				"type":"interaction_control",
-				"position_only":false,
+				"type":"set_robot_mode",
+				"mode":"interaction ctrl",
 				"orientation_x":true,
 				"orientation_y":true,
 				"orientation_z":true,
 				"position_x":true,
 				"position_y":true,
-				"position_z":true,
-				"in_end_point_frame":false,
-				"PASS":true,
-				"ways":false,
-				"wait":true
+				"position_z":true
+			},
+			{
+				"type":"wait",
+				"for":"user input"
+			},
+			{
+				"type":"set_robot_mode",
+				"mode":"position"
 			},
 			{
 				"//":"Please stand back so that I can reset my position.",
@@ -1071,27 +1112,31 @@
 		"id":"feedback",
 		"instructions":[
 			{
-				"type": "initializeDisplay"
+				"type":"set_graphic_mode",
+				"mode":"image"
 			},
 			{
-				"type":"drawShape",
+				"type":"set_graphic_mode",
+				"mode":"canvas",
+				"clear":true
+			},
+			{
+				"type":"draw",
 				"shape":"ball",
-				"x_ratio": 50,
-				"y_ratio": 83,
-				"r_ratio": 10,
+				"cx": 50,
+				"cy": 83,
+				"r": 10,
 				"fillStyle": "BlueViolet",
-				"label": "A",
-				"labelsize_ratio": 5
+				"label": "A"
 			},
 			{
-				"type":"drawShape",
+				"type":"draw",
 				"shape":"ball",
-				"x_ratio": 39,
-				"y_ratio": 45,
-				"r_ratio": 10,
+				"cx": 39,
+				"cy": 45,
+				"r": 10,
 				"fillStyle": "#7c2629",
-				"label": "B",
-				"labelsize_ratio": 5
+				"label": "B"
 			},
 			{
 				"type":"goToJointAngles",
@@ -1108,13 +1153,20 @@
 				"delay":false
 			},
 			{
-				"type":"joint_move",
-				"joints":"elbow",
-				"terminatingCondition":"lambda self : self.limb.joint_angle(elbow)<point_b[3]",
-				"resetPOS":"point_a",
-				"min_thresh":"1.0",
-				"bias":"BIAS_SHOULDER",
-				"listen":true
+				"type":"set_robot_mode",
+				"mode":"admittance ctrl",
+				"joints":[3],
+				"resetPos":"point_a",
+				"min_thresh":[1.0]
+			},
+			{
+				"type":"wait",
+				"for":"custom",
+				"function":"#JOINT_POSITION_3<-1.87"
+			},
+			{
+				"type":"set_robot_mode",
+				"mode":"position"
 			},
 			{
 				"//":"Great! Thanks. Now I'm going to move to point B on my own.",
@@ -1137,14 +1189,13 @@
 				"delay":true
 			},
 			{
-				"type":"drawShape",
+				"type":"draw",
 				"shape":"ball",
-				"x_ratio": 37,
-				"y_ratio": 15,
-				"r_ratio": 10,
+				"cx": 37,
+				"cy": 15,
+				"r": 10,
 				"fillStyle": "DarkGreen",
-				"label": "C",
-				"labelsize_ratio": 5
+				"label": "C"
 			},
 			{
 				"//":"Can you correct my position back to point B?",
@@ -1153,13 +1204,20 @@
 				"delay":false
 			},
 			{
-				"type":"joint_move",
-				"joints":"elbow",
-				"terminatingCondition":"lambda self : self.limb.joint_angle(elbow)>point_b[3]",
-				"resetPOS":"point_c",
-				"min_thresh":"1.0",
-				"bias":"BIAS_SHOULDER",
-				"listen":true
+				"type":"set_robot_mode",
+				"mode":"admittance ctrl",
+				"joints":[3],
+				"resetPos":"point_a",
+				"min_thresh":[1.0]
+			},
+			{
+				"type":"wait",
+				"for":"custom",
+				"function":"#JOINT_POSITION_3>-1.87"
+			},
+			{
+				"type":"set_robot_mode",
+				"mode":"position"
 			},
 			{
 				"//":"Thank you! At any point, I know the position of my arm because of my encoder. Here is position A,",
@@ -1172,14 +1230,14 @@
 				"joint_angles":"point_a"
 			},
 			{
-				"type":"drawShape",
+				"type":"draw",
 				"shape":"bar",
-				"x_ratio": 5,
-				"y_ratio": 85,
-				"width_ratio": 6,
-				"max_height_ratio": 40,
+				"x": 5,
+				"y": 85,
+				"width": 6,
+				"max_height": 40,
 				"height_percent": 0.3,
-				"fillStyle": "BlueViolet",
+				"fillStyle": ["BlueViolet"],
 				"label": "A"
 			},
 			{
@@ -1193,14 +1251,14 @@
 				"joint_angles":"point_b"
 			},
 			{
-				"type":"drawShape",
+				"type":"draw",
 				"shape":"bar",
-				"x_ratio": 15,
-				"y_ratio": 85,
-				"width_ratio": 6,
-				"max_height_ratio": 40,
+				"x": 15,
+				"y": 85,
+				"width": 6,
+				"max_height": 40,
 				"height_percent": 0.5,
-				"fillStyle": "#7c2629",
+				"fillStyle": ["#7c2629"],
 				"label": "B"
 			},
 			{
@@ -1214,14 +1272,14 @@
 				"joint_angles":"point_c"
 			},
 			{
-				"type":"drawShape",
+				"type":"draw",
 				"shape":"bar",
-				"x_ratio": 25,
-				"y_ratio": 85,
-				"width_ratio": 6,
-				"max_height_ratio": 40,
+				"x": 25,
+				"y": 85,
+				"width": 6,
+				"max_height": 40,
 				"height_percent": 0.6,
-				"fillStyle": "DarkGreen",
+				"fillStyle": ["DarkGreen"],
 				"label": "C"
 			},
 			{
@@ -1231,10 +1289,8 @@
 				"delay":true
 			},
 			{
-				"type":"reset"
-			},
-			{
-				"type":"displayImage",
+				"type":"set_graphic_mode",
+				"mode":"image",
 				"location":"images/Welcome.png"
 			},
 			{
@@ -1254,7 +1310,9 @@
 			},
 			{
 				"type":"wait",
-				"what":"effort",
+				"for":"total effort",
+				"to_be":"<",
+				"val":"10",
 				"timeout": 1000,
 				"store_answer_in":"wait_output"
 			},
@@ -1265,12 +1323,25 @@
 				"delay":false
 			},
 			{
-				"type":"joint_impedance",
-				"terminatingCondition":"lambda self: self.finished",
-				"tics":2
+				"type":"set_robot_mode",
+				"mode":"impedance ctrl",
+				"joints":[0,1,2,3,4,5,6],
+				"resetPos":"joint_push_down",
+				"V2F":[5,10,10,10,10,10,10],
+				"X2F":[160,150,150,150,150,150,150]
 			},
 			{
-				"type":"projection"
+				"type":"set_graphic_mode",
+				"mode":"projection"
+			},
+			{
+				"type":"wait",
+				"for":"user input"
+			},
+			{
+				"type":"set_robot_mode",
+				"mode":"position",
+				"ways":false
 			},
 			{
 				"//":"Before, I was using the feedback from my encoders to go somewhere new. Now, I'm using feedback to stay in one place. What am I using to know when my arm is moving? Please stand back so I can reset my arm position.",
@@ -1283,7 +1354,11 @@
 				"joint_angles":"default"
 			},
 			{
-				"type":"multiple_choice",
+				"type":"set_graphic_mode",
+				"mode":"multiple choice"
+			},
+			{
+				"type":"multiple_choice_action",
 				"store_answer_in":"wheelVal"
 			},
 			{
@@ -1305,7 +1380,7 @@
 						"delay":true
 					},
 					{
-						"type":"multiple_choice",
+						"type":"multiple_choice_action",
 						"store_answer_in":"wheelVal"
 					},
 					{
@@ -1340,7 +1415,8 @@
 		"id":"waypoints",
 		"instructions":[
 			{
-				"type":"refresh"
+				"type":"set_graphic_mode",
+				"mode":"image"
 			},
 			{
 				"//":"The final lesson of the day is about waypoints. Just like how your phone or computer can save pictures and music in its memory, I use my memory to remember different arm positions. Specifically, whenever you move my arm, I read all of my encoders so that, if I want to, I can return to this exact position. I call that remembered position a 'waypoint.'",
@@ -1359,28 +1435,35 @@
 				"delay":true
 			},
 			{
-				"type":"displayImage",
-				"location": "images/hokeypokey_out.png"
-			},
-			{
 				"//":"Start by pulling my arm so it's extended all the way and matches the image on the projector. When it's in the right position, press any button on the box and I'll record the position as a waypoint.",
 				"type":"play",
 				"audio_index":2,
 				"delay":false
 			},
 			{
-				"type":"interaction_control",
+				"type":"set_robot_mode",
+				"mode":"interaction ctrl",
 				"position_only":true,
 				"orientation_x":false,
 				"orientation_y":false,
 				"orientation_z":false,
 				"position_x":false,
 				"position_y":false,
-				"position_z":false,
-				"in_end_point_frame":false,
-				"PASS":true,
-				"ways":true,
-				"wait":true
+				"position_z":false
+			},
+			{
+				"type":"set_graphic_mode",
+				"mode":"image",
+				"location":"images/hokeypokey_out.png"
+			},
+			{
+				"type":"wait",
+				"for":"user input"
+			},
+			{
+				"type":"set_robot_mode",
+				"mode":"position",
+				"ways":true
 			},
 			{
 				"//":"Good! Now, push my arm in so it's close to my torso. When it's in the right position, press any button on the box.",
@@ -1389,22 +1472,29 @@
 				"delay":false
 			},
 			{
-				"type":"displayImage",
-				"location":"images/hokeypokey_in.png"
-			},
-			{
-				"type":"interaction_control",
+				"type":"set_robot_mode",
+				"mode":"interaction ctrl",
 				"position_only":true,
 				"orientation_x":false,
 				"orientation_y":false,
 				"orientation_z":false,
 				"position_x":false,
 				"position_y":false,
-				"position_z":false,
-				"in_end_point_frame":false,
-				"PASS":true,
-				"ways":true,
-				"wait":true
+				"position_z":false
+			},
+			{
+				"type":"set_graphic_mode",
+				"mode":"image",
+				"location":"images/hokeypokey_in.png"
+			},
+			{
+				"type":"wait",
+				"for":"user input"
+			},
+			{
+				"type":"set_robot_mode",
+				"mode":"position",
+				"ways":true
 			},
 			{
 				"//":"Now pull my arm back out and press any button on the box.",
@@ -1413,22 +1503,29 @@
 				"delay":false
 			},
 			{
-				"type":"displayImage",
-				"location": "images/hokeypokey_out.png"
-			},
-			{
-				"type":"interaction_control",
+				"type":"set_robot_mode",
+				"mode":"interaction ctrl",
 				"position_only":true,
 				"orientation_x":false,
 				"orientation_y":false,
 				"orientation_z":false,
 				"position_x":false,
 				"position_y":false,
-				"position_z":false,
-				"in_end_point_frame":false,
-				"PASS":true,
-				"ways":true,
-				"wait":true
+				"position_z":false
+			},
+			{
+				"type":"set_graphic_mode",
+				"mode":"image",
+				"location":"images/hokeypokey_out.png"
+			},
+			{
+				"type":"wait",
+				"for":"user input"
+			},
+			{
+				"type":"set_robot_mode",
+				"mode":"position",
+				"ways":true
 			},
 			{
 				"//":"Now rotate my torso this way and press any button on the box.",
@@ -1437,22 +1534,29 @@
 				"delay":false
 			},
 			{
-				"type":"displayImage",
-				"location":"images/hokeypokey_rot1.png"
-			},
-			{
-				"type":"interaction_control",
+				"type":"set_robot_mode",
+				"mode":"interaction ctrl",
 				"position_only":true,
 				"orientation_x":false,
 				"orientation_y":false,
 				"orientation_z":false,
 				"position_x":false,
 				"position_y":false,
-				"position_z":false,
-				"in_end_point_frame":false,
-				"PASS":true,
-				"ways":true,
-				"wait":true
+				"position_z":false
+			},
+			{
+				"type":"set_graphic_mode",
+				"mode":"image",
+				"location":"images/hokeypokey_rot1.png"
+			},
+			{
+				"type":"wait",
+				"for":"user input"
+			},
+			{
+				"type":"set_robot_mode",
+				"mode":"position",
+				"ways":true
 			},
 			{
 				"//":"Finally, rotate my torso that way and press any button on the box.",
@@ -1461,22 +1565,29 @@
 				"delay":false
 			},
 			{
-				"type":"displayImage",
-				"location":"images/hokeypokey_rot2.png"
-			},
-			{
-				"type":"interaction_control",
+				"type":"set_robot_mode",
+				"mode":"interaction ctrl",
 				"position_only":true,
 				"orientation_x":false,
 				"orientation_y":false,
 				"orientation_z":false,
 				"position_x":false,
 				"position_y":false,
-				"position_z":false,
-				"in_end_point_frame":false,
-				"PASS":true,
-				"ways":true,
-				"wait":true
+				"position_z":false
+			},
+			{
+				"type":"set_graphic_mode",
+				"mode":"image",
+				"location":"images/hokeypokey_rot2.png"
+			},
+			{
+				"type":"wait",
+				"for":"user input"
+			},
+			{
+				"type":"set_robot_mode",
+				"mode":"position",
+				"ways":true
 			},
 			{
 				"//":"Great job! Now, I'll play back each waypoint. As I move from one waypoint to another, do the same motion with your arm.",
@@ -1485,8 +1596,9 @@
 				"delay":true
 			},
 			{
-				"type":"displayImage",
-				"location": "images/hokeypokey_out.png"
+				"type":"set_graphic_mode",
+				"mode":"image",
+				"location":"images/hokeypokey_out.png"
 			},
 			{
 				"//":"First, you put my arm in.",
@@ -1506,7 +1618,8 @@
 				"delay":false
 			},
 			{
-				"type":"displayImage",
+				"type":"set_graphic_mode",
+				"mode":"image",
 				"location":"images/hokeypokey_in.png"
 			},
 			{
@@ -1521,8 +1634,9 @@
 				"delay":false
 			},
 			{
-				"type":"displayImage",
-				"location": "images/hokeypokey_out.png"
+				"type":"set_graphic_mode",
+				"mode":"image",
+				"location":"images/hokeypokey_out.png"
 			},
 			{
 				"type":"goToJointAngles",
@@ -1536,12 +1650,18 @@
 				"delay":false
 			},
 			{
-				"type":"displayImage",
+				"type":"set_graphic_mode",
+				"mode":"image",
 				"location":"images/hokeypokey_rot1.png"
 			},
 			{
 				"type":"goToJointAngles",
 				"joint_angles":"waypoints.pop(0)"
+			},
+			{
+				"type":"set_graphic_mode",
+				"mode":"image",
+				"location":"images/hokeypokey_rot2.png"
 			},
 			{
 				"type":"goToJointAngles",
@@ -1558,7 +1678,8 @@
 		"id":"end",
 		"instructions":[
 			{
-				"type":"displayImage",
+				"type":"set_graphic_mode",
+				"mode":"image",
 				"location":"images/Welcome.png"
 			},
 			{
@@ -1574,7 +1695,9 @@
 			},
 			{
 				"type":"wait",
-				"what": "effort",
+				"for": "total effort",
+				"to_be":"<",
+				"val":"10",
 				"timeout": 5,
 				"store_answer_in":"wait_output"
 			},
@@ -1598,7 +1721,9 @@
 					},
 					{
 						"type":"wait",
-						"what":"effort",
+						"for":"total effort",
+						"to_be":"<",
+						"val":"10",
 						"timeout": 5,
 						"store_answer_in":"wait_output"
 					},

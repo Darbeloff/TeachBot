@@ -286,7 +286,7 @@ class Module():
 		'''
 
 	def display_camera_callback(self, img_data):
-		rospy.sleep(0.5)
+		rospy.sleep(0.76)
 		bridge = CvBridge()
 		try:
 			cv_image = bridge.imgmsg_to_cv2(img_data, 'bgr8')
@@ -337,7 +337,7 @@ class Module():
 
 		try:
 			distance = ((centerBin[0]-centerApril[0])**2+(centerBin[1]-centerApril[1])**2)**0.5
-			if distance < 80:
+			if distance < 90:
 				self.box_in_bin_topic.publish(True)
 				self.command_complete_topic.publish()
 				rospy.loginfo('Box is in bin')
@@ -782,6 +782,9 @@ class Module():
 		if req.mode == 'position':
 			self.limb.exit_control_mode()
 			self.limb.go_to_joint_angles(self.limb.joint_angles())
+			if req.ways:
+				rospy.loginfo('Setting waypoint')
+				waypoints.append(self.limb.joint_angles())
 
 		elif req.mode == 'admittance ctrl':
 			# Set command timeout to be much greater than the command period
@@ -837,7 +840,7 @@ class Module():
 			# Set V2F and X2F specs
 			for joint in self.limb.joint_efforts().keys():
 				joints[joint]['V2F'] = 5 if joint==shoulder else 10
-				joints[joint]['X2F'] = 160 if joint==shoulder else 10
+				joints[joint]['X2F'] = 160 if joint==shoulder else 150
 			for i,j in enumerate(req.joints):
 				joints['right_j'+str(j)]['V2F'] = req.V2F[i]
 				joints['right_j'+str(j)]['X2F'] = req.X2F[i]

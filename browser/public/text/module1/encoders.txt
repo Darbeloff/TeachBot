@@ -6,8 +6,8 @@ Let me show you how I know. Please stand back.
 This device is called an encoder. Every motor in my arm has one. These encoders can measure the angles of each of my motors.
 Now I'm going to lock my shoulder and unlock my wrist. Try pushing my hand. When you're done, press any button on the box.
 So far I've only unlocked one motor at a time. Let's try unlocking both my shoulder and wrist motors. Push on my arm again and see what happens. When you're done, press any button on the box.
-Good! Now, before we go further, how many encoders do you think I have in my arm? Step back so I can reset my position. Again, use the white buttons on the box to change the number.
+Good! Now, before we go further, how many encoders do you think I have in my arm? Step back so I can reset my position. Again, use the white buttons on the box to change the number. Then, press any colored button to submit your answer.
 Good job!
-Not quite. If I have one encoder for every motor, how many encoders do I have?
+Not quite. If I have one encoder for every motor, how many encoders do I have? Use the white buttons on the box to change the number. Then, press any colored button to submit your answer.
 Now grab and move my arm again. I've unlocked all of my motors, so my arm might drift around a little. Go ahead and grab it anyway while watching the projection to see what I sense as you move each motor. When you're done, press any button on the box.
 Using my encoders, I can measure the angles of all seven of my motors. Please stand back so I can reset my position.
