@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   genmsg
+  controller_manager_msgs
   control_msgs
   sensor_msgs
   cv_bridge
@@ -137,6 +138,7 @@ catkin_package(
 	cv_bridge
 	trajectory_msgs
 	control_msgs
+  controller_manager_msgs
 	sensor_msgs
 	dynamic_reconfigure
 	intera_core_msgs

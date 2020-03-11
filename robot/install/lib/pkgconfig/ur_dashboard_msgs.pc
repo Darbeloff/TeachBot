@@ -1,0 +1,8 @@
+prefix=/home/sarah/TeachBot/robot/install
+
+Name: ur_dashboard_msgs
+Description: Description of ur_dashboard_msgs
+Version: 0.0.0
+Cflags: -I/home/sarah/TeachBot/robot/install/include
+Libs: -L/home/sarah/TeachBot/robot/install/lib 
+Requires: message_runtime actionlib_msgs

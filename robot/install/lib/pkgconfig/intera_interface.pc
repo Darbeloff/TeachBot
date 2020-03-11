@@ -1,0 +1,8 @@
+prefix=/home/sarah/TeachBot/robot/install
+
+Name: intera_interface
+Description: Description of intera_interface
+Version: 5.3.0
+Cflags: -I/home/sarah/TeachBot/robot/install/include
+Libs: -L/home/sarah/TeachBot/robot/install/lib 
+Requires: cv_bridge rospy actionlib sensor_msgs std_msgs control_msgs trajectory_msgs dynamic_reconfigure intera_core_msgs intera_motion_msgs

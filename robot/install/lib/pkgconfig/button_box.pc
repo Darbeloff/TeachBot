@@ -1,0 +1,8 @@
+prefix=/home/sarah/TeachBot/robot/install
+
+Name: button_box
+Description: Description of button_box
+Version: 0.0.0
+Cflags: -I/home/sarah/TeachBot/robot/install/include
+Libs: -L/home/sarah/TeachBot/robot/install/lib 
+Requires: rospy std_msgs intera_core_msgs intera_motion_msgs intera_interface actionlib

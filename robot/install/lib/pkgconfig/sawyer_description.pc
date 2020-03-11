@@ -1,0 +1,8 @@
+prefix=/home/sarah/TeachBot/robot/install
+
+Name: sawyer_description
+Description: Description of sawyer_description
+Version: 5.3.0
+Cflags: 
+Libs: -L/home/sarah/TeachBot/robot/install/lib 
+Requires: 
