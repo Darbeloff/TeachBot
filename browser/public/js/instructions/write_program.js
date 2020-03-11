@@ -22,7 +22,10 @@ Module.prototype.write_program = function(instr, instructionAddr) {
 		if (self.free_mode) {
 			console.log('entering position mode')
 			display_choices(m.ctx, ['Open Gripper','Close Gripper','Free Mode', 'Done', 'Remove Choice'], multi_choice_url, code=true, self.program, 10, 80);
-			self.program.push([self.dictionary['JOINT_POSITION_0'],self.dictionary['JOINT_POSITION_1'],self.dictionary['JOINT_POSITION_2'],self.dictionary['JOINT_POSITION_3'],self.dictionary['JOINT_POSITION_4'],self.dictionary['JOINT_POSITION_5'],self.dictionary['JOINT_POSITION_6']])
+			var current_pos = [];
+			for (let j=0; j<JOINTS; j++) {
+				current_pos[j] = self.dictionary[`JOINT_POSITION_${j}`];
+			}
 			self.set_robot_mode({
 				'mode':'position', 
 				'ways':true}, instructionAddr);
@@ -87,6 +90,7 @@ Module.prototype.write_program = function(instr, instructionAddr) {
 				default:
 					console.log('No Support for this button');
 					break;
+			}
 		}
-	}
+	});
 }

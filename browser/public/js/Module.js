@@ -862,56 +862,6 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 
 				break;
 
-			case 'complete_program':
-
-
-				action = self.program[0]
-				console.log(self.program[0])
-
-				if (self.program[0] == 'Open Gripper'){
-					var goal_Gripper2 = new ROSLIB.Goal({
-						actionClient: this.GripperAct,
-						goalMessage:{grip: false}
-					});
-					goal_Gripper2.on('result', function(result){
-						console.log('Completed program')
-						self.program.shift()
-						if (self.program.length == 0){
-							self.dictionary['q'] = true;
-						}
-						self.start(self.getNextAddress(instructionAddr));
-					});
-					goal_Gripper2.send();
-				} else if (self.program[0] == 'Close Gripper'){
-					var goal_Gripper1 = new ROSLIB.Goal({
-						actionClient: this.GripperAct,
-						goalMessage:{grip: true}
-					});
-					goal_Gripper1.on('result', function(result){
-						console.log('Completed program')
-						self.program.shift()
-						if (self.program.length == 0){
-							self.dictionary['q'] = true;
-						}
-						self.start(self.getNextAddress(instructionAddr));
-					});
-					goal_Gripper1.send();
-				} else {
-					var goal;
-					goal = this.getGoToGoal('waypoints.pop(0)', 0.25);
-					goal.on('result', function(result) {
-						console.log('Completed program')
-						self.program.shift()
-						if (self.program.length == 0){
-							self.dictionary['q'] = true;
-						}
-						self.start(self.getNextAddress(instructionAddr));
-					});
-					goal.send();
-				}
-
-			break;
-
 			case 'cuff_interaction':
 				checkInstruction(instr, ['ways'], instructionAddr);
 
@@ -1242,8 +1192,8 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 
 				break;
 
-			case 'programming_choices':
-				this.programming_choices(instr, instructionAddr);
+			case 'write_program':
+				this.write_program(instr, instructionAddr);
 
 				break;
 
@@ -1260,7 +1210,11 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 
 			case 'numeric_input':
 				this.numeric_input(instr, instructionAddr);
-				
+				break;
+
+			case 'run_program':
+				await this.run_program(instr, instructionAddr);
+				this.start(this.getNextAddress(instructionAddr));
 				break;
 
 			case 'set':

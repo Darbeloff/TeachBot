@@ -7,7 +7,7 @@
 				"joint_angles":"above_fourth_box_joint_arg"
 			},
 			{
-				"type":"write_choices"
+				"type":"write_program"
 			},
 			{
 				"//":"6: Please stand back so I can reset my position. ",
@@ -15,150 +15,56 @@
 				"audio_index":5,
 				"delay": true
 			},
-
 			{
-				"type":"while",
-				"conditional":"#p===false",
-				"instructions":[
-					{
-						"type":"set_graphic_mode",
-						"mode":"image"
-					},
-					
-					{
-						"type":"set_graphic_mode",
-						"mode":"canvas",
-						"clear":true
-					},
-					{
-						"type":"draw",
-						"shape":"rectangle",
-						"x":58,
-						"y":69,
-						"width":11,
-						"height":10,
-						"rotate":90
-					},
-					{
-						"type":"draw",
-						"shape":"rectangle",
-						"x":19,
-						"y":67,
-						"width":17,
-						"height":19
-					},
-					{
-						"type":"adjustPoseBy",
-						"geometry":"position",
-						"axis":"z",
-						"amount":"0.15"
-					},
-					{
-						"type":"goToJointAngles",
-						"joint_angles":"above_fourth_box_joint_arg"
-					},
-					{
-						"//":"7: Can you please put Box 2 in its original position? Press any button on the box once you've done so. ",
-						"type":"play",
-						"audio_index":6,
-						"delay": false
-					},
-					{
-						"type":"wait",
-						"for":"user input"
-					},
-					{
-						"//":"8: I am going to run through program you set up for me.",
-						"type":"play",
-						"audio_index":7,
-						"delay": true
-					},
-					{
-						"type":"set",
-						"key":"q",
-						"val":false
-					},
-					{
-						"type":"while",
-						"conditional":"#q===false",
-						"instructions":[
-							{
-								"type":"complete_program"
-							}
-						]
-					},
-					{
-						"type":"goToJointAngles",
-						"joint_angles":"camera_pos2"
-					},
-					{
-						"//":"9: Let's see if you successfully put the box into the bin.",
-						"type":"play",
-						"audio_index":8,
-						"delay":true
-					},
-					{
-						"type":"camera",
-						"store_answer_in":"wheelVal"
-					},
-					{
-						"type":"camera_off"
-					},
-					{
-						"type":"if",
-						"conditional":"#wheelVal==1",
-						"if_true":[
-							{
-								"type":"set",
-								"key":"p",
-								"val":true
-							}
-						],
-						"if_false":[
-							{
-								"//":"11: Ooops! Not quite. Please put box 2 back into its designated position and try again. When you're ready, press any button on the box.",
-								"type":"play",
-								"audio_index":10,
-								"delay":true
-							},
-							{
-								"type":"wait",
-								"for":"user input"
-							},
-							{
-								"type":"goToJointAngles",
-								"joint_angles":"above_fourth_box_joint_arg"
-							}
-						]
-					}
-				]
+				"type":"set_graphic_mode",
+				"mode":"canvas",
+				"clear":true
 			},
 			{
-				"//":"10:Great job! You are a programming expert!",
-				"type":"play",
-				"audio_index":9,
-				"delay":true
+				"type":"draw",
+				"shape":"rectangle",
+				"x":58,
+				"y":69,
+				"width":11,
+				"height":10,
+				"rotate":90
 			},
 			{
-				"type":"proceed",
-				"to_section":"end"
-			}
-		]
-	},
-	{
-		"id":"end",
-		"instructions":[
+				"type":"draw",
+				"shape":"rectangle",
+				"x":19,
+				"y":67,
+				"width":17,
+				"height":19
+			},
 			{
-				"//":"1: You have learned a lot today! You successfully put multiple boxes into bins in multiple degrees of freedom, learned how my camera works, and programmed me yourself!",
+				"type":"adjustPoseBy",
+				"geometry":"position",
+				"axis":"z",
+				"amount":"0.15"
+			},
+			{
+				"type":"goToJointAngles",
+				"joint_angles":"above_fourth_box_joint_arg"
+			},
+			{
+				"//":"7: Can you please put Box 2 in its original position? Press any button on the box once you've done so. ",
 				"type":"play",
-				"audio_index":0,
+				"audio_index":6,
+				"delay": false
+			},
+			{
+				"type":"wait",
+				"for":"user input"
+			},
+			{
+				"//":"8: I am going to run through program you set up for me.",
+				"type":"play",
+				"audio_index":7,
 				"delay": true
 			},
 			{
-				"//":"2: Congratulations! You have completed Module 2.",
-				"type":"play",
-				"audio_index":1,
-				"delay": true
+				"type":"run_program"
 			}
 		]
 	}
