@@ -40,6 +40,11 @@ Next, make sure that the external cap you installed in the previous section has 
 
 ![IP Adress Location](./connect_ip.png)
 
+You can find your computer's IP address by entering the following command in a terminal:
+```
+$ ifconfig
+```
+
 Do not press play yet for the robot program - wait until after running your terminal instructions.
 
 You can adjust the speed that your robot moves at using the speed slider. It is outlined in red below. 
@@ -56,7 +61,7 @@ For `robot_ip:=`, put the IP address of your UR robot to replace the IP address 
 
 For `kinematics_config:=`, put the path to your configuration file and replace the example. 
 
-Once this command has run successfully, press "play" on the UR5e interface. It is to the right of the speed slider. If the connection is successful, you should see a confirmation in your terminal tab and no errors on the UR5e interface. 
+Once this command has run successfully, navigate to Program/URCaps and press "play" on the UR5e interface. It is to the right of the speed slider. If the connection is successful, you should see a confirmation in your terminal tab and no errors on the UR5e interface. 
 
 ```bash
 [ INFO] [1573668956.316314604]: Robot requested program
@@ -66,10 +71,12 @@ Once this command has run successfully, press "play" on the UR5e interface. It i
 
 In the next terminal tab, run 
 
+    $ source devel/setup.bash
     $ rosrun ur teachbot.py
 
 Then, navigate to the last tab and run
 
+    $ source devel/setup.bash
     $ roslaunch ../browser/websocket.launch & node ../browser/www.js &
 
 And navigate to https://localhost:8000 to begin Module 1. 
