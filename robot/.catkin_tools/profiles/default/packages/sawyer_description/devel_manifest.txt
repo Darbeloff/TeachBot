@@ -1,5 +1,0 @@
-sawyer_robot/sawyer_description
-/home/albertgo/teachbot/robot/devel_cb/.private/sawyer_description/cmake.lock /home/albertgo/teachbot/robot/devel_cb/./cmake.lock
-/home/albertgo/teachbot/robot/devel_cb/.private/sawyer_description/share/sawyer_description/cmake/sawyer_descriptionConfig-version.cmake /home/albertgo/teachbot/robot/devel_cb/share/sawyer_description/cmake/sawyer_descriptionConfig-version.cmake
-/home/albertgo/teachbot/robot/devel_cb/.private/sawyer_description/share/sawyer_description/cmake/sawyer_descriptionConfig.cmake /home/albertgo/teachbot/robot/devel_cb/share/sawyer_description/cmake/sawyer_descriptionConfig.cmake
-/home/albertgo/teachbot/robot/devel_cb/.private/sawyer_description/lib/pkgconfig/sawyer_description.pc /home/albertgo/teachbot/robot/devel_cb/lib/pkgconfig/sawyer_description.pc
