@@ -1,3 +1,0 @@
-/home/albertgo/teachbot/robot/devel_cb/./cmake.lock 108
-/home/albertgo/teachbot/robot/devel_cb/lib/python2.7/dist-packages/intera_external_devices/__init__.py 13
-/home/albertgo/teachbot/robot/devel_cb/lib/python2.7/dist-packages/intera_examples/__init__.py 13

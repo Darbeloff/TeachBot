@@ -1,1 +1,0 @@
-string[] endpoint_names

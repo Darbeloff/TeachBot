@@ -1,5 +1,0 @@
-intera_common/intera_tools_description
-/home/albertgo/teachbot/robot/devel_cb/.private/intera_tools_description/cmake.lock /home/albertgo/teachbot/robot/devel_cb/./cmake.lock
-/home/albertgo/teachbot/robot/devel_cb/.private/intera_tools_description/share/intera_tools_description/cmake/intera_tools_descriptionConfig-version.cmake /home/albertgo/teachbot/robot/devel_cb/share/intera_tools_description/cmake/intera_tools_descriptionConfig-version.cmake
-/home/albertgo/teachbot/robot/devel_cb/.private/intera_tools_description/share/intera_tools_description/cmake/intera_tools_descriptionConfig.cmake /home/albertgo/teachbot/robot/devel_cb/share/intera_tools_description/cmake/intera_tools_descriptionConfig.cmake
-/home/albertgo/teachbot/robot/devel_cb/.private/intera_tools_description/lib/pkgconfig/intera_tools_description.pc /home/albertgo/teachbot/robot/devel_cb/lib/pkgconfig/intera_tools_description.pc
