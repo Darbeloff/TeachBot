@@ -93,7 +93,7 @@ class Module():
 		rospy.Subscriber('/robot/joint_states', sensor_msgs.msg.JointState, self.forwardJointState)
 		rospy.Subscriber('/robot/limb/right/endpoint_state', intera_core_msgs.msg.EndpointState, self.forwardEndpointState)
 		rospy.Subscriber('/teachbot/camera', Bool, self.cb_camera)
-		rospy.Subscriber('/teachbot/allowCuffInteraction', Bool, self.cb_allowCuffInteraction)
+		rospy.Subscriber('/teachbot/allowCuffInteraction', Bool, self.cb_AllowCuffInteraction)
 		rospy.Subscriber('/teachbot/button', String, self.cb_Button)
 
 		# Service Servers
@@ -612,7 +612,9 @@ class Module():
 			self.GoToJointAnglesAct.set_succeeded(result)
 		else:
 			if goal.wait == True:
-				startTime = rospy.get_time()
+				# startTime = rospy.get_time()
+
+			# No matter the wait, this line of code takes time to complete. Wait is meaningless
 				goto = self.limb.go_to_joint_angles(eval(goal.name), speed_ratio=speed_ratio, ways = ways)
 
 				if goto == False:
@@ -646,7 +648,7 @@ class Module():
 					self.limb.go_to_joint_angles(default)
 
 				# while(rospy.get_time()-startTime<self.audio_duration or sum(abs(velocity) for velocity in self.limb.joint_velocities().values())>0.05):
-				while(sum(abs(velocity) for velocity in self.limb.joint_velocities().values())>0.05):	
+				while(sum(abs(velocity) for velocity in self.limb.joint_velocities().values())>0.05):
 					pass
 
 			else:
@@ -931,7 +933,7 @@ class Mode(Enum):
 ## DEFINE IMPORTANT CONSTANTS ##
 if __name__ == '__main__':
 	# Commonly used objects
-	default = [0.0, -0.78, 0.0, 1.57, 0, -0.79, 0.2]
+	default = [0.0, -0.78, 0.0, 1.57, 0, -0.79, 0.175]
 	joint_buttons = [0.0, -0.78, 0.0, 1.57, 0, -2.99, -1.37]
 
 	BIAS_SHOULDER = -0.55#-0.5
@@ -941,7 +943,7 @@ if __name__ == '__main__':
 	#shoulder_wrist_thresh = {shoulder: 1.0, wrist: 0.5}
 
 	# Joint offset angles in order to align properly
-	j6_offset = 0.2
+	j6_offset = 0.175
 
 	# Joint Names
 	shoulder = 'right_j0'
@@ -1063,21 +1065,34 @@ if __name__ == '__main__':
 	waypoints = []
 
 	# 58
-	joint_high_two = [0.0, 0.3, 0.0, -1.08, 0.0, -0.78, 0.2]
+	joint_high_two = [0.0, 0.3, 0.0, -1.08, 0.0, -0.78, 0.175]
 
 	## MODULE 2 ##
 	# init_joint_arg                = [1.133,-0.678481445312,-0.433721679687,1.33986621094,-0.763953125,-1.132484375,0.959416015625]
-	avoid_collision				  = [0.48652,-0.27409,-1.40738,1.64292,0.23778,-0.10091,0.17191]
-	fail_init_joint_arg           = [0.83073,-0.11565,-1.25283,1.24106,1.35105,1.28988,-0.27901]
-	success_pickup_box1           = [0.84542,-0.08553,-1.34804,1.27302,1.43411,1.36175,-1.82399]
+	avoid_collision				= [0.48652,-0.27409,-1.40738,1.64292,0.23778,-0.10091,0.17191]
+	fail_init_joint_arg			= [0.83073,-0.11565,-1.25283,1.24106,1.35105,1.28988,-0.27901]
+	success_pickup_box1			= [0.84542,-0.08553,-1.34804,1.27302,1.43411,1.36175,-1.82399]
 
-	above_first_bin_joint_arg     = [1.14708,0.02910,-1.40753,1.92801,1.64855,1.42886,-2.23213]
+	above_first_bin_joint_arg	= [1.14708,0.02910,-1.40753,1.92801,1.64855,1.42886,-2.23213]
 
-	above_second_box_joint_arg    = [0.67078,-0.00905,-1.43319,1.59981,1.55063,1.39695,-2.37913]
-	above_third_box_joint_arg     = [0.29264,-0.21117,-1.25342,1.56628,1.30664,1.24663,-1.04227]
-	above_fourth_box_joint_arg    = [0.49833,-0.21497,-1.28520,2.12842,1.45044,1.20956,-3.03918]
+	above_second_box_joint_arg	= [0.67078,-0.00905,-1.43319,1.59981,1.55063,1.39695,-2.37913]
+	above_third_box_joint_arg	= [0.29264,-0.21117,-1.25342,1.56628,1.30664,1.24663,-1.04227]
+	above_fourth_box_joint_arg	= [0.49833,-0.21497,-1.28520,2.12842,1.45044,1.20956,-3.03918]
 
-	camera_pos                    = [0.5832646484375, -1.301193359375, -0.193248046875, 2.0165146484375, 0.0075908203125, -0.75755078125, 0.3351982421875] # Temporary pose. This is not working yet.
-	camera_pos2					  = [0.21234375, 0.2708505859375, -1.70441796875, 1.7846484375, 1.9352724609375, -0.17507421875, -3.083966796875]
+	camera_pos2					= [0.5832646484375, -1.301193359375, -0.193248046875, 2.0165146484375, 0.0075908203125, -0.75755078125, 0.3351982421875] # Temporary pose. This is not working yet.
+	camera_pos2					= [0.21234375, 0.2708505859375, -1.70441796875, 1.7846484375, 1.9352724609375, -0.17507421875, -3.083966796875]
 
+	## MODULE 3 ##
+	m3_review_AboveBox		= [-0.45827,-0.66027,-0.50757,1.34321,0.39380,1.05853,0.76242]
+	m3_review_PickupBox		= [-0.44369,-0.50475,-0.50829,1.34190,0.43141,0.94513,0.76242]
+	m3_review_AboveBin		= [0.60657,-0.65739,-0.80892,1.46362,0.66840,1.12900,1.36374]
+	m3_review_PlaceIntoBin	= [0.60524,-0.58868,-0.65497,1.64858,0.76925,0.80487,1.36374]
+
+	m3_conveyor_initial		= [0.51250,-0.15236,1.53013,-1.97725,2.93612,-1.53143,1.64995]
+
+	m3_timing_demo_wp1		= [0.23770,-0.03536,1.53328,-1.51935,2.98259,-2.87203,1.57054]
+	m3_timing_demo_wp2		= [0.63945,-0.05757,1.55015,-1.55999,2.97681,-2.47036,1.60983]
+
+	m3_with_box_init		= [0.55841,-0.16129,1.66105,-1.58110,2.97516,0.58149,1.72997]
+	
 	Module()

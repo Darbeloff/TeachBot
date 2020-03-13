@@ -18,6 +18,6 @@ canvas_obj.style.display = 'initial';
 var ctx = canvas_obj.getContext('2d');
 canvas_obj.addEventListener('mousemove', function(evt) {
     var mousePos = getMousePos(canvas_obj, evt);
-    var message = 'Mouse position: ' + Math.round(100*mousePos.x/canvas_obj.width) + '%, ' + Math.round(100*mousePos.y/canvas_obj.height) +'%';
+    var message = 'Mouse position: ' + (100*mousePos.x/canvas_obj.width).toFixed(1) + '%, ' + (100*mousePos.y/canvas_obj.height).toFixed(1) +'%';
     writeMessage(canvas_obj, message);
 }, false);

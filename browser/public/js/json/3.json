@@ -3,14 +3,62 @@
 		"id": "intro",
 		"instructions": [
 			{
+				"type":"set",
+				"key":"index",
+				"val":0
+			},
+			{
+				"type":"while",
+				"conditional":"#index<5",
+				"instructions":[
+					{
+						"type":"log",
+						"key":"#index"
+					},
+					{
+						"type":"wait",
+						"for":"time",
+						"s":1
+					},
+					{
+						"type":"set",
+						"key":"index",
+						"val":"#index+1"
+					}
+				]
+			},
+			{
+				"type":"pause"
+			},
+			{
+				"type":"set_robot_mode",
+				"mode":"position"
+			},
+			{
 				"type":"set_graphic_mode",
-				"mode":"canvas",
+				"mode":"canvas"
+			},
+			{
+				"type":"draw",
+				"shape":"rectangle",
+				"x":20,
+				"y":60,
+				"width":11,
+				"height":10
+			},
+			{
+				"type":"draw",
+				"shape":"rectangle",
+				"x":60,
+				"y":57,
+				"width":17,
+				"height":13
 			},
 			{
 				"//":"Welcome to module 3! Today, you will learn how I interface with other automated machinery on the factory floor, even when I'm not physically connected to it.",
 				"type":"play",
 				"audio_index":0,
-				"delay":true
+				"delay":false
 			},
 			{
 				"type":"proceed",
@@ -34,6 +82,84 @@
 				"delay":true
 			},
 			{
+				"//":"First, I need to move my gripper right above the box.",
+				"type":"play",
+				"audio_index":2,
+				"delay":true
+			},
+			{
+				"type":"goToJointAngles",
+				"joint_angles":"m3_review_AboveBox",
+				"speed_ratio":0.3
+			},
+			{
+				"//":"Then, I grab and pick up the box,",
+				"type":"play",
+				"audio_index":3,
+				"delay":false
+			},
+			{
+				"type":"goToJointAngles",
+				"joint_angles":"m3_review_PickupBox",
+				"speed_ratio":0.3
+			},
+			{
+				"type":"gripper",
+				"grip":true
+			},
+			{
+				"type":"goToJointAngles",
+				"joint_angles":"m3_review_AboveBox",
+				"speed_ratio":0.3
+			},
+			{
+				"//":"And finally put it into the bin like this.",
+				"type":"play",
+				"audio_index":4,
+				"delay":false
+			},
+			{
+				"type":"goToJointAngles",
+				"joint_angles":"m3_review_AboveBin",
+				"speed_ratio":0.4
+			},
+			{
+				"type":"goToJointAngles",
+				"joint_angles":"m3_review_PlaceIntoBin",
+				"speed_ratio":0.2
+			},
+
+			{
+				"type":"gripper",
+				"grip":false
+			},
+			{
+				"type":"goToJointAngles",
+				"joint_angles":"m3_review_AboveBin",
+				"speed_ratio":0.2
+			},
+			{
+				"//":"As you saw, I moved to a sequence of positions in order to put the box into the bin.",
+				"type":"play",
+				"audio_index":5,
+				"delay":true
+			},
+			{
+				"type":"set_graphic_mode",
+				"mode":"image",
+				"location":"images/Welcome.png"
+			},
+			{
+				"//":"Today, we are going to learn a similar concept. Instead of just picking up boxes, I'm going to interact with external devices that are almost always present on a factory floor.",
+				"type":"play",
+				"audio_index":6,
+				"delay":false
+			},
+			{
+				"type":"goToJointAngles",
+				"joint_angles":"default"
+			},
+			{
 				"type":"proceed",
 				"to_section":"conveyor"
 			}
@@ -42,6 +168,90 @@
 	{
 		"id": "conveyor",
 		"instructions":[
+			{
+				"type":"goToJointAngles",
+				"joint_angles":"m3_conveyor_initial"
+			},
+			{
+				"type":"set_robot_mode",
+				"mode":"interaction ctrl",
+				"orientation_x":false,
+				"orientation_y":false,
+				"orientation_z":true,
+				"position_x":true,
+				"position_y":true,
+				"position_z":false
+			},
+			{
+				"//":"Please put the box and bin away from the table. Press the scroll wheel when you are done.",
+				"type":"play",
+				"audio_index":0,
+				"delay":false
+			},
+			{
+				"type":"wait",
+				"for":"user input"
+			},
+			{
+				"type":"set_graphic_mode",
+				"mode":"image",
+				"location":"images/conveyor_belt.png"
+			},
+			{
+				"//":"A conveyor belt is one of the most commonly used devices to transport goods and packages in a manufacturing factory. Here is what it looks like. I am going to use this equipment to teach you how I communicate with external devices.",
+				"type":"play",
+				"audio_index":1,
+				"delay":true
+			},
+			{
+				"type":"set_graphic_mode",
+				"mode":"canvas",
+				"clear":true
+			},
+			{
+				"type":"draw",
+				"shape":"conveyor_belt"
+			},
+			{
+				"type":"conveyor_belt",
+				"command":"setSpeed(0.8)"
+			},
+			{
+				"type":"conveyor_belt",
+				"command":"addBox()"
+			},
+			{
+				"type":"draw",
+				"shape":"gripper_projection"
+			},
+			{
+				"//":"Instead of an actual conveyor, I have a virtual conveyor that carries goods to my side. My gripper is projected onto the table so that I can interact with these virtual boxes.",
+				"type":"play",
+				"audio_index":2,
+				"delay":true
+			},
+			{
+				"type":"conveyor_belt",
+				"command":"stop()"
+			},
+			{
+				"type":"conveyor_belt",
+				"command":"inspectedArea()"
+			},
+			{
+				"//":"My task is to pick it up from the belt, inspect it, and place in a designated area.",
+				"type":"play",
+				"audio_index":3,
+				"delay":true
+			},
+			{
+				"type":"wait",
+				"for":"user input"
+			},
+			{
+				"type":"set_robot_mode",
+				"mode":"position"
+			},
 			{
 				"type":"proceed",
 				"to_section":"timing_based_coordination"
@@ -52,6 +262,268 @@
 		"id": "timing_based_coordination",
 		"instructions":[
 			{
+				"type":"goToJointAngles",
+				"joint_angles":"default"
+			},
+			{
+				"type":"set_graphic_mode",
+				"mode":"canvas",
+				"clear":true
+			},
+			{
+				"type":"draw",
+				"shape":"gripper_projection"
+			},
+			{
+				"type":"draw",
+				"shape":"conveyor_belt"
+			},
+			{
+				"type":"conveyor_belt",
+				"command":"timing(true,1.0,5,2,true)"
+			},
+			{
+				"//":"Let's say the conveyor belt delivers one box to me every five seconds, stops for two seconds for me to pick up the box, and then continues. No matter what I do, the conveyor belt will do this.",
+				"type":"play",
+				"audio_index":0,
+				"delay":true
+			},
+			{
+				"type":"conveyor_belt",
+				"command":"stop(true)"
+			},
+			{
+				"//":"The first one we'll talk about is purely about timing. Since I know that the conveyor belt is doing a repetitive cycle that's constantly timed, I can just use that to figure out when to grab the box, and even when to place it back if necessary. That would look something like this.",
+				"type":"play",
+				"audio_index":1,
+				"delay":true
+			},
+			{
+				"type":"conveyor_belt",
+				"command":"timing(true,1.0,5,2,true)"
+			},
+			{
+				"type":"goToJointAngles",
+				"joint_angles":"m3_timing_demo_wp1",
+				"wait":false
+			},
+			{
+				"type":"check_wait_time",
+				"action":"set",
+				"key":"wait_duration",
+				"val":1.9
+			},
+			{
+				"type":"set",
+				"key":"i",
+				"val":0
+			},
+			{
+				"type":"while",
+				"conditional":"#i<3",
+				"instructions":[
+					{
+						"type":"wait",
+						"for":"time",
+						"s":4.9
+					},
+					{
+						"type":"check_wait_time",
+						"action":"start",
+						"key":"start_time"
+					},
+					{
+						"type":"goToJointAngles",
+						"joint_angles":"m3_timing_demo_wp2"
+					},
+					{
+						"type":"gripper",
+						"grip":true
+					},
+					{
+						"type":"goToJointAngles",
+						"joint_angles":"m3_timing_demo_wp1"
+					},
+					{
+						"type":"gripper",
+						"grip":false
+					},
+					{
+						"type":"check_wait_time",
+						"action":"wait_for_completion"
+					},
+					{
+						"type":"set",
+						"key":"i",
+						"val":"#i+1"
+					}
+				]
+			},
+			{
+				"//":"This methodology is called timing based coordination.",
+				"type":"play",
+				"audio_index":2,
+				"delay":true
+			},
+			{
+				"type":"conveyor_belt",
+				"command":"stop(true)"
+			},
+			{
+				"//":"Timing based coordination is great for things like this where I know exactly the amount of time that motions will take place. But what happens if the conveyor belt moves at a different speed?",
+				"type":"play",
+				"audio_index":3,
+				"delay":true
+			},
+			{
+				"//":"Something like this would happen.",
+				"type":"play",
+				"audio_index":4,
+				"delay":true
+			},
+			{
+				"type":"conveyor_belt",
+				"command":"timing(true,1.4,3.57,2,true)"
+			},
+			{
+				"type":"check_wait_time",
+				"action":"set",
+				"key":"wait_duration",
+				"val":1.9
+			},
+			{
+				"type":"set",
+				"key":"i",
+				"val":0
+			},
+			{
+				"type":"while",
+				"conditional":"#i<3",
+				"instructions":[
+					{
+						"type":"wait",
+						"for":"time",
+						"s":4.9
+					},
+					{
+						"type":"check_wait_time",
+						"action":"start",
+						"key":"start_time"
+					},
+					{
+						"type":"goToJointAngles",
+						"joint_angles":"m3_timing_demo_wp2"
+					},
+					{
+						"type":"gripper",
+						"grip":true
+					},
+					{
+						"type":"goToJointAngles",
+						"joint_angles":"m3_timing_demo_wp1"
+					},
+					{
+						"type":"gripper",
+						"grip":false
+					},
+					{
+						"type":"check_wait_time",
+						"action":"wait_for_completion"
+					},
+					{
+						"type":"set",
+						"key":"i",
+						"val":"#i+1"
+					}
+				]
+			},
+			{
+				"type":"conveyor_belt",
+				"command":"stop(true)"
+			},
+			{
+				"//":"Or, if the boxes are delivered at a random pace, I will miss some or all boxes like how I did earlier.",
+				"type":"play",
+				"audio_index":5,
+				"delay":true
+			},
+			{
+				"type":"conveyor_belt",
+				"command":"setCommandVariable('m3_mess_box_placement', true)"
+			},
+			{
+				"type":"conveyor_belt",
+				"command":"timing(true,1,5,2,true)"
+			},
+			{
+				"type":"check_wait_time",
+				"action":"set",
+				"key":"wait_duration",
+				"val":1.9
+			},
+			{
+				"type":"set",
+				"key":"i",
+				"val":0
+			},
+			{
+				"type":"while",
+				"conditional":"#i<3",
+				"instructions":[
+					{
+						"type":"wait",
+						"for":"time",
+						"s":4.9
+					},
+					{
+						"type":"check_wait_time",
+						"action":"start",
+						"key":"start_time"
+					},
+					{
+						"type":"goToJointAngles",
+						"joint_angles":"m3_timing_demo_wp2"
+					},
+					{
+						"type":"gripper",
+						"grip":true
+					},
+					{
+						"type":"goToJointAngles",
+						"joint_angles":"m3_timing_demo_wp1"
+					},
+					{
+						"type":"gripper",
+						"grip":false
+					},
+					{
+						"type":"check_wait_time",
+						"action":"wait_for_completion"
+					},
+					{
+						"type":"set",
+						"key":"i",
+						"val":"#i+1"
+					}
+				]
+			},
+			{
+				"type":"conveyor_belt",
+				"command":"setCommandVariable('m3_mess_box_placement', false)"
+			},
+			{
+				"//":"Timing based coordination requires precise timing on the conveyor belt. Any small errors can accumulate over time and eventually lead to failure of tasks.",
+				"type":"play",
+				"audio_index":6,
+				"delay":true
+			},{
+				"type":"conveyor_belt",
+				"command":"stop()"
+			},
+			{
+				"type":"pause"
+			},
+			{
 				"type":"proceed",
 				"to_section":"event_based_coordination"
 			}
@@ -60,6 +532,235 @@
 	{
 		"id": "event_based_coordination",
 		"instructions":[
+			{
+				"type":"set_graphic_mode",
+				"mode":"canvas",
+				"clear":true
+			},
+			{
+				"type":"draw",
+				"shape":"conveyor_belt"
+			},
+			{
+				"type":"conveyor_belt",
+				"command":"pickupArea()"
+			},
+			{
+				"type":"set_robot_mode",
+				"mode":"position"
+			},
+			{
+				"type":"goToJointAngles",
+				"joint_angles":"m3_timing_demo_wp1"
+			},
+			{
+				"type":"draw",
+				"shape":"gripper_projection"
+			},
+			{
+				"//":"This problem kinds of reminds me of when I tried to move my arm to a target in Module 1 and missed the target. Because I didn't listen closely to feedback I was receiving, I would miss the target.",
+				"type":"play",
+				"audio_index":0,
+				"delay":false
+			},
+			{
+				"//":"A similar problem happened here. Because the conveyor belt isn't communicating with me at all, I have to guess when the conveyor belt has placed a box in front of me.",
+				"type":"play",
+				"audio_index":1,
+				"delay":false
+			},
+			{
+				"//":"Just like when I 'closed the loop by' listening to my encoders and correct my arm position, I'm going to need to communicate with the conveyor belt so that I know when a box is ready for me to pick up.",
+				"type":"play",
+				"audio_index":2,
+				"delay":false
+			},
+			{
+				"//":"For now, can you tell me when to start? When you see a box in the designated pickup area, press the scroll wheel button.",
+				"type":"play",
+				"audio_index":3,
+				"delay":false
+			},
+			{
+				"type":"conveyor_belt",
+				"command":"timing(true,1,5,2,true)"
+			},
+			{
+				"type":"conveyor_belt",
+				"command":"setCommandVariable('m3_mess_belt_speed',true)"
+			},
+			{
+				"type":"set",
+				"key":"success_trials",
+				"val":0
+			},
+			{
+				"type":"set",
+				"key":"i",
+				"val":0
+			},
+			{
+				"type":"while",
+				"conditional":"#i<4",
+				"instructions":[
+					{
+						"type":"buttons"
+					},
+					{
+						"type":"goToJointAngles",
+						"joint_angles":"m3_timing_demo_wp2"
+					},
+					{
+						"type":"gripper",
+						"grip":true
+					},
+					{
+						"type":"goToJointAngles",
+						"joint_angles":"m3_timing_demo_wp1"
+					},
+					{
+						"type":"set",
+						"key":"flag",
+						"val":"GP.grabbedBox"
+					},
+					{
+						"type":"if",
+						"conditional":"#flag==true",
+						"if_true":[
+							{
+								"//":"Keep it going! You're doing great!",
+								"type":"play",
+								"audio_index":4,
+								"delay":false
+							},
+							{
+								"type":"set",
+								"key":"success_trials",
+								"val":"#success_trials+1"
+							}
+						],
+						"if_false":[
+							{
+								"//":"Don't worry, let's try again!",
+								"type":"play",
+								"audio_index":5,
+								"delay":false
+							}
+						]
+					},
+					{
+						"type":"gripper",
+						"grip":false
+					},
+					{
+						"type":"set",
+						"key":"i",
+						"val":"#i+1"
+					}
+				]
+			},
+			{
+				"//":"So, as you can see, this kind of planning works a lot better when there's some inconsistency with the motions I'm dealing with. This methodology is called event based coordination.",
+				"type":"play",
+				"audio_index":6,
+				"delay":true
+			},
+			{
+				"type":"conveyor_belt",
+				"command":"stop(true)"
+			},
+			{
+				"//":"That said, it wouldn't be good if I relied on a human operator to just tell me when the box is ready for pickup.",
+				"type":"play",
+				"audio_index":7,
+				"delay":true
+			},
+			{
+				"//":"Let me try to communicate directly with the conveyor belt. Whenever it carries an object to the pickup area, it sends me a message and turns on the red light.",
+				"type":"play",
+				"audio_index":8,
+				"delay":true
+			},
+			{
+				"type":"conveyor_belt",
+				"command":"timing(true,1,5,2,true)"
+			},
+			{
+				"type":"conveyor_belt",
+				"command":"light()"
+			},
+			{
+				"//":"After the conveyor belt sends a message to me, it waits for me to pick up the box before turning off the red light and brings the next box.",
+				"type":"play",
+				"audio_index":9,
+				"delay":true
+			},
+			{
+				"//":"On my end, after receiving the message, I will pick up the box and send a message back to the conveyor to tell it that I've picked up the box.",
+				"type":"play",
+				"audio_index":10,
+				"delay":true
+			},
+			{
+				"//":"Then, I can inspect the box, place it in the designated area, and move on to the next box. The whole process looks something like this:",
+				"type":"play",
+				"audio_index":11,
+				"delay":true
+			},
+			{
+				"type":"conveyor_belt",
+				"command":"pickupArea()"
+			},
+			{
+				"type":"conveyor_belt",
+				"command":"setSpeed(1)"
+			},
+			{
+				"type":"goToJointAngles",
+				"joint_angles":"m3_timing_demo_wp2"
+			},
+			{
+				"type":"gripper",
+				"grip":true
+			},
+			{
+				"type":"goToJointAngles",
+				"joint_angles":"m3_timing_demo_wp1"
+			},
+			{
+				"type":"gripper",
+				"grip":true
+			},
+			{
+				"//":"In this process, each device, including myself, can have two states: ready and busy.",
+				"type":"play",
+				"audio_index":12,
+				"delay":true
+			},
+			{
+				"//":"When the conveyor belt turns on the red light and waits for me to grab the box, it is at the ready state. Otherwise, it is busy since the box is not ready for pick up yet.",
+				"type":"play",
+				"audio_index":13,
+				"delay":true
+			},
+			{
+				"//":"For me, the ready state means that I can pick up a box from the conveyor belt. While inspecting the box, I am in the busy state.",
+				"type":"play",
+				"audio_index":14,
+				"delay":true
+			},
+			{
+				"//":"Let me show the status of both me and the conveyor. Notice how they change during the operation.",
+				"type":"play",
+				"audio_index":15,
+				"delay":true
+			},
+			{
+				"//":"The key here is that a sequence should be followed, like how I tried to put a box into a bin. I cannot pick up a box before the conveyor belt tells me that it is ready.",
+				"type":"play",
+				"audio_index":16,
+				"delay":true
+			},
 			{
 				"type":"proceed",
 				"to_section":"end"
@@ -70,7 +771,7 @@
 		"id":"end",
 		"instructions":[
 			{
-				"type":"pasue"
+				"type":"pause"
 			}
 		]
 	}

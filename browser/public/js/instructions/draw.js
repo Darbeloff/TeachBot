@@ -22,6 +22,10 @@ Module.prototype.draw = function(instr, instructionAddr) {
 			checkInstruction(instr, ['x1', 'y1', 'x2', 'y2', 'x3', 'y3', 'ccw'], instructionAddr);
 			break;
 
+		case 'rectangle':
+			checkInstruction(instr, ['x', 'y', 'width', 'height'], instructionAddr);
+			break;
+
 		case 'conveyor_belt':
 			checkInstruction(instr, [], instructionAddr);
 			break;

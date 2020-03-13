@@ -1,9 +1,7 @@
 Let's say the conveyor belt delivers one box to me every five seconds, stops for two seconds for me to pick up the box, and then continues. No matter what I do, the conveyor belt will do this.
-The first one we'll talk about is purely about timing. Since I know that the conveyor belt is doing a repetitive cycle that's constantly timed, I can just use that to figure out when to grab the box, and even when to place it back if necessary. That would look something like this.
+The first one we'll talk about is purely about timing. Since I know that the conveyor belt is doing a repetitive cycle that's constantly timed, I can just use that to figure out when to grab the box. That would look something like this.
 This methodology is called timing based coordination.
-Timing based coordination is great for things like this where I know exactly the amount of time that motions will take place. But what happens if the timing gets messed up, even by a small amount?
+Timing based coordination is great for things like this where I know exactly the amount of time that motions will take place. But what happens if the conveyor belt moves at a different speed?
 Something like this would happen.
-Can you fix this by changing the amount of time I should wait before attempting to grab the box? Currently, it is set to wait for 5 seconds. Turn the scroll wheel to change the amount and press it when you are done.
-Thanks, now let me try.
-It seems like this one isn't working well. Can you tell me a different time?
-Hmmm. There seems to be no perfect timing for all of the boxes being dispensed.
+Or, if the boxes are delivered at a random pace, I will miss some or all boxes like how I did earlier.
+Timing based coordination requires precise timing on the conveyor belt. Any small errors can accumulate over time and eventually lead to failure of tasks.

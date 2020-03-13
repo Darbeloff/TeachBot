@@ -38,25 +38,23 @@
 <body>
 
 	<div id="display_container">
-		<!-- Canvas -->
 		<canvas id="canvas_obj" style="border:1px solid #d3d3d3;"></canvas>
 		
 	</div>
 
-	<button onclick="conveyor.stop()">Stop</button>
-	<button onclick="conveyor.resume()">Resume</button>
+	<button onclick="conveyor.stop(true)">Stop</button>
 	<button onclick="conveyor.changeSpeed(0.1)">Down</button>
 	<button onclick="conveyor.changeSpeed(-0.1)">Up</button>
-	<button onclick="conveyor.setSpeed(3)">3</button>
+	<button onclick="conveyor.setSpeed(2)">2</button>
 	<button onclick="conveyor.setSpeed(-3)">-3</button>
 	||
 	<button onclick="conveyor.addBox(true)">Add a box</button>
+	<button onclick="conveyor.removeBox()">Remove last box</button>
 	<button onclick="conveyor.pickupArea()">pickup area</button>
-	<button onclick="conveyor.ignorebox()">Ignore?</button>
 
 	<br>
-	<button onclick="openGripper(m)">Open</button>
-	<button onclick="closeGripper(m)">Close</button>
+	<button onclick="conveyor.light(); conveyor.setCommandVariable('m3_mess_belt_speed', true); conveyor.timing(true,1,5,2,true);">T on</button>
+	<button onclick="conveyor.light(); conveyor.setCommandVariable('m3_mess_belt_speed', false); conveyor.timing(false);">T off</button>
 	<button onclick="enableCuffInteraction()">allow cuff</button>
 	<button onclick="disableCuffInteraction()">disable cuff</button>
 

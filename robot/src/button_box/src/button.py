@@ -23,7 +23,7 @@ from sawyer.msg import *
 
 class ButtonClient():
 	def __init__(self):
-		rospy.init_node('client', anonymous=True)
+		rospy.init_node('client', anonymous=True)	
 
 		self.pressed = False
 		self.button  = None
@@ -35,23 +35,23 @@ class ButtonClient():
 		self.ButtonPressAct = actionlib.SimpleActionServer('/teachbot/ButtonSend', ButtonSendAction, execute_cb=self.cb_buttonPress, auto_start=True)
 
 		#Connect to the arduino serial port
-		self.arduino = serial.Serial("/dev/ttyACM0", 9600)
+		self.arduino = serial.Serial("/dev/ttyACM0", 9600, timeout=0.3)
 		rospy.loginfo('Connected to Arduino')
 
 		#Constantly listen for any buttons that are pressed throughout
 		r = rospy.Rate(10)
 		while not rospy.is_shutdown():
+
 			button_raw = str(self.arduino.readline())
 
 			#Split the serial line readout and take the first item
 			self.button = re.split(": |\r|\n", button_raw)[0]
-			if self.button != 'start' and self.button != 'On' and self.button != 'Off':
+			if self.button!='' and self.button != 'start' and self.button != 'On' and self.button != 'Off':
 				rospy.loginfo('Publishing...')
 				self.button_topic.publish(self.button)
-			if self.button != "start":
+			if self.button!='' and self.button != "start":
 				self.pressed = True
 				self.send_buttonInfo()
-
 			r.sleep()
 
 	def cb_buttonPress(self, goal):

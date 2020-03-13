@@ -81,7 +81,7 @@ Module.prototype.wait = async function(instr, instructionAddr) {
 
 			case 'time':
 				checkInstruction(instr, ['s'], instructionAddr);
-				setTimeout(() => { resolve(); }, 1000*instr.s);
+				setTimeout(() => { resolve(); }, self.hashTokeyVal(instr.s)*1000);
 				break;
 
 			case 'custom':

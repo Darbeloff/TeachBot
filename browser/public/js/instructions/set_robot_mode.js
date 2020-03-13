@@ -49,5 +49,5 @@ Module.prototype.set_robot_mode = function(instr, instructionAddr) {
 
 	this.robot_mode = req;
 
-	this.SetRobotModeSrv.callService(new ROSLIB.ServiceRequest(req), result => {  });
+	return new Promise ((resolve, reject)=>{this.SetRobotModeSrv.callService(new ROSLIB.ServiceRequest(req), result => { resolve(); })});
 };

@@ -9,16 +9,124 @@
 				"delay":false
 			},
 			{
-				"type":"draw",
-				"shape":"conveyor_belt"
-			},
-			{
 				"type":"set_graphic_mode",
 				"mode":"canvas"
 			},
 			{
 				"type":"draw",
+				"shape":"conveyor_belt"
+			},
+			{
+				"type":"conveyor_belt",
+				"command":"pickupArea()"
+			},
+			{
+				"type":"conveyor_belt",
+				"command":"inspectedArea()"
+			},
+			{
+				"type":"conveyor_belt",
+				"command":"light()"
+			},
+			{
+				"type":"conveyor_belt",
+				"command":"setSpeed(2)"
+			},
+			{
+				"type":"draw",
 				"shape":"gripper_projection"
+			},
+			{
+				"type":"goToJointAngles",
+				"joint_angles":"m3_timing_demo_wp1"
+			},
+			{
+				"type":"set_robot_mode",
+				"mode":"position"
+			},
+			{
+				"type":"gripper",
+				"grip":false
+			},
+			{
+				"type":"set",
+				"key":"i",
+				"val":0
+			},
+			{
+				"type":"while",
+				"conditional":"#i<1000",
+				"instructions":[
+					{
+						"type":"buttons"
+					},
+					{
+						"type":"goToJointAngles",
+						"joint_angles":"m3_timing_demo_wp2"
+					},
+					{
+						"type":"gripper",
+						"grip":true
+					},
+					{
+						"type":"goToJointAngles",
+						"joint_angles":"m3_timing_demo_wp1"
+					},
+					{
+						"type":"set",
+						"key":"flag",
+						"val":"GP.grabbedBox"
+					},
+					{
+						"type":"if",
+						"conditional":"#flag==true",
+						"if_true":[
+							{
+								"type":"goToJointAngles",
+								"joint_angles":"m3_with_box_init"
+							},
+							{
+								"type":"set_robot_mode",
+								"mode":"interaction ctrl",
+								"orientation_x":false,
+								"orientation_y":false,
+								"orientation_z":false,
+								"position_x":true,
+								"position_y":true,
+								"position_z":false
+							},
+							{
+								"type":"buttons"
+							},
+							{
+								"type":"gripper",
+								"grip":false
+							},
+							{
+								"type":"set_robot_mode",
+								"mode":"position"
+							},
+							{
+								"type":"goToJointAngles",
+								"joint_angles":"m3_timing_demo_wp1"
+							}
+						],
+						"if_false":[
+							{
+								"type":"buttons"
+							},
+							{
+								"type":"gripper",
+								"grip":false
+							}
+						]
+					},
+					{
+						"type":"set",
+						"key":"i",
+						"val":"#i+1"
+					}
+				]
 			},
 			{
 				"type": "pause"

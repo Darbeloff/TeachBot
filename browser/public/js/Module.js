@@ -243,6 +243,9 @@ function Module(module_num, main, content_elements) {
 }
 
 // Callbacks
+Module.prototype.cb_testing = function(msg) {
+	console.log(msg);
+}
 Module.prototype.positionCallback = function(msg) {
 	for (let j=0; j<Object.keys(msg).length; j++) {
 		self.dictionary[`JOINT_POSITION_${j}`] = msg[`j${j}`];
@@ -654,7 +657,7 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 	if (this.thisSection === undefined) {
 		throw `There is no section with id ${instructionAddr[0]}`;
 	}
- 
+
 	var instructions = this.thisSection.instructions;
 	this.instructionSets = [JSONcopy(instructions)];
 
@@ -686,14 +689,43 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 	} else {
 		switch(instr.type) {
 			case 'pause':
-
-				console.log("module paused here.")
-				// self.start(self.getNextAddress(instructionAddr));
-
+				console.log(`module paused at instruction ${instructionAddr[1]}.`)
 				break;
 
-			// case 'shadow':
+			case 'log':
+				console.log(self.hashTokeyVal(instr.key));
+				this.start(this.getNextAddress(instructionAddr));
+				break;
 
+			case 'GPB':
+				console.log(GP.grabbedBox)
+				this.start(this.getNextAddress(instructionAddr));
+				break;
+
+			case 'check_wait_time':
+				checkInstruction(instr, ['action'], instructionAddr);
+				switch(instr.action) {
+					case 'set':
+						if (typeof instr.val === 'string') {
+							this.dictionary[instr.key] = eval(this.hashTokeyVal(instr.val));
+						} else {
+							this.dictionary[instr.key] = instr.val;
+						}
+						break;
+					case 'start':
+						this.dictionary[instr.key] = new Date().getTime();
+						break;
+					case 'wait_for_completion':
+						var remaining_wait = this.dictionary['wait_duration'] - (new Date().getTime()-this.dictionary['start_time'])*1000;
+						await new Promise(r => setTimeout(r, remaining_wait)).then((msg) => { 
+							console.log(new Date().getTime()-this.dictionary['start_time'])
+						});
+						break;
+				}
+				this.start(this.getNextAddress(instructionAddr));
+				break;
+
+			// case 'shadow': (typeof instr.val === 'string') {
 			// 	const Kx = 72.73;
 			// 	const bx = 51.45;
 			// 	const Ky = 157.89;
@@ -760,6 +792,7 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 				if (this.drawings.filter(drawing => drawing.shape=='conveyor_belt').length==0) {
 					throw "Drawings array does not contain a conveyor belt! Use 'draw' command first.";
 				}
+				checkInstruction(instr, ['command'], instructionAddr);
 				try {
 				 	eval('conveyor.'+instr.command);
 				} catch(error) {
@@ -884,6 +917,7 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 				});
 
 				goal_ButtonPress.on('result', function(result) {
+					console.log("should move forward.")
 					if (VERBOSE) console.log(self.button)
 					self.start(self.getNextAddress(instructionAddr));
 				});
@@ -1164,31 +1198,81 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 				break;
 
 			case 'gripper':
-				checkInstruction(instr, ['grip'], instructionAddr);
+				// checkInstruction(instr, ['grip'], instructionAddr);
 
-				var goal_Gripper = new ROSLIB.Goal({
-					actionClient: this.GripperAct,
-					goalMessage:{grip: instr.grip}
-				});
-				goal_Gripper.on('result', function(result){
-					self.start(self.getNextAddress(instructionAddr));
-				});
-				goal_Gripper.send();
+				if (instr.hasOwnProperty('button_control')) {
+					this.button_topic.subscribe(async function(message) {
+						var value = parseInt(message.data)
+						if (value==2){
+							if (VERBOSE) console.log('Closing the gripper.');
+							var goal_Gripper = new ROSLIB.Goal({
+								actionClient: self.GripperAct,
+								goalMessage:{grip: true}
+							});
+							goal_Gripper.send();
+
+						} else if (value==3) {
+							if (VERBOSE) console.log('Closing the gripper.');
+							var goal_Gripper = new ROSLIB.Goal({
+								actionClient: self.GripperAct,
+								goalMessage:{grip: false}
+							});
+							goal_Gripper.send();
+
+						} else if (value==8){
+							if (VERBOSE) console.log('Received indication to advance');
+							self.button_topic.unsubscribe();
+							self.button_topic.removeAllListeners();
+							self.start(self.getNextAddress(instructionAddr));
+						} else {
+							console.log(`Button ${value} is not programmed in gripper mode.`);
+						}
+					});
+				} else {
+					var goal_Gripper = new ROSLIB.Goal({
+						actionClient: this.GripperAct,
+						goalMessage:{grip: instr.grip}
+					});
+					goal_Gripper.on('result', function(result){
+						self.start(self.getNextAddress(instructionAddr));
+					});
+					goal_Gripper.send();
+				}
 
 				break;
 
 			case 'goToJointAngles':
 				checkInstruction(instr, ['joint_angles'], instructionAddr);
 
-				// Format goal.
 				var goal;
-				if (instr.hasOwnProperty('speed_ratio')) {
-					goal = this.getGoToGoal(instr.joint_angles, instr.speed_ratio);
-				} else if (instr.hasOwnProperty('wait')){
-					goal = this.getGoToGoal(instr.joint_angles, 0, instr.wait);
+				if (instr.hasOwnProperty('wait')) {
+					if (instr.wait==false) {
+						goal = this.getGoToGoal(instr.joint_angles, 0, instr.wait);
+						goal.send();
+						console.log('before next add')
+						self.start(self.getNextAddress(instructionAddr));
+						break;
+					} else {
+						goal = this.getGoToGoal(instr.joint_angles, 0, instr.wait);
+					}
 				} else {
-					goal = this.getGoToGoal(instr.joint_angles);
+					if (instr.hasOwnProperty('speed_ratio')) {
+						goal = this.getGoToGoal(instr.joint_angles, instr.speed_ratio);
+					} else {
+						goal = this.getGoToGoal(instr.joint_angles);
+					}
 				}
+
+				// OLD VERSION, before fixing wait functionality.
+				// // Format goal.
+				// var goal;
+				// if (instr.hasOwnProperty('speed_ratio')) {
+				// 	goal = this.getGoToGoal(instr.joint_angles, instr.speed_ratio);
+				// } else if (instr.hasOwnProperty('wait')){
+				// 	goal = this.getGoToGoal(instr.joint_angles, 0, instr.wait);
+				// } else {
+				// 	goal = this.getGoToGoal(instr.joint_angles);
+				// }
 
 				// When the motion is completed, move to the next instruction.
 				goal.on('result', function(result) {
@@ -1528,8 +1612,9 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 				break;
 
 			case 'set_robot_mode':
-				this.set_robot_mode(instr, instructionAddr);
-				this.start(this.getNextAddress(instructionAddr));
+				this.set_robot_mode(instr, instructionAddr).then((msg)=>{
+					this.start(this.getNextAddress(instructionAddr));
+				});
 				break;
 
 			case 'show_camera':
