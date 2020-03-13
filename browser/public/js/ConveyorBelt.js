@@ -70,7 +70,7 @@ function ConveyorBelt(module_obj) {
 	this.status_light = 0; // 0:disabled; -1:off; 1:on
 
 	// Ready/Busy states
-	this.rb_conveyor = true;
+	this.rb_conveyor = false;
 	this.ready_conveyor = false;
 
 	// Temporary variables for testing stuff
@@ -392,6 +392,13 @@ ConveyorBelt.prototype.light = function() {
 
 ConveyorBelt.prototype.readyBusy = function() {
 	this.rb_conveyor = !this.rb_conveyor;
+	GP.display_rb = !GP.display_rb;
+}
+
+// This function changes the state of robot. It is implemented in the conveyor belt file
+// because GripperProjection does not have an instruction case that executes a command.
+ConveyorBelt.prototype.robotReady = function(state) {
+	GP.robot_ready = state;
 }
 
 var conveyor = new ConveyorBelt(m);

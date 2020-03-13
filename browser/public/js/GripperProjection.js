@@ -19,6 +19,10 @@ function GripperProjection (module_obj) {
 	this.box_held_coord_global = [];
 	this.boxes_floor = [];
 
+	// Ready/busy
+	this.display_rb = false;
+	this.robot_ready = false;
+
 	self_GP = this;
 }
 
@@ -103,6 +107,18 @@ GripperProjection.prototype.update = async function(module_obj) {
 		module_obj.ctx.fill();
 		module_obj.ctx.stroke();
 	}
+
+	if (conveyor.print) {console.log(this.display_rb)}
+	if (this.display_rb) {
+		module_obj.ctx.fillStyle = 'black';
+		var font_num = Math.round(4*module_obj.cw);
+		module_obj.ctx.font = font_num.toString() + "px Arial";
+		if (this.robot_ready) {
+			module_obj.ctx.fillText('ready',45*module_obj.cw,13*module_obj.ch);
+		} else {
+			module_obj.ctx.fillText('busy',45*module_obj.cw,13*module_obj.ch);
+		}
+	}
 	
 }
 
@@ -117,8 +133,6 @@ GripperProjection.prototype.checkBox = function(module_obj, conveyor_belt) {
 	module_obj.ctx.fillStyle = 'green';
 	module_obj.ctx.fill();
 	module_obj.ctx.stroke();
-
-	if(conveyor_belt.print) {console.log(this.grabbedBox)}
 
 	if (grip_orig_x!==NaN && grip_orig_y!==NaN) {
 		conveyor_belt.boxes.forEach(function (item, index) {
@@ -199,6 +213,10 @@ GripperProjection.prototype.GripperStatus = function(signal) {
 	// signal[2].data returns '[true]' if the gripper is open.
 	this.grip_status = signal[0].data=='[true]' ? 'closed' : 'open';
 	console.log('Gripper is ' + this.grip_status);
+}
+
+GripperProjection.prototype.displayRB = function() {
+	this.display_rb = !this.display_rb;
 }
 
 // All below for testing only. Will be deprecated.

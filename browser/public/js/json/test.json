@@ -33,6 +33,10 @@
 				"command":"setSpeed(2)"
 			},
 			{
+				"type":"conveyor_belt",
+				"command":"readyBusy()"
+			},
+			{
 				"type":"draw",
 				"shape":"gripper_projection"
 			},
@@ -58,7 +62,15 @@
 				"conditional":"#i<1000",
 				"instructions":[
 					{
+						"type":"conveyor_belt",
+						"command":"robotReady(true)"
+					},
+					{
 						"type":"buttons"
+					},
+					{
+						"type":"conveyor_belt",
+						"command":"robotReady(false)"
 					},
 					{
 						"type":"goToJointAngles",
