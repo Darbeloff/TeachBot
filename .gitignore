@@ -65,3 +65,5 @@ teachbot_ws/devel
 robot/src/universal_robot
 robot/src/Universal_Robots_ROS_Driver
 robot/start.sh
+robot/src/src/
+robot/src/ur/my_robot_calibration.yaml
