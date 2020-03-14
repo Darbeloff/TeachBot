@@ -14,83 +14,57 @@ Module.prototype.write_program = function(instr, instructionAddr) {
 	this.free_mode = false
 	this.program = [];
 
-	display_choices(m.ctx, ['Open Gripper','Close Gripper','Free Mode', 'Done', 'Remove Choice'], multi_choice_url);
+	display_choices(m.ctx, ['Toggle Gripper','Toggle Free Mode','Set Waypoint', 'Done', 'Remove Choice'], multi_choice_url);
 
 	this.button_topic.subscribe(async function(message) {
 		if (VERBOSE) console.log('Pressed: ' + message.data);
 
-		if (self.free_mode) {
-			console.log('entering position mode')
-			display_choices(m.ctx, ['Open Gripper','Close Gripper','Free Mode', 'Done', 'Remove Choice'], multi_choice_url, code=true, self.program, 10, 80);
-			var current_pos = [];
-			for (let j=0; j<JOINTS; j++) {
-				current_pos[j] = self.dictionary[`JOINT_POSITION_${j}`];
-			}
-			self.set_robot_mode({
-				'mode':'position', 
-				'ways':true}, instructionAddr);
-			self.free_mode = false
-		} else {
-			switch (parseInt(message.data)) {
-				case 5: 	// Done
-					console.log(self.program)
-					self.button_topic.unsubscribe();
-					self.button_topic.removeAllListeners();
-					self.displayOff(true);
-					self.start(self.getNextAddress(instructionAddr));
-					break;
+		switch (parseInt(message.data)) {
+			case 5: 	// Done
+				console.log(self.program)
+				self.button_topic.unsubscribe();
+				self.button_topic.removeAllListeners();
+				self.displayOff(true);
+				self.start(self.getNextAddress(instructionAddr));
+				break;
 
-				case 2: 	// Open Gripper
-					self.program.push('Open Gripper')
-					var goal_Gripper = new ROSLIB.Goal({
-						actionClient: self.GripperAct,
-						goalMessage:{grip: false}
-					});
-					goal_Gripper.on('result', function(result){
-						display_choices(m.ctx, ['Open Gripper','Close Gripper','Free Mode', 'Done', 'Remove Choice'], multi_choice_url, code=true, self.program, 10, 80);
-					});
-					goal_Gripper.send();
-					break;
+			case 2: 	// Blue: Toggle Gripper
+				self.program.push('Toggle Gripper')
+				await self.gripper(!self.gripper_closed);
+				break;
 
-				case 3: 	// Close Gripper
-					self.program.push('Close Gripper')
-					var goal_Gripper = new ROSLIB.Goal({
-						actionClient: self.GripperAct,
-						goalMessage:{grip: true}
-					});
-					goal_Gripper.on('result', function(result){
-						display_choices(m.ctx, ['Open Gripper','Close Gripper','Free Mode', 'Done', 'Remove Choice'], multi_choice_url, code=true, self.program, 10, 80);
-					});
-					goal_Gripper.send();
-					break;
-
-				case 4: 	// Set Waypoint
-					console.log('entering free mode')
+			case 3: 	// Black: Toggle Free Mode
+				if (self.free_mode) {
+					self.set_robot_mode({'mode': 'position'});
+				} else {
 					self.set_robot_mode({
-						'mode':'interaction ctrl', 
-						'position_only':false, 
-						'position_x': true,
-						'position_y': true,
-						'position_z': true,
-						'orientation_x': true,
-						'orientation_y': true,
-						'orientation_z': true,
-						'in_end_point_frame': false}, instructionAddr);
-				
-					self.ctx.clearRect(0,0,100*self.cw,100*self.ch);
-					canvas_container.style.display = 'initial';
-					self.free_mode = true;
-					break;
+					'mode':'interaction ctrl', 
+					'position_only':false, 
+					'position_x': true,
+					'position_y': true,
+					'position_z': true,
+					'orientation_x': true,
+					'orientation_y': true,
+					'orientation_z': true,
+					'in_end_point_frame': false}, instructionAddr);
+				}
+				break;
 
-				case -1: 	// Rm Command
-					self.program.pop()
-					display_choices(m.ctx, ['Open Gripper','Close Gripper','Free Mode', 'Done', 'Remove Choice'], multi_choice_url, code=true, self.program, 10, 80);
-					break;
+			case 4: 	// Yellow: Set Waypoint
+				var current_pos = [];
+				for (let j=0; j<JOINTS; j++) {
+					current_pos[j] = self.dictionary[`JOINT_POSITION_${j}`];
+				}
+				self.program.push(current_pos);
+				break;
 
-				default:
-					console.log('No Support for this button');
-					break;
-			}
+			case -1: 	// Minus: Rm Command
+				self.program.pop()
+				break;
+
+			default:
+				console.log('No Support for this button');
+				break;
 		}
 	});
 }

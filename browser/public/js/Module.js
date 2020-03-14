@@ -2,8 +2,6 @@
 const DIR = 'https://localhost:8000/';    // Directory containing resources
 const JOINTS = 7;                         // Numer of joints in Sawyer arm
 const VERBOSE = true;                     // Whether or not to print everything
-const BUTTON = {'back': 0, 'show': 1, 'circle': 2, 'square': 3, 'triangle': 4};
-// const ROBOT = 'sawyer';
 const ROBOT = 'sawyer';
 const ARDUINO = 'button_box';
 
@@ -38,7 +36,8 @@ function Module(module_num, main, content_elements) {
 	this.canvas_frame_req;													// Animation frame request. See: set_graphic_mode().
 	this.button = 'none';
 	this.program = [];
-	this.free_mode = false
+	this.free_mode = false;
+	this.gripper_closed = false;
 	
 	// Initialize self to module for use in event callbacks
 	self = this;
@@ -421,6 +420,28 @@ Module.prototype.getGoToGoal = function(joint_angles, speed_ratio=0, wait=false)
 	return new ROSLIB.Goal({
 		actionClient: self.GoToJointAnglesAct,
 		goalMessage: goalMessage
+	});
+}
+
+/**
+ * Open or close the gripper.
+ *
+ * When the returned object is sent, the robot should open or close its gripper.
+ *
+ * @param  {bool}   grip    true to close the gripper, false to open.
+ * @return {object}         Promise that resolves when the gripper has completed the action.
+ */
+Module.prototype.gripper = function(grip) {
+	return new Promise( (resolve, reject) => {
+		var goal_Gripper = new ROSLIB.Goal({
+			actionClient: this.GripperAct,
+			goalMessage:{grip: grip}
+		});
+		goal_Gripper.on('result', function(result){
+			self.gripper_closed = grip;
+			resolve();
+		});
+		goal_Gripper.send();
 	});
 }
 
@@ -969,14 +990,8 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 			case 'gripper':
 				checkInstruction(instr, ['grip'], instructionAddr);
 
-				var goal_Gripper = new ROSLIB.Goal({
-					actionClient: this.GripperAct,
-					goalMessage:{grip: instr.grip}
-				});
-				goal_Gripper.on('result', function(result){
-					self.start(self.getNextAddress(instructionAddr));
-				});
-				goal_Gripper.send();
+				await this.gripper(instr.grip);
+				this.start(self.getNextAddress(instructionAddr));
 
 				break;
 
