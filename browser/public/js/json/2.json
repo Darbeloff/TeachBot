@@ -7,6 +7,10 @@
 				"joint_angles":"above_fourth_box_joint_arg"
 			},
 			{
+				"type":"gripper",
+				"grip":false
+			},
+			{
 				"type":"write_program"
 			},
 			{
@@ -21,23 +25,6 @@
 				"clear":true
 			},
 			{
-				"type":"draw",
-				"shape":"rectangle",
-				"x":58,
-				"y":69,
-				"width":11,
-				"height":10,
-				"rotate":90
-			},
-			{
-				"type":"draw",
-				"shape":"rectangle",
-				"x":19,
-				"y":67,
-				"width":17,
-				"height":19
-			},
-			{
 				"type":"adjustPoseBy",
 				"geometry":"position",
 				"axis":"z",
@@ -46,6 +33,10 @@
 			{
 				"type":"goToJointAngles",
 				"joint_angles":"above_fourth_box_joint_arg"
+			},
+			{
+				"type":"gripper",
+				"grip":false
 			},
 			{
 				"//":"7: Can you please put Box 2 in its original position? Press any button on the box once you've done so. ",

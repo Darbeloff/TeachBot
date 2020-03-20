@@ -10,7 +10,6 @@
 
 function display_choices(ctx_in, choices_arr, multi_choice_url, code=false, program_arr = [], x= 0 ,y= 0) {
     let cw = ctx_in.canvas.width;
-    console.log("displaying choices")
     var imgb = new Image();
 
     imgb.onload = function(){
@@ -27,8 +26,6 @@ function display_choices(ctx_in, choices_arr, multi_choice_url, code=false, prog
         var img_scale = .9
         var img_height = ctx_in.canvas.height*img_scale;
         font_size = img_height / 20;
-        console.log("font" + font_size);
-        console.log(img_scale);
         var img_width =  780/425*img_height;
         var scale = img_height/425
         ctx_in.drawImage(imgb, ctx_in.canvas.width/2 - img_width/2,ctx_in.canvas.height/2 - img_height/2, width = img_width, height = img_height);
@@ -37,7 +34,6 @@ function display_choices(ctx_in, choices_arr, multi_choice_url, code=false, prog
         ctx_in.fillStyle = "#373737";
         ctx_in.strokeStyle = '#333333';
         for (let c=0; c<choices_arr.length; c++) {
-            console.log("hello")
             ctx_in.lineWidth = 2;
             ctx_in.fillText(choices_arr[c], ctx_in.canvas.width/2  - img_width/2 + (choice_x_pos[c] )*img_height/425, ctx_in.canvas.height/2-img_height/2 + (choice_y_pos[c] ) * img_height/425);
             ctx_in.beginPath(); 

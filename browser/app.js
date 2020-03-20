@@ -33,7 +33,7 @@ app.use('/css', css);
 
 //app.get all the teachbot required files
 app.get('/', function(req, res) {
-  res.sendFile(path.join(__dirname + '/public/html/home.html'));
+  res.sendFile(path.join(__dirname + '/public/html/2.html'));
 })
 app.get('/home', function(req, res) {
   res.sendFile(path.join(__dirname + '/public/html/home.html'));

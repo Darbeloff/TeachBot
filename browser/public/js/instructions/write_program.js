@@ -36,6 +36,7 @@ Module.prototype.write_program = function(instr, instructionAddr) {
 			case 3: 	// Black: Toggle Free Mode
 				if (self.free_mode) {
 					self.set_robot_mode({'mode': 'position'});
+					self.free_mode = false;
 				} else {
 					self.set_robot_mode({
 					'mode':'interaction ctrl', 
@@ -47,6 +48,7 @@ Module.prototype.write_program = function(instr, instructionAddr) {
 					'orientation_y': true,
 					'orientation_z': true,
 					'in_end_point_frame': false}, instructionAddr);
+					self.free_mode = true;
 				}
 				break;
 
