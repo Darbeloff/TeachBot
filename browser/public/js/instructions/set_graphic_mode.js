@@ -24,7 +24,7 @@ Module.prototype.set_graphic_mode = function(instr, instructionAddr) {
 			if (instr.hasOwnProperty('location')) {
 				image.src = DIR + instr.location;
 			}
-			image.style.display = 'initial';
+			image.style.display = 'block';
 
 
 			break;
@@ -114,17 +114,16 @@ Module.prototype.set_graphic_mode = function(instr, instructionAddr) {
 			canvas_obj.style.display = 'initial';
 
 			this.position.subscribe(async function(message) {
-					// if (VERBOSE) console.log(message.j1);
-					draw_goal(self.ctx, 100, message.j1*400+100)
-				});
+				// if (VERBOSE) console.log(message.j1);
+				draw_goal(self.ctx, 100, message.j1*400+100)
+			});
 
 			this.button_topic.subscribe(async function(message) {
-					console.log('here')
-					self.position.unsubscribe();
-					self.position.removeAllListeners();
-					self.button_topic.unsubscribe();
-					self.button_topic.removeAllListeners();
-				});
+				self.position.unsubscribe();
+				self.position.removeAllListeners();
+				self.button_topic.unsubscribe();
+				self.button_topic.removeAllListeners();
+			});
 
 			break;
 

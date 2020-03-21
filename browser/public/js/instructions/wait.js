@@ -128,7 +128,6 @@ Module.prototype.wait = async function(instr, instructionAddr) {
 
 			case 'user input':
 				this.button_topic.subscribe(async function(message) {
-					console.log('here')
 					self.button_topic.unsubscribe();
 					self.button_topic.removeAllListeners();
 					resolve();

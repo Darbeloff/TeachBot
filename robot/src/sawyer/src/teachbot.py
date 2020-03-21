@@ -499,6 +499,7 @@ class Module():
 			if self.VERBOSE: rospy.loginfo('Opening gripper')
 			self.open_gripper()
 
+		rospy.sleep(0.5)
 		result_Gripper.is_done = True
 		self.GripperAct.set_succeeded(result_Gripper)
 

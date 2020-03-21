@@ -1174,9 +1174,16 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 					audio_index = eval(this.hashTokeyVal(audio_index));
 				}
 
-				this.play(this.thisSection._audiofiles_mp3[audio_index], this.thisSection._audio_duration[audio_index], this.thisSection._textArray[audio_index]);
-				if (instr.delay) {
-					await sleep(this.thisSection._audio_duration[audio_index]);
+				if (typeof audio_index === 'number') {
+					this.play(this.thisSection._audiofiles_mp3[audio_index], this.thisSection._audio_duration[audio_index], this.thisSection._textArray[audio_index]);
+					if (instr.delay) {
+						await sleep(this.thisSection._audio_duration[audio_index]);
+					}
+				} else if (Array.isArray(audio_index)) {
+					for (let a=0; a<audio_index.length; a++) {
+						this.play(this.thisSection._audiofiles_mp3[audio_index[a]], this.thisSection._audio_duration[audio_index[a]], this.thisSection._textArray[audio_index[a]]);
+						await sleep(this.thisSection._audio_duration[audio_index[a]]);
+					}
 				}
 
 				this.start(this.getNextAddress(instructionAddr));

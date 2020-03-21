@@ -43,4 +43,7 @@ for textFile in srcDirList:
 
 		# Synthesize text into audio file and save.
 		tts = gTTS(text = lines[x], lang='en')
-		tts.save(linePath + 'line' + str(x) +'.mp3')
+		try:
+			tts.save(linePath + 'line' + str(x) +'.mp3')
+		except:
+			print('Unable to generate mp3 for the following:\n\t' + lines[x] + 'Ensure the line contains no unpronounceable characters.')

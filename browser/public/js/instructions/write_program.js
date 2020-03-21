@@ -7,14 +7,14 @@
  * @param {object}  instructionAddr  The address of the current instruction.
  */
 Module.prototype.write_program = function(instr, instructionAddr) {
-	this.displayOff();
-	canvas_container.style.display = 'initial';
-	var multi_choice_url = DIR + 'images/new_button_box.JPG';
-	var program_url = DIR + 'images/program_rect.png';
 	this.free_mode = false
 	this.program = [];
 
-	display_choices(m.ctx, ['Toggle Gripper','Toggle Free Mode','Set Waypoint', 'Done', 'Remove Choice'], multi_choice_url);
+	// this.displayOff();
+	// canvas_container.style.display = 'initial';
+	// var multi_choice_url = DIR + 'images/new_button_box.JPG';
+	// var program_url = DIR + 'images/program_rect.png';
+	// display_choices(m.ctx, ['Toggle Gripper','Toggle Free Mode','Set Waypoint', 'Done', 'Remove Choice'], multi_choice_url);
 
 	this.button_topic.subscribe(async function(message) {
 		if (VERBOSE) console.log('Pressed: ' + message.data);
