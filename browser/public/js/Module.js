@@ -363,8 +363,7 @@ Module.prototype.play = async function(audioFile, duration, text) {
 	player.play();
 
 	// Update text on screen.
-	adjustable.innerHTML = text;
-	this.adjust_text();
+	this.print(text);
 
 	// Convert units of duration from [ms]->[s]
 	duration/=1000.0;
@@ -374,6 +373,19 @@ Module.prototype.play = async function(audioFile, duration, text) {
 
 	// Log action.
 	if (VERBOSE) console.log('Playing ' + audioFile + ', duration ' + Math.round(duration) + 's.');
+}
+
+
+/**
+ * Print text.
+ *
+ * Displays text at bottom of browser.
+ *
+ * @param {string}	text 	Text to display on screen.
+ */
+Module.prototype.print = function(text) {
+	adjustable.innerHTML = text;
+	this.adjust_text();
 }
 
 /**
@@ -1207,16 +1219,18 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 
 				break;
 
+			case 'print':
+				checkInstruction(instr, ['text'], instructionAddr);
+				this.print(instr.text);
+				break;
+
 			case 'proceed':
 				checkInstruction(instr, ['to_section'], instructionAddr);
-
 				this.start([instr.to_section, 0]);
-
 				break;
 
 			case 'write_program':
 				this.write_program(instr, instructionAddr);
-
 				break;
 
 			case 'reset':

@@ -22,10 +22,9 @@ Module.prototype.set_graphic_mode = function(instr, instructionAddr) {
 	switch (instr.mode) {
 		case 'image':
 			if (instr.hasOwnProperty('location')) {
-				image.src = DIR + instr.location;
+				image.src = DIR + 'images/' + instr.location;
 			}
-			image.style.display = 'block';
-
+			image.style.display = 'initial';
 
 			break;
 

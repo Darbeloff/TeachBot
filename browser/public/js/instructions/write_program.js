@@ -68,5 +68,15 @@ Module.prototype.write_program = function(instr, instructionAddr) {
 				console.log('No Support for this button');
 				break;
 		}
+
+		var print_instructions = '';
+		for (let i=0; i<self.program.length; i++) {
+			if (self.program[i] === 'Toggle Gripper') {
+				print_instructions += self.program[i] + ', ';
+			} else {
+				print_instructions += 'Go To Waypoint, '
+			}
+		}
+		self.print(print_instructions);
 	});
 }

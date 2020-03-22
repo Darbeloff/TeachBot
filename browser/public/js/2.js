@@ -5,7 +5,7 @@ const module_num = 2;         //The module number
 /*******************************
  *       Construct Module      *
  *******************************/
-var m = new Module(module_num, main, [image,canvas_container]);
+var m = new Module(module_num, main, [image]);
 var cw = m.cw;
 var ch = m.ch;
 

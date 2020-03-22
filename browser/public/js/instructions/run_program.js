@@ -7,6 +7,16 @@
  * @param {object}  instructionAddr  The address of the current instruction.
  */
 Module.prototype.run_program = async function(instr, instructionAddr) {
+	var print_instructions = '';
+	for (let i=0; i<self.program.length; i++) {
+		if (self.program[i] === 'Toggle Gripper') {
+			print_instructions += self.program[i] + ', ';
+		} else {
+			print_instructions += 'Go To Waypoint, '
+		}
+	}
+	self.print(print_instructions);
+	
 	return new Promise(async (resolve, reject) => {
 		for (let p=0; p<self.program.length; p++) {
 			await new Promise(async (resolve2, reject2) => {
