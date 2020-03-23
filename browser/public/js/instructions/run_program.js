@@ -7,6 +7,7 @@
  * @param {object}  instructionAddr  The address of the current instruction.
  */
 Module.prototype.run_program = async function(instr, instructionAddr) {
+	this.last_program = this.program.slice();
 	var print_instructions = '';
 	for (let i=0; i<self.program.length; i++) {
 		if (self.program[i] === 'Toggle Gripper') {

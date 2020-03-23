@@ -7,7 +7,8 @@
  * @param {object}  instructionAddr  The address of the current instruction.
  */
 Module.prototype.write_program = function(instr, instructionAddr) {
-	this.free_mode = false
+	this.free_mode = false;
+	var first_free_mode = true;
 	this.program = [];
 
 	// this.displayOff();
@@ -38,6 +39,10 @@ Module.prototype.write_program = function(instr, instructionAddr) {
 					self.set_robot_mode({'mode': 'position'});
 					self.free_mode = false;
 				} else {
+					if (first_free_mode) {
+						self.play(self.thisSection._audiofiles_mp3[5], self.thisSection._audio_duration[5], self.thisSection._textArray[5]);
+						first_free_mode = false;
+					}
 					self.set_robot_mode({
 					'mode':'interaction ctrl', 
 					'position_only':false, 
@@ -62,6 +67,10 @@ Module.prototype.write_program = function(instr, instructionAddr) {
 
 			case -1: 	// Minus: Rm Command
 				self.program.pop()
+				break;
+
+			case 1: 	// Plus: Recall Program
+				self.program = self.last_program.slice();
 				break;
 
 			default:

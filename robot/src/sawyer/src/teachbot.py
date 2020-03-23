@@ -190,7 +190,7 @@ class Module():
 
 	# Returns true iff the current joint position will not collide with the table
 	def joint_safety_check(self, resetFn, returnFn):
-		#rospy.loginfo('in safety zone')
+		'''
 		pos = self.limb.endpoint_pose()['position']
 		if pos.z<0 or pos.x<0.1:
 			rospy.loginfo('oops outside safety zone')
@@ -205,6 +205,8 @@ class Module():
 			rospy.loginfo('Audio file 2 played')
 			returnFn(self)
 			rospy.loginfo('Ready to be moved again')
+		'''
+		pass
 
 	# Open gripper
 	def open_gripper(self):
@@ -213,6 +215,8 @@ class Module():
 			self.gripper.set_ee_signal_value('grip', False)
 		else:
 			self.gripper.open()
+		while not self.gripper.get_ee_signal_value('open'):
+			pass
 
 	# Close gripper
 	def close_gripper(self):
@@ -221,6 +225,8 @@ class Module():
 			self.gripper.set_ee_signal_value('grip', True)
 		else:
 			self.gripper.close()
+		while self.gripper.get_ee_signal_value('open'):
+			pass
 
 	# Lower the gripper, close gripper, raise gripper, check effort, return whether or not an object is being supported 
 	def cb_PickUpBox(self, goal, lift_position=Z_TABLE+BOX_HEIGHT+0.1, effort_tol=5):
@@ -488,18 +494,11 @@ class Module():
 		rospy.loginfo('Received: ' + str(self.finished))
 
 	def cb_Gripper(self,goal):
-
 		result_Gripper = GripperResult()
 		result_Gripper.is_done = False
 
-		if (goal.grip==True):
-			if self.VERBOSE: rospy.loginfo('Closing gripper')
-			self.close_gripper()
-		else:
-			if self.VERBOSE: rospy.loginfo('Opening gripper')
-			self.open_gripper()
+		self.close_gripper() if goal.grip else self.open_gripper()
 
-		rospy.sleep(0.5)
 		result_Gripper.is_done = True
 		self.GripperAct.set_succeeded(result_Gripper)
 

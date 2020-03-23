@@ -36,6 +36,7 @@ function Module(module_num, main, content_elements) {
 	this.canvas_frame_req;													// Animation frame request. See: set_graphic_mode().
 	this.button = 'none';
 	this.program = [];
+	this.last_program = [];
 	this.free_mode = false;
 	this.gripper_closed = false;
 	

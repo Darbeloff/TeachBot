@@ -15,6 +15,5 @@ var ch = m.ch;
 var start_seq = 'coding';
 async function main() {
     m.displayOff();
-    // canvas_container.style.display = 'initial';
     m.start([start_seq,0]);
 }
