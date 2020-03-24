@@ -35,7 +35,7 @@ import threading
 
 class Module():
 	FORCE2VELOCITY = {'right_j0': 0.06, 'right_j1': 0.06, 'right_j2': 0.4, 'right_j3': 0.2, 'right_j4': 1, 'right_j5': 0.9, 'right_j6': 2}
-	VERBOSE = True
+	VERBOSE = False
 	JOINTS = 7
 	BUTTON = {'back': 0, 'show': 1, 'circle': 2, 'square': 3, 'triangle': 4}	# Triangle is the X button. An earlier version of Sawyer had a triangle and Rethink never updated the SDK.
 	CUFF_BUTTON = {'upper': 0, 'lower': 1}
@@ -50,7 +50,7 @@ class Module():
 		intera_interface.HeadDisplay().display_image('logo.png')
 
 		# Limb
-		self.limb = LimbPlus()
+		self.limb = LimbPlus(self.VERBOSE)
 		self.limb.go_to_joint_angles()
 
 		# Global Vars
@@ -491,7 +491,7 @@ class Module():
 
 	def cb_Button(self, data):
 		self.finished = True
-		rospy.loginfo('Received: ' + str(self.finished))
+		if self.VERBOSE: rospy.loginfo('Received: ' + str(self.finished))
 
 	def cb_Gripper(self,goal):
 		result_Gripper = GripperResult()

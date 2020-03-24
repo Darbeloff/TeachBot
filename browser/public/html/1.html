@@ -1,12 +1,9 @@
 <!DOCTYPE html>
-<html>
-
 <head>
-	<title>Module 1</title>
+	<title>Intro</title>
 
 	<link rel="stylesheet" type="text/css" href="https://localhost:8000/css/main.css">
 	<link rel="stylesheet" type="text/css" href="https://localhost:8000/css/sawyer.css">
-	<link rel="icon" href="https://localhost:8000/images/favicon.png">
 
 	<!-- Structural Utilities -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -19,6 +16,7 @@
 	<!-- TeachBot Utilities -->
 	<script src="https://localhost:8000/js/utils/arc3pt.js"></script>
 	<script src="https://localhost:8000/js/utils/display_choices.js"></script>
+	<script src="https://localhost:8000/js/utils/display_program.js"></script>
 	<script src="https://localhost:8000/js/utils/draw_ball.js"></script>
 	<script src="https://localhost:8000/js/utils/draw_bar.js"></script>
 	<script src="https://localhost:8000/js/utils/draw_goal.js"></script>
@@ -26,7 +24,6 @@
 	<script src="https://localhost:8000/js/utils/draw_odometer.js"></script>
 	<script src="https://localhost:8000/js/utils/draw_rectangle.js"></script>
 	<script src="https://localhost:8000/js/utils/draw_spring.js"></script>
-	<script src="https://localhost:8000/js/utils/draw_encoder.js"></script>
 	<script src="https://localhost:8000/js/utils/JSONcopy.js"></script>
 	<script src="https://localhost:8000/js/utils/sleep.js"></script>
 
@@ -34,51 +31,29 @@
 	<script type="text/javascript" src="https://localhost:8000/js/Module.js"></script>
 	<script src="https://localhost:8000/js/instructions/draw.js"></script>
 	<script src="https://localhost:8000/js/instructions/numeric_input.js"></script>
+	<script src="https://localhost:8000/js/instructions/run_program.js"></script>
 	<script src="https://localhost:8000/js/instructions/set_graphic_mode.js"></script>
 	<script src="https://localhost:8000/js/instructions/set_robot_mode.js"></script>
 	<script src="https://localhost:8000/js/instructions/wait.js"></script>
+	<script src="https://localhost:8000/js/instructions/write_program.js"></script>
 </head>
 
-<script type="text/javascript">
-	function begin() {
-		document.getElementById("adjustable").innerHTML = "Loading..."
-		var script = document.createElement("script");
-		script.setAttribute('type', "text/javascript");
-		script.setAttribute('src', "https://localhost:8000/js/1.js");
-		document.getElementsByTagName("head")[0].appendChild(script);
-	}
-
-</script>
-
 <body>
-	<!-- Welcome image -->
 	<img id="image" class="welcome" src="https://localhost:8000/images/Welcome.png" height="90%">
-	
-	<!-- Canvas -->
+
 	<div id="canvas_container">
 		<canvas id="canvas_obj"></canvas>
 	</div>
 
-	<!-- Speech -->
+	<div id='adjustable'>Loading...</div>
+
 	<audio id="player"></audio>
 
-	<!-- Animation -->
-	<video id="animator" class="centered" preload>
-		<source src="https://localhost:8000/videos/motor_animation.mp4" type="video/mp4">
-	</video>
-
-	<!-- Audio text -->
-	<div id='adjustable'>Loading...
-		<!-- <div align="center">
-			<button onclick="begin()">Begin Module 1</button>
-		</div> -->
-	</div>
-
-	<!-- Run JS Module -->
-	<script type="text/javascript" src="https://localhost:8000/js/1.js"></script>
+	<script type ="text/javascript" src = 'https://localhost:8000/js/1.js'> </script>
 
 	<!-- Display Pointer Position -->
 	<!-- <script type="text/javascript" src="https://localhost:8000/js/utils/displayPointerPosition.js"></script> -->
 	
 </body>
+
 </html>

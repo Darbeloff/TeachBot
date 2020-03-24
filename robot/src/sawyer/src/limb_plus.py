@@ -16,7 +16,7 @@
 
 ## IMPORTS ##
 # Basic
-import rospy, math, PyKDL
+import rospy, math, PyKDL, pygame
 from std_msgs.msg import String
 from geometry_msgs.msg import (
 	PoseStamped,
@@ -48,8 +48,9 @@ from intera_core_msgs.srv import (
 from sensor_msgs.msg import JointState
 
 class LimbPlus(Limb):
-	def __init__(self):
+	def __init__(self, VERBOSE=False):
 		super(LimbPlus, self).__init__()
+		self.VERBOSE = VERBOSE
 		self.nav = intera_interface.Navigator()
 		self.icc_pub = rospy.Publisher('/robot/limb/right/interaction_control_command', InteractionControlCommand, queue_size = 1)
 
@@ -77,7 +78,7 @@ class LimbPlus(Limb):
 				rospy.logerr('Trajectory FAILED to send')
 				return
 			if result.result:
-				#rospy.loginfo('Motion controller successfully finished the trajectory!')
+				if self.VERBOSE: rospy.loginfo('Motion controller successfully finished the trajectory!')
 				return True
 			else:
 				#rospy.logerr('Motion controller failed to complete the trajectory with error %s',result.errorId)
@@ -87,6 +88,13 @@ class LimbPlus(Limb):
 					return True
 				else:
 					rospy.loginfo('Could not complete trajectory due to collision')
+					# NICK HACK
+					pygame.mixer.init()
+					pygame.mixer.music.load("collision.mp3")
+					pygame.mixer.music.play()
+					while pygame.mixer.music.get_busy(): 
+						pygame.time.Clock().tick(10)
+					# END HACK
 					return False
 		except rospy.ROSInterruptException:
 			rospy.logerr('Keyboard interrupt detected from the user. Exiting before trajectory completion.')
@@ -171,7 +179,7 @@ class LimbPlus(Limb):
 			if not joint_angles:
 				# using current joint angles for nullspace bais if not provided
 				joint_angles = self.joint_ordered_angles()
-				print(poseStamped.pose)
+				if self.VERBOSE: print(poseStamped.pose)
 				waypoint.set_cartesian_pose(poseStamped, tip_name, joint_angles)
 			else:
 				waypoint.set_cartesian_pose(poseStamped, tip_name, joint_angles)
@@ -186,7 +194,7 @@ class LimbPlus(Limb):
 			return
 
 		if result.result:
-			rospy.loginfo('Motion controller successfully finished the trajectory!')
+			if self.VERBOSE: rospy.loginfo('Motion controller successfully finished the trajectory!')
 		else:
 			rospy.logerr('Motion controller failed to complete the trajectory with error %s',
 						 result.errorId)
@@ -321,13 +329,13 @@ class LimbPlus(Limb):
 		fksvc = rospy.ServiceProxy(ns, SolvePositionFK)
 		fkreq = SolvePositionFKRequest()
 		joints = JointState()
-		print(self.joint_names())
+		if self.VERBOSE: print(self.joint_names())
 		for key in self.joint_names():
 			joints.name.append(key)
 		joints.position = joint_angles
 		rospy.wait_for_service(ns, 5.0)
 		resp = fksvc(fkreq)
-		rospy.loginfo(resp)
+		if self.VERBOSE: rospy.loginfo(resp)
 
 	def adjustPoseTo(self, geometry, axis, amount):
 		pose = self.endpoint_pose()
@@ -346,11 +354,11 @@ class LimbPlus(Limb):
 
 	def zeroG_callback(self,msg):
 		self.zeroG = False
-		rospy.loginfo('ZeroG Callback')
+		if self.VERBOSE: rospy.loginfo('ZeroG Callback')
 
 	def position_mode(self):
 		# send a message to put the robot back into position mode
-		rospy.loginfo('Entering position mode')
+		if self.VERBOSE: rospy.loginfo('Entering position mode')
 		position_mode = InteractionOptions()
 		position_mode.set_interaction_control_active(False)
 		self.icc_pub.publish(position_mode.to_msg())

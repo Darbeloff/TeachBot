@@ -33,48 +33,24 @@ app.use('/css', css);
 
 //app.get all the teachbot required files
 app.get('/', function(req, res) {
+  res.sendFile(path.join(__dirname + '/public/html/1.html'));
+})
+app.get('/1', function(req, res) {
+  res.sendFile(path.join(__dirname + '/public/html/1.html'));
+})
+app.get('/coding', function(req, res) {
   res.sendFile(path.join(__dirname + '/public/html/2.html'));
 })
-app.get('/home', function(req, res) {
-  res.sendFile(path.join(__dirname + '/public/html/home.html'));
+app.get('/2', function(req, res) {
+  res.sendFile(path.join(__dirname + '/public/html/2.html'));
 })
-app.get('/selectmodules', function(req, res) {
-  res.sendFile(path.join(__dirname + '/public/html/home_modules.html'));
+app.get('/lecture', function(req, res) {
+  res.sendFile(path.join(__dirname + '/public/html/3.html'));
 })
-app.get('/robotconfiguration', function(req, res) {
-  res.sendFile(path.join(__dirname + '/public/html/robot_configuration.html'));
+app.get('/3', function(req, res) {
+  res.sendFile(path.join(__dirname + '/public/html/3.html'));
 })
-app.get('/cuffinteraction', function(req, res) {
-  res.sendFile(path.join(__dirname + '/public/html/cuff_interaction.html'));
-})
-app.get('/test', function(req, res) {
-  res.sendFile(path.join(__dirname + '/public/html/test_module_page.html'));
-})
-app.get('/module1', function(req,res) {
-	res.sendFile(path.join(__dirname + '/public/html/1.html'));
-});
-app.get('/module2', function(req,res) {
-	res.sendFile(path.join(__dirname + '/public/html/2.html'));
-});
-app.get('/module3', function(req,res) {
-	res.sendFile(path.join(__dirname + '/public/html/3.html'));
-});
 
-app.get('/urTest', function(req, res){
-  res.sendFile(path.join(__dirname + '/public/html/urTest.html'));
-});
-
-app.get('/table', function(req, res) {
-  res.sendFile(path.join(__dirname + '/public/html/table.html'));
-});
-
-app.get('/module2_brief', function(req,res){
-	res.sendFile(path.join(__dirname + '/public/html/module2_brief.html'))
-});
-
-app.get('/module4', function(req,res){
-  res.sendFile(path.join(__dirname + '/public/html/4.html'))
-})
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');

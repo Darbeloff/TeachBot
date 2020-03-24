@@ -99,6 +99,93 @@
 				"geometry":"position",
 				"axis":"y",
 				"amount":"0.15"
+			},
+			{
+				"type":"proceed",
+				"to_section":"coding"
+			}
+		]
+	},
+	{
+		"id":"coding",
+		"instructions":[
+			{
+				"//":"Now you try!",
+				"type":"play",
+				"audio_index":0,
+				"delay":false
+			},
+			{
+				"type":"while",
+				"conditional":true,
+				"instructions": [
+					{
+						"type":"set_graphic_mode",
+						"mode":"image",
+						"location":"programming_choices.png"
+					},
+					{
+						"type":"goToJointAngles",
+						"joint_angles":"above_fourth_box_joint_arg"
+					},
+					{
+						"type":"gripper",
+						"grip":false
+					},
+					{
+						"//":"Program any sequence you want and press the red button to see your program in action.",
+						"type":"play",
+						"audio_index":1,
+						"delay":false
+					},
+					{
+						"type":"write_program"
+					},
+					{
+						"type":"set_graphic_mode",
+						"mode":"image",
+						"location":"Welcome.png"
+					},
+					{
+						"//":"Please stand back so I can reset my position.",
+						"type":"play",
+						"audio_index":2,
+						"delay":true
+					},
+					{
+						"type":"adjustPoseBy",
+						"geometry":"position",
+						"axis":"z",
+						"amount":"0.15"
+					},
+					{
+						"type":"goToJointAngles",
+						"joint_angles":"above_fourth_box_joint_arg"
+					},
+					{
+						"type":"gripper",
+						"grip":false
+					},
+					{
+						"//":"Can you please put the box and bin in their original positions? Press any button when you've done so.",
+						"type":"play",
+						"audio_index":3,
+						"delay":false
+					},
+					{
+						"type":"wait",
+						"for":"user input"
+					},
+					{
+						"//":"Okay, here we go. Please stand back until your program finishes.",
+						"type":"play",
+						"audio_index":4,
+						"delay":true
+					},
+					{
+						"type":"run_program"
+					}
+				]
 			}
 		]
 	}

@@ -12,7 +12,7 @@ var ch = m.ch;
 /**************************
  *   Main Functionality   *
  **************************/
-var start_seq = 'coding';
+var start_seq = 'intro';
 async function main() {
     m.displayOff();
     m.start([start_seq,0]);

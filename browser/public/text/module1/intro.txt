@@ -1,1 +1,6 @@
-Hello, my name is TeachBot. It's nice to meet you.
+Thank you for taking part in our user study! My name is TeachBot, and I am a Sawyer robot arm. You can program me to do whatever you want.
+Add steps to the program by pressing buttons on the box in front of you. The blue button opens or closes my gripper.
+Usually, my arm is fixed, and you can't move it, but, if you press the black button, my arm will go limp, and you can move it wherever you want, like this.
+The yellow button allows me to memorize a point to go to. So, if you want me to move from where I am now over to the right, you would press the black button, move my arm over,
+and press the black button again to fix my arm. Then, you could press the yellow button to tell me to remember that point.
+Finally, when you are done programming, press the red button to see your program in action.

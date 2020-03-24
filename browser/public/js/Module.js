@@ -414,7 +414,7 @@ Module.prototype.adjust_text = function(max_font_size='64px') {
  * @param  {bool}           [wait=false]    Tells the robot whether or not to wait for the audio file to be done playing.
  * @return {object}                         ROSLIB.Goal object to be sent.
  */
-Module.prototype.getGoToGoal = function(joint_angles, speed_ratio=0, wait=false) {
+Module.prototype.getGoToGoal = function(joint_angles, speed_ratio=0, wait=true) {
 	var goalMessage = {
 		speed_ratio: speed_ratio,
 		wait: wait
