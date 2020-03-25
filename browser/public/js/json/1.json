@@ -17,6 +17,11 @@
 				"delay":true
 			},
 			{
+				"type":"set_graphic_mode",
+				"mode":"image",
+				"location":"programming_choices.png"
+			},
+			{
 				"//":"Add steps to the program by pressing buttons on the box in front of you. The blue button opens or closes my gripper.",
 				"type":"play",
 				"audio_index":1,

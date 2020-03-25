@@ -25,7 +25,9 @@ Module.prototype.write_program = function(instr, instructionAddr) {
 		if (parseInt(message.data)!==-1) reset_ready = false;
 
 		switch (parseInt(message.data)) {
-			case 5: 	// Done
+			case 5: 	// Red: Done
+				self.set_robot_mode({'mode': 'position'});
+				this.free_mode = false;
 				console.log(self.program)
 				self.button_topic.unsubscribe();
 				self.button_topic.removeAllListeners();
@@ -46,7 +48,7 @@ Module.prototype.write_program = function(instr, instructionAddr) {
 					self.free_mode = false;
 				} else {
 					if (first_free_mode) {
-						self.play(self.thisSection._audiofiles_mp3[5], self.thisSection._audio_duration[5], self.thisSection._textArray[5]);
+						self.play(self.thisSection._audiofiles_mp3[4], self.thisSection._audio_duration[4], self.thisSection._textArray[4]);
 						first_free_mode = false;
 					} else {
 						player.play();
@@ -85,7 +87,7 @@ Module.prototype.write_program = function(instr, instructionAddr) {
 						self.getGoToGoal('above_fourth_box_joint_arg').send();
 					} else {
 						reset_ready = true;
-						self.play(self.thisSection._audiofiles_mp3[6], self.thisSection._audio_duration[6], self.thisSection._textArray[6]);
+						self.play(self.thisSection._audiofiles_mp3[5], self.thisSection._audio_duration[5], self.thisSection._textArray[5]);
 					}
 				}
 				
