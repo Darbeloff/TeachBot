@@ -285,6 +285,10 @@ Module.prototype.endpointCallback = function(msg) {
  * Loads text and audio.
  */
 Module.prototype.loadTextAndAudio = function() {
+	// Load Beep
+	this.beep_sound = new Audio();
+	this.beep_sound.src = DIR + 'audio/beep.mp3';
+
 	// Base of directory containing text
 	this.text_dir = DIR + 'text/module' + this.module_num + '/';
 	

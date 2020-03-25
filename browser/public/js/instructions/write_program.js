@@ -9,6 +9,7 @@
 Module.prototype.write_program = function(instr, instructionAddr) {
 	this.free_mode = false;
 	var first_free_mode = true;
+	var reset_ready = false;
 	this.program = [];
 
 	// this.displayOff();
@@ -19,6 +20,9 @@ Module.prototype.write_program = function(instr, instructionAddr) {
 
 	this.button_topic.subscribe(async function(message) {
 		if (VERBOSE) console.log('Pressed: ' + message.data);
+		player.src = DIR + 'audio/beep.mp3';
+
+		if (parseInt(message.data)!==-1) reset_ready = false;
 
 		switch (parseInt(message.data)) {
 			case 5: 	// Done
@@ -30,18 +34,22 @@ Module.prototype.write_program = function(instr, instructionAddr) {
 				break;
 
 			case 2: 	// Blue: Toggle Gripper
+				player.play();
 				self.program.push('Toggle Gripper')
 				await self.gripper(!self.gripper_closed);
 				break;
 
 			case 3: 	// Black: Toggle Free Mode
 				if (self.free_mode) {
+					player.play();
 					self.set_robot_mode({'mode': 'position'});
 					self.free_mode = false;
 				} else {
 					if (first_free_mode) {
 						self.play(self.thisSection._audiofiles_mp3[5], self.thisSection._audio_duration[5], self.thisSection._textArray[5]);
 						first_free_mode = false;
+					} else {
+						player.play();
 					}
 					self.set_robot_mode({
 					'mode':'interaction ctrl', 
@@ -58,6 +66,7 @@ Module.prototype.write_program = function(instr, instructionAddr) {
 				break;
 
 			case 4: 	// Yellow: Set Waypoint
+				player.play();
 				var current_pos = [];
 				for (let j=0; j<JOINTS; j++) {
 					current_pos[j] = self.dictionary[`JOINT_POSITION_${j}`];
@@ -66,10 +75,24 @@ Module.prototype.write_program = function(instr, instructionAddr) {
 				break;
 
 			case -1: 	// Minus: Rm Command
-				self.program.pop()
+				if (self.program.length > 0) {
+					player.play();
+					self.program.pop()
+				} else {
+					if (reset_ready) {
+						player.play();
+						reset_ready = false;
+						self.getGoToGoal('above_fourth_box_joint_arg').send();
+					} else {
+						reset_ready = true;
+						self.play(self.thisSection._audiofiles_mp3[6], self.thisSection._audio_duration[6], self.thisSection._textArray[6]);
+					}
+				}
+				
 				break;
 
 			case 1: 	// Plus: Recall Program
+				player.play();
 				self.program = self.last_program.slice();
 				break;
 

@@ -27,6 +27,7 @@ class ButtonClient():
 
 		self.pressed = False
 		self.button  = None
+		self.last_pub = rospy.get_time()
 
 		#Publisher topics
 		self.button_topic = rospy.Publisher('/teachbot/button', String, queue_size=10)
@@ -43,20 +44,22 @@ class ButtonClient():
 		while not rospy.is_shutdown():
 			button_raw = str(self.arduino.readline())
 
-			#Split the serial line readout and take the first item
-			self.button = re.split(": |\r|\n", button_raw)[0]
-			if self.button != 'start' and self.button != 'On' and self.button != 'Off':
-				rospy.loginfo('Publishing...')
-				self.button_topic.publish(self.button)
-			if self.button != "start":
-				self.pressed = True
-				self.send_buttonInfo()
+			if rospy.get_time()-self.last_pub>1:	# Avoid accidental double clicking by waiting one second after every button press before publishing another.
+				#Split the serial line readout and take the first item
+				self.button = re.split(": |\r|\n", button_raw)[0]
+				if self.button != 'start' and self.button != 'On' and self.button != 'Off':
+					rospy.loginfo('Publishing...')
+					self.button_topic.publish(self.button)
+				if self.button != "start":
+					self.pressed = True
+					self.send_buttonInfo()
+					self.last_pub = rospy.get_time()
 
 			r.sleep()
 
 	def cb_buttonPress(self, goal):
 		'''
-		Action server callback function that receives a goal from the module.js action client
+		Action server callback function that receives a goal from the Module.js action client
 		The result should be a button being pressed and it returns True
 		If there is an error, it will automaticallt return False
 		'''
