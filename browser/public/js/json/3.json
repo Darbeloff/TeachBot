@@ -11,15 +11,34 @@
 				"joint_angles":"above_fourth_box_joint_arg"
 			},
 			{
-				"//":"Thank you for taking part in our user study! My name is TeachBot, and I am a Sawyer robot arm. You can program me to do whatever you want.",
+				"type":"gripper",
+				"grip":false
+			},
+			{
 				"type":"play",
-				"audio_index":0,
+				"audio_index":[0,1,2,3,4,5,6,7,8,9,10,11,12],
 				"delay":true
 			},
 			{
-				"//":"Add steps to the program by pressing buttons on the box in front of you. The blue button opens or closes my gripper.",
+				"type":"adjustPoseBy",
+				"geometry":"position",
+				"axis":"y",
+				"amount":"0.15"
+			},
+			{
+				"//":"I can still return to my original position because I stored it in my memory.",
 				"type":"play",
-				"audio_index":1,
+				"audio_index":13,
+				"delay":true
+			},
+			{
+				"type":"goToJointAngles",
+				"joint_angles":"above_fourth_box_joint_arg"
+			},
+			{
+				"//":"I can also remember actions, like opening and closing my gripper.",
+				"type":"play",
+				"audio_index":14,
 				"delay":true
 			},
 			{
@@ -31,9 +50,89 @@
 				"grip":false
 			},
 			{
-				"//":"Usually, my arm is fixed, and you can't move it, but, if you press the black button, my arm will go limp, and you can move it wherever you want, like this.",
+				"//":"I can even remember sequences of positions and actions, and I can play them back in a specific order. The key here is the order in which you program me to do a task. Let's call these points A,",
 				"type":"play",
-				"audio_index":2,
+				"audio_index":15,
+				"delay":true
+			},
+			{
+				"//":"B,",
+				"type":"play",
+				"audio_index":16,
+				"delay":true
+			},
+			{
+				"type":"adjustPoseBy",
+				"geometry":"position",
+				"axis":"z",
+				"amount":"0.15"
+			},
+			{
+				"//":"and C.",
+				"type":"play",
+				"audio_index":17,
+				"delay":true
+			},
+			{
+				"type":"adjustPoseBy",
+				"geometry":"position",
+				"axis":"y",
+				"amount":"0.15"
+			},
+			{
+				"//":"If B helps me get around an obstacle, it's very important that I move from A to B first, then C. If I rearrange the order to A, C, B, then I might run into something in my path.",
+				"type":"play",
+				"audio_index":18,
+				"delay":true
+			},
+			{
+				"type":"goToJointAngles",
+				"joint_angles":"above_fourth_box_joint_arg"
+			},
+			{
+				"//":"Let's walk through the steps of programming a pick and place operation.",
+				"type":"play",
+				"audio_index":19,
+				"delay":true
+			},
+			{
+				"//":"If I want to pick up a part and place it into a bin, I will need the following steps programmed into my memory:",
+				"type":"play",
+				"audio_index":20,
+				"delay":true
+			},
+			{
+				"//":"One, a waypoint above the part.",
+				"type":"play",
+				"audio_index":21,
+				"delay":true
+			},
+			{
+				"//":"Two, a waypoint around the part.",
+				"type":"play",
+				"audio_index":22,
+				"delay":true
+			},
+			{
+				"type":"adjustPoseBy",
+				"geometry":"position",
+				"axis":"z",
+				"amount":"-0.15"
+			},
+			{
+				"//":"Three, close gripper.",
+				"type":"play",
+				"audio_index":23,
+				"delay":true
+			},
+			{
+				"type":"gripper",
+				"grip":true
+			},
+			{
+				"//":"Four, waypoints over or around any obstacles and into the bin.",
+				"type":"play",
+				"audio_index":24,
 				"delay":true
 			},
 			{
@@ -55,137 +154,24 @@
 				"amount":"-0.15"
 			},
 			{
-				"type":"goToJointAngles",
-				"joint_angles":"above_fourth_box_joint_arg"
-			},
-			{
-				"//":"The yellow button allows me to memorize a point to go to. So, if you want me to move from where I am now over to the right, you would press the black button, move my arm over,",
+				"//":"Five, open gripper.",
 				"type":"play",
-				"audio_index":3,
+				"audio_index":25,
 				"delay":true
-			},
-			{
-				"type":"adjustPoseBy",
-				"geometry":"position",
-				"axis":"y",
-				"amount":"0.15"
-			},
-			{
-				"//":"and press the black button again to fix my arm. Then, you could press the yellow button to tell me to remember that point.",
-				"type":"play",
-				"audio_index":4,
-				"delay":true
-			},
-			{
-				"//":"Finally, when you are done programming, press the red button to see your program in action.",
-				"type":"play",
-				"audio_index":5,
-				"delay":true
-			},
-			{
-				"type":"goToJointAngles",
-				"joint_angles":"above_fourth_box_joint_arg"
-			},
-			{
-				"type":"gripper",
-				"grip":true
 			},
 			{
 				"type":"gripper",
 				"grip":false
 			},
 			{
-				"type":"adjustPoseBy",
-				"geometry":"position",
-				"axis":"y",
-				"amount":"0.15"
-			},
-			{
-				"type":"proceed",
-				"to_section":"coding"
-			}
-		]
-	},
-	{
-		"id":"coding",
-		"instructions":[
-			{
-				"//":"Now you try!",
+				"//":"I may want more waypoints to return me to my initial position. This task, called a pick-and-place operation, is very common on industrial manufacturing lines.",
 				"type":"play",
-				"audio_index":0,
-				"delay":false
+				"audio_index":26,
+				"delay":true
 			},
 			{
-				"type":"while",
-				"conditional":true,
-				"instructions": [
-					{
-						"type":"set_graphic_mode",
-						"mode":"image",
-						"location":"programming_choices.png"
-					},
-					{
-						"type":"goToJointAngles",
-						"joint_angles":"above_fourth_box_joint_arg"
-					},
-					{
-						"type":"gripper",
-						"grip":false
-					},
-					{
-						"//":"Program any sequence you want and press the red button to see your program in action.",
-						"type":"play",
-						"audio_index":1,
-						"delay":false
-					},
-					{
-						"type":"write_program"
-					},
-					{
-						"type":"set_graphic_mode",
-						"mode":"image",
-						"location":"Welcome.png"
-					},
-					{
-						"//":"Please stand back so I can reset my position.",
-						"type":"play",
-						"audio_index":2,
-						"delay":true
-					},
-					{
-						"type":"adjustPoseBy",
-						"geometry":"position",
-						"axis":"z",
-						"amount":"0.15"
-					},
-					{
-						"type":"goToJointAngles",
-						"joint_angles":"above_fourth_box_joint_arg"
-					},
-					{
-						"type":"gripper",
-						"grip":false
-					},
-					{
-						"//":"Can you please put the box and bin in their original positions? Press any button when you've done so.",
-						"type":"play",
-						"audio_index":3,
-						"delay":false
-					},
-					{
-						"type":"wait",
-						"for":"user input"
-					},
-					{
-						"//":"Okay, here we go. Please stand back until your program finishes.",
-						"type":"play",
-						"audio_index":4,
-						"delay":true
-					},
-					{
-						"type":"run_program"
-					}
-				]
+				"type":"goToJointAngles",
+				"joint_angles":"above_fourth_box_joint_arg"
 			}
 		]
 	}

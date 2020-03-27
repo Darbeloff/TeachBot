@@ -1,6 +1,27 @@
-Now you try!
-Program any sequence you want and press the red button to see your program in action.
-Please stand back so I can reset my position.
-Can you please put the box and bin in their original positions? Press any button when you've done so.
-Okay, here we go. Please stand back until your program finishes.
-You put my arm in free mode and it might drift around. Feel free to grab it anyway. Sometimes you have to use a lot of strength to move it where you want it to go.
+In many ways, our memories make us who we are: helping us remember our past, learn and retain skills, and plan for the future.
+For robots like me that operate as an extension of humans like you, memory plays much the same role.
+Whether it's a specific position to which I should move my arm, an instruction to open or close my gripper, or a combination of the two, everything in my memory takes the form of basic units called bits, or "binary digits."
+Each of these is stored in a memory cell that can switch between two states for two possible values, zero and one.
+Programs that allow me to perform tasks consist of millions of these bits, all processed in my central processing unit, or "CPU," that acts as my brain.
+As the number of bits needing to be processed grows, I need memory to store everything you want me to do.
+Like you, I have short term memory for immediate tasks and long term memory for more permanent storage.
+When you write a program, I store each step into my long term memory. When you run a program, I use my short term memory to store individual steps for my CPU brain to execute.
+For this exercise, there are three things I can store in my memory: open gripper, close gripper, and move my arm to a new position, called a waypoint.
+When you press the "Open/Close Gripper" or "Set Waypoint" buttons, I store that command in my long term memory.
+I can remember that instruction and perform it whenever you want.
+For example, let's say you set a waypoint right here.
+Even if my arm gets moved over here,
+I can still return to my original position because I stored it in my memory.
+I can also remember actions, like opening and closing my gripper.
+I can even remember sequences of positions and actions, and I can play them back in a specific order. The key here is the order in which you program me to do a task. Let's call these points A,
+B,
+and C.
+If B helps me get around an obstacle, it's very important that I move from A to B first, then C. If I rearrange the order to A, C, B, then I might run into something in my path.
+Let's walk through the steps of programming a pick and place operation.
+If I want to pick up a part and place it into a bin, I will need the following steps programmed into my memory:
+One, a waypoint above the part.
+Two, a waypoint around the part.
+Three, close gripper.
+Four, waypoints over or around any obstacles and into the bin.
+Five, open gripper.
+I may want more waypoints to return me to my initial position. This task, called a pick-and-place operation, is very common on industrial manufacturing lines.
