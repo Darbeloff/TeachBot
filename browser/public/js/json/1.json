@@ -42,26 +42,19 @@
 				"delay":true
 			},
 			{
-				"type":"adjustPoseBy",
-				"geometry":"position",
-				"axis":"z",
-				"amount":"0.15"
+				"type":"set_graphic_mode",
+				"mode":"video",
+				"location":"free_drive.mp4",
+				"mute":true
 			},
 			{
-				"type":"adjustPoseBy",
-				"geometry":"position",
-				"axis":"y",
-				"amount":"0.15"
+				"type":"wait",
+				"for":"time",
+				"s":12
 			},
 			{
-				"type":"adjustPoseBy",
-				"geometry":"position",
-				"axis":"z",
-				"amount":"-0.15"
-			},
-			{
-				"type":"goToJointAngles",
-				"joint_angles":"above_fourth_box_joint_arg"
+				"type":"set_graphic_mode",
+				"mode":"image"
 			},
 			{
 				"//":"The yellow button allows me to memorize a point to go to. So, if you want me to move from where I am now over to the right, you would press the black button, move my arm over,",
@@ -104,6 +97,12 @@
 				"geometry":"position",
 				"axis":"y",
 				"amount":"0.15"
+			},
+			{
+				"//":"Now you try!",
+				"type":"play",
+				"audio_index":6,
+				"delay":true
 			}
 		]
 	}

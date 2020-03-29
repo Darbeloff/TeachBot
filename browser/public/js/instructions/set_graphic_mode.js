@@ -29,8 +29,12 @@ Module.prototype.set_graphic_mode = function(instr, instructionAddr) {
 			break;
 
 		case 'video':
+			if (instr.hasOwnProperty('location')) {
+				animator.src = DIR + 'videos/' + instr.location;
+			}
 			animator.style.display = 'initial';
 			animator.play();
+			if (instr.hasOwnProperty('mute') && instr.mute)	animator.muted = true;
 			
 			break;
 

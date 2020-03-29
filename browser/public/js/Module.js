@@ -1,9 +1,10 @@
 // Constants
 const DIR = 'https://localhost:8000/';    // Directory containing resources
 const JOINTS = 7;                         // Numer of joints in Sawyer arm
-const VERBOSE = true;                     // Whether or not to print everything
+const VERBOSE = false;                    // Whether or not to print everything
 const ROBOT = 'sawyer';
 const ARDUINO = 'button_box';
+const START_TIME = new Date().getTime();
 
 /**
  * A learning module for TeachBot.
@@ -234,7 +235,7 @@ function Module(module_num, main, content_elements) {
 // Callbacks
 Module.prototype.buttontopicCallback = function(msg) {
 	var value = parseInt(msg.data)
-	console.log('Changing dict value')
+	if (VERBOSE) console.log('Changing dict value');
 	self.dictionary['lastButton'] = value;
 }
 Module.prototype.positionCallback = function(msg) {
@@ -1382,6 +1383,29 @@ Module.prototype.getNextAddress = function(instructionAddr) {
 	}
 }
 
+/**
+ * Get current robot position.
+ *
+ * Returns the current robot joint angles and pose as a string formatted as follows:
+ *     (j0,j1,j2,j3,j4,j5,j6),(px,py,pz,ox,oy,oz,ow)
+ *
+ * @return 	{string}	The current robot joint angles and pose.
+ */
+ Module.prototype.pose2str = function() {
+ 	var retStr = '(';
+ 	for (let j=0; j<JOINTS; j++) {
+ 		retStr += self.dictionary[`JOINT_POSITION_${j}`] + ',';
+ 	}
+ 	retStr = retStr.slice(0, retStr.length-1) + '),('
+ 	         + `${self.dictionary[`ENDPOINT_POSITION_X`]},`
+ 	         + `${self.dictionary[`ENDPOINT_POSITION_Y`]},`
+ 	         + `${self.dictionary[`ENDPOINT_POSITION_Z`]},`
+ 	         + `${self.dictionary[`ENDPOINT_ORIENTATION_X`]},`
+ 	         + `${self.dictionary[`ENDPOINT_ORIENTATION_Y`]},`
+ 	         + `${self.dictionary[`ENDPOINT_ORIENTATION_Z`]},`
+ 	         + `${self.dictionary[`ENDPOINT_ORIENTATION_W`]})`;
+ 	return retStr;
+ }
 
 /**
  * Checks an instruction to make sure it has the required properties.
@@ -1399,3 +1423,14 @@ function checkInstruction(instruction, properties, addr) {
 		}
 	}
 }
+
+/**
+ * Get the current run time.
+ *
+ * Returns the number of milliseconds since page refresh.
+ *
+ * @return 	{number}	Number of milliseconds since page refresh.
+ */
+ function getRuntime() {
+ 	return new Date().getTime() - START_TIME;
+ }

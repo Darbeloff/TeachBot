@@ -71,6 +71,12 @@
 					},
 					{
 						"type":"run_program"
+					},
+					{
+						"//":"Your program has completed. Press the plus button if you want to recall it. Otherwise,",
+						"type":"play",
+						"audio_index":4,
+						"delay":true
 					}
 				]
 			}

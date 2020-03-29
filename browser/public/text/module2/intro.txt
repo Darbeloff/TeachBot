@@ -2,5 +2,6 @@ Program any sequence you want and press the red button to see your program in ac
 Please stand back so I can reset my position.
 Can you please put the box and bin in their original positions? Press any button when you've done so.
 Okay, here we go. Please stand back until your program finishes.
+Your program has completed. Press the plus button if you want to recall it. Otherwise,
 You put my arm in free mode and it might drift around. Feel free to grab it anyway. Sometimes you have to use a lot of strength to move it where you want it to go. Don't worry; I am not fragile!
 Press the minus button again to reset the robot arm position.
