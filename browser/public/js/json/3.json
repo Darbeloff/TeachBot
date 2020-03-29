@@ -15,8 +15,62 @@
 				"grip":false
 			},
 			{
+				"type":"set_graphic_mode",
+				"mode":"image",
+				"location":"t1.JPG"
+			},
+			{
+				"//":"In many ways, our memories make us who we are: helping us remember our past, learn and retain skills, and plan for the future.",
 				"type":"play",
-				"audio_index":[0,1,2,3,4,5,6,7,8,9,10,11,12],
+				"audio_index":0,
+				"delay":true
+			},
+			{
+				"//":"For robots like me that operate as an extension of humans like you, memory plays much the same role.",
+				"type":"play",
+				"audio_index":1,
+				"delay":true
+			},
+			{
+				"type":"set_graphic_mode",
+				"mode":"image",
+				"location":"t3.JPG"
+			},
+			{
+				"//":"Whether it's a specific position to which I should move my arm, an instruction to open or close my gripper, or a combination of the two, everything in my memory takes the form of basic units called bits, or \"binary digits\".",
+				"type":"play",
+				"audio_index":2,
+				"delay":true
+			},
+			{
+				"type":"set_graphic_mode",
+				"mode":"image",
+				"location":"t4.JPG"
+			},
+			{
+				"//":"Each of these is stored in a memory cell that can switch between two states for two possible values, zero and one.",
+				"type":"play",
+				"audio_index":3,
+				"delay":true
+			},
+			{
+				"type":"set_graphic_mode",
+				"mode":"image",
+				"location":"t5.jpg"
+			},
+			{
+				"type":"play",
+				"audio_index":[4,5,6,7],
+				"delay":true
+			},
+			{
+				"type":"set_graphic_mode",
+				"mode":"image",
+				"location":"programming_choices.png"
+			},
+			{
+				"type":"play",
+				"audio_index":[8,9,10,11,12],
 				"delay":true
 			},
 			{
@@ -172,6 +226,12 @@
 			{
 				"type":"goToJointAngles",
 				"joint_angles":"above_fourth_box_joint_arg"
+			},
+			{
+				"//":"Now you try!",
+				"type":"play",
+				"audio_index":27,
+				"delay":true
 			}
 		]
 	}

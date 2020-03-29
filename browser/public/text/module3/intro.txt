@@ -25,3 +25,4 @@ Three, close gripper.
 Four, waypoints over or around any obstacles and into the bin.
 Five, open gripper.
 I may want more waypoints to return me to my initial position. This task, called a pick-and-place operation, is very common on industrial manufacturing lines.
+Now you try!
