@@ -44,7 +44,7 @@ class ButtonClient():
 		while not rospy.is_shutdown():
 			button_raw = str(self.arduino.readline())
 
-			if rospy.get_time()-self.last_pub>1:	# Avoid accidental double clicking by waiting one second after every button press before publishing another.
+			if rospy.get_time()-self.last_pub>0.5:	# Avoid accidental double clicking by waiting one second after every button press before publishing another.
 				#Split the serial line readout and take the first item
 				self.button = re.split(": |\r|\n", button_raw)[0]
 				if self.button != 'start' and self.button != 'On' and self.button != 'Off':

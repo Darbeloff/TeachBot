@@ -100,7 +100,7 @@ Module.prototype.write_program = function(instr, instructionAddr) {
 						console.log(`\t[${getRuntime()}] Reset to start position`);
 						player.play();
 						reset_ready = false;
-						self.getGoToGoal('above_fourth_box_joint_arg').send();
+						self.getGoToGoal('above_fourth_box_joint_arg',fail_plan='user assist').send();
 					} else {
 						reset_ready = true;
 						self.play(self.thisSection._audiofiles_mp3[ai_minusreset], self.thisSection._audio_duration[ai_minusreset], self.thisSection._textArray[ai_minusreset]);
@@ -110,14 +110,12 @@ Module.prototype.write_program = function(instr, instructionAddr) {
 				break;
 
 			case 1: 	// Plus: Recall Program
-				let printStr = `\t[${getRuntime()}] Recall last program: [`;
-				for (let p=0; p<self.program.length; p++) {
-					printStr += `${self.program[p]}, `;
-				}
-				printStr = printStr.splice(printStr.length-2) + ']';
-				console.log(printStr);
 				player.play();
+				
 				self.program = self.last_program.slice();
+
+				console.log(`\t[${getRuntime()}] Recall last program`);
+				
 				break;
 
 			default:

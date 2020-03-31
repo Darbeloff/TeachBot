@@ -13,7 +13,8 @@
 					},
 					{
 						"type":"goToJointAngles",
-						"joint_angles":"above_fourth_box_joint_arg"
+						"joint_angles":"above_fourth_box_joint_arg",
+						"fail_plan":"user assist"
 					},
 					{
 						"type":"gripper",
@@ -47,7 +48,8 @@
 					},
 					{
 						"type":"goToJointAngles",
-						"joint_angles":"above_fourth_box_joint_arg"
+						"joint_angles":"above_fourth_box_joint_arg",
+						"fail_plan":"user assist"
 					},
 					{
 						"type":"gripper",

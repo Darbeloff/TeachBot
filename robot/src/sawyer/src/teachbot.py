@@ -4,7 +4,6 @@
 # Basic
 import rospy, actionlib, numpy, math
 from enum import Enum
-from pygame import mixer
 import cv2
 import apriltag
 import serial
@@ -103,7 +102,6 @@ class Module():
 		# Service Servers
 		rospy.Service('/teachbot/audio_duration', AudioDuration, self.rx_audio_duration)
 		rospy.Service('/teachbot/set_robot_mode', SetRobotMode, self.cb_SetRobotMode)
-		rospy.Service('/teachbot/CuffWays', CuffWays, self.cb_CuffWays)
 
 		# Service Clients
 		self.DevModeSrv = rospy.ServiceProxy('/teachbot/dev_mode', DevMode)
@@ -536,11 +534,6 @@ class Module():
 		feedback.mode = False
 		self.CuffInteractionAct.publish_feedback(feedback)
 
-	def cb_CuffWays(self, data):
-		waypoints.append(self.limb.joint_angles())
-		rospy.loginfo('Adding to waypoints')
-		return True
-
 	def unsubscribe_from_cuff_interaction(self):
 		self._unsubscribe_from(self.cuff, self.cuff_callback_ids)
 		self.limb.position_mode()
@@ -598,90 +591,23 @@ class Module():
 	def cb_GoToJointAngles(self, goal):
 		if self.VERBOSE: rospy.loginfo('Going to joint angles')
 
+		# Set speed ratio, or default
 		speed_ratio = 0.5 if goal.speed_ratio == 0 else goal.speed_ratio
 
-		ways = False
-		if goal.name == 'waypoints.pop(0)':
-			ways = True
-
+		# Initialize result
 		result = sawyer.msg.GoToJointAnglesResult()
 
-		if goal.name is '':
-			self.limb.go_to_joint_angles([goal.j0pos, goal.j1pos, goal.j2pos, goal.j3pos, goal.j4pos, goal.j5pos, goal.j6pos], speed_ratio=speed_ratio)
-			result.success = True
-			self.GoToJointAnglesAct.set_succeeded(result)
-		else:
-			if goal.wait == True:
-				startTime = rospy.get_time()
-				goto = self.limb.go_to_joint_angles(eval(goal.name), speed_ratio=speed_ratio, ways = ways)
+		# If client wants me to wait for audio, start a timer
+		if goal.wait == True:
+			startTime = rospy.get_time()
 
-				if goto == False:
-					rospy.loginfo('correct me please')
-
-					mixer.init()
-					mixer.music.load('safety3.mp3')
-					mixer.music.play()
-					rospy.loginfo('Audio file played')
-					rospy.sleep(10.5)
-
-					goal_InteractionControl = InteractionControlGoal(
-						position_only = False,
-						orientation_x = True,
-						orientation_y = True,
-						orientation_z = True,
-						position_x = True,
-						position_y = True,
-						position_z = True,
-						PASS = False,
-						ways = False
-						)
-					self.InteractionControlActCli.send_goal(goal_InteractionControl)
-					self.InteractionControlActCli.wait_for_result()
-
-					mixer.init()
-					mixer.music.load('safety4.mp3')
-					mixer.music.play()
-					rospy.loginfo('Audio file played')
-					rospy.sleep(4.5)
-					self.limb.go_to_joint_angles(default)
-
-				# while(rospy.get_time()-startTime<self.audio_duration or sum(abs(velocity) for velocity in self.limb.joint_velocities().values())>0.05):
-				while(sum(abs(velocity) for velocity in self.limb.joint_velocities().values())>0.05):	
-					pass
-
-			else:
-				goto = self.limb.go_to_joint_angles(eval(goal.name), speed_ratio=speed_ratio, ways = ways)
-				if goto == False:
-					rospy.loginfo('correct me please')
-
-					mixer.init()
-					mixer.music.load('safety3.mp3')
-					mixer.music.play()
-					rospy.loginfo('Audio file played')
-					rospy.sleep(10.5)
-
-					goal_InteractionControl = InteractionControlGoal(
-						position_only = False,
-						orientation_x = True,
-						orientation_y = True,
-						orientation_z = True,
-						position_x = True,
-						position_y = True,
-						position_z = True,
-						PASS = False,
-						ways = False
-						)
-					self.InteractionControlActCli.send_goal(goal_InteractionControl)
-					self.InteractionControlActCli.wait_for_result()
-
-					mixer.init()
-					mixer.music.load('safety4.mp3')
-					mixer.music.play()
-					rospy.loginfo('Audio file played')
-					rospy.sleep(4.5)
-					self.limb.go_to_joint_angles(default)
-			result.success = True
-			self.GoToJointAnglesAct.set_succeeded(result)
+		# Try to move to goal and return result
+		to_pos = [goal.j0pos, goal.j1pos, goal.j2pos, goal.j3pos, goal.j4pos, goal.j5pos, goal.j6pos] if goal.name is '' else eval(goal.name)
+		result.success = self.limb.go_to_joint_angles(to_pos, speed_ratio=speed_ratio, fail_plan=goal.fail_plan)
+		if result.success and goal.wait:
+			while rospy.get_time()-startTime<self.audio_duration:
+				pass
+		self.GoToJointAnglesAct.set_succeeded(result)
 
 	def cb_interaction(self, goal):
 		if self.VERBOSE: rospy.loginfo('Free motion is on')
@@ -782,9 +708,6 @@ class Module():
 		if req.mode == 'position':
 			self.limb.exit_control_mode()
 			self.limb.go_to_joint_angles(self.limb.joint_angles())
-			if req.ways:
-				rospy.loginfo('Setting waypoint')
-				waypoints.append(self.limb.joint_angles())
 
 		elif req.mode == 'admittance ctrl':
 			# Set command timeout to be much greater than the command period
@@ -1061,9 +984,6 @@ if __name__ == '__main__':
 	joint_dot_3_8_5[3] = joint_dot_3_8_6[3]
 	joint_dot_3_8_7 = joint_dot_3_8_6[:]
 	joint_dot_3_8_7[3] = joint_dot_3[3]
-
-	# 49-
-	waypoints = []
 
 	# 58
 	joint_high_two = [0.0, 0.3, 0.0, -1.08, 0.0, -0.78, 0.2]

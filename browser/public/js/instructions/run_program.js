@@ -26,7 +26,7 @@ Module.prototype.run_program = async function(instr, instructionAddr) {
 					await self.gripper(!self.gripper_closed);
 					resolve2();
 				} else {
-					var goal = self.getGoToGoal(this_step);
+					var goal = self.getGoToGoal(this_step, 0, false, 'audio');
 					goal.on('result', result => { resolve2(); } );
 					goal.send();
 				}

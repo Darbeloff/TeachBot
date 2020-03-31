@@ -54,7 +54,7 @@ class LimbPlus(Limb):
 		self.nav = intera_interface.Navigator()
 		self.icc_pub = rospy.Publisher('/robot/limb/right/interaction_control_command', InteractionControlCommand, queue_size = 1)
 
-	def go_to_joint_angles(self, joint_angles = [0.0, -0.78, 0.0, 1.57, 0, -0.79, 0.2], speed_ratio = 0.5, accel_ratio = 0.5, timeout = None, ways = False):
+	def go_to_joint_angles(self, joint_angles = [0.0, -0.78, 0.0, 1.57, 0, -0.79, 0.2], speed_ratio = 0.5, accel_ratio = 0.5, timeout = None, fail_plan = None):
 		# Old home position: [math.pi/2, -0.9, 0.0, 1.8, 0.0, -0.9, 0.0]
 		try:
 			if isinstance(joint_angles, dict):
@@ -76,26 +76,49 @@ class LimbPlus(Limb):
 			result = traj.send_trajectory(timeout=timeout)
 			if result is None:
 				rospy.logerr('Trajectory FAILED to send')
-				return
+				return False
 			if result.result:
 				if self.VERBOSE: rospy.loginfo('Motion controller successfully finished the trajectory!')
 				return True
 			else:
-				#rospy.logerr('Motion controller failed to complete the trajectory with error %s',result.errorId)
-				if ways == True:
-					rospy.loginfo('Collision anticipated')
-					self.go_to_joint_angles()
-					return True
-				else:
-					rospy.loginfo('Could not complete trajectory due to collision')
-					# NICK HACK
+				rospy.logerr('Motion controller failed to complete the trajectory with error %s',result.errorId)
+				rospy.loginfo('Could not complete trajectory due to collision')
+				if fail_plan is None or fail_plan == '':
+					pass
+				elif fail_plan == 'audio':
 					pygame.mixer.init()
 					pygame.mixer.music.load("collision.mp3")
 					pygame.mixer.music.play()
 					while pygame.mixer.music.get_busy(): 
 						pygame.time.Clock().tick(10)
-					# END HACK
-					return False
+				elif fail_plan == 'user assist':
+					pygame.mixer.init()
+					pygame.mixer.music.load('safety3.mp3')
+					pygame.mixer.music.play()
+					while pygame.mixer.music.get_busy(): 
+						pygame.time.Clock().tick(10)
+
+					self.interaction_control(
+						orientation_x = True,
+						orientation_y = True,
+						orientation_z = True,
+						position_x = True,
+						position_y = True,
+						position_z = True,
+					)
+					while self.endpoint_pose()['position'].x<0.9:
+						pass
+					self.go_to_joint_angles(self.joint_angles())
+
+					pygame.mixer.init()
+					pygame.mixer.music.load('safety4.mp3')
+					pygame.mixer.music.play()
+					while pygame.mixer.music.get_busy(): 
+						pygame.time.Clock().tick(10)
+					self.go_to_joint_angles()
+				else:
+					rospy.logerr('Did not recognize fail plan ' + fail_plan)
+				return False
 		except rospy.ROSInterruptException:
 			rospy.logerr('Keyboard interrupt detected from the user. Exiting before trajectory completion.')
 

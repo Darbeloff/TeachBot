@@ -12,8 +12,10 @@ float32 j6pos
 string name
 # Optional: Fraction of fastest speed the arm can move
 float32 speed_ratio
-#Optional: Audio file delay
+# Optional: Audio file delay
 bool wait
+# Optional: Failure plan if trajectory cannot be executed.
+string fail_plan
 ---
 bool success
 ---

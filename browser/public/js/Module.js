@@ -417,12 +417,14 @@ Module.prototype.adjust_text = function(max_font_size='64px') {
  * @param  {[string,Array]}	joint_angles 	Either an Array of joint angles or the name of the specific pose.
  * @param  {number}		    [speed_ratio=0]	Fraction of maximum speed for the robot to move.
  * @param  {bool}           [wait=false]    Tells the robot whether or not to wait for the audio file to be done playing.
+ * @param  {string}			[fail_plan='']	What to do in case of trajectory failure. Either '' to do nothing, 'audio' to play a warning audio, or 'user assist' to request user assistance.
  * @return {object}                         ROSLIB.Goal object to be sent.
  */
-Module.prototype.getGoToGoal = function(joint_angles, speed_ratio=0, wait=true) {
+Module.prototype.getGoToGoal = function(joint_angles, speed_ratio=0, wait=false, fail_plan='') {
 	var goalMessage = {
 		speed_ratio: speed_ratio,
-		wait: wait
+		wait: wait,
+		fail_plan: fail_plan
 	}
 
 	if (typeof joint_angles === 'string') {
@@ -1016,15 +1018,10 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 			case 'goToJointAngles':
 				checkInstruction(instr, ['joint_angles'], instructionAddr);
 
-				// Format goal.
-				var goal;
-				if (instr.hasOwnProperty('speed_ratio')) {
-					goal = this.getGoToGoal(instr.joint_angles, instr.speed_ratio);
-				} else if (instr.hasOwnProperty('wait')){
-					goal = this.getGoToGoal(instr.joint_angles, 0, instr.wait);
-				} else {
-					goal = this.getGoToGoal(instr.joint_angles);
-				}
+				var goal = this.getGoToGoal(instr.joint_angles,
+											speed_ratio=(instr.hasOwnProperty('speed_ratio') ? instr.speed_ratio : 0),
+											wait=(instr.hasOwnProperty('wait') ? instr.wait : false),
+											fail_plan=(instr.hasOwnProperty('fail_plan') ? instr.fail_plan : '') );
 
 				// When the motion is completed, move to the next instruction.
 				goal.on('result', function(result) {
