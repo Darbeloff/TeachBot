@@ -844,12 +844,17 @@
 			},
 			{
 				"type":"set",
+				"key":"tol",
+				"val":0.2
+			},
+			{
+				"type":"set",
 				"key":"lastButton",
 				"val":-3
 			},
 			{
 				"type":"while",
-				"conditional":"Math.abs(#ENDPOINT_POSITION_X-#x)>0.03 || Math.abs(#ENDPOINT_POSITION_Y-(#y))>0.03",
+				"conditional":"Math.abs(#ENDPOINT_POSITION_X-#x)>#tol || Math.abs(#ENDPOINT_POSITION_Y-(#y))>#tol",
 				"instructions":[
 					{
 						"type":"set_robot_mode",
@@ -861,7 +866,7 @@
 					{
 						"type":"wait",
 						"for":"custom",
-						"function":"(Math.abs(#ENDPOINT_POSITION_X-#x)<0.03 && Math.abs(#ENDPOINT_POSITION_Y-(#y))<0.03) || (#lastButton >-2)"
+						"function":"(Math.abs(#ENDPOINT_POSITION_X-#x)<#tol && Math.abs(#ENDPOINT_POSITION_Y-(#y))<#tol) || (#lastButton >-2)"
 					},
 					{
 						"type":"set",
@@ -882,7 +887,7 @@
 					{
 						"type":"wait",
 						"for":"custom",
-						"function":"(Math.abs(#ENDPOINT_POSITION_X-#x)<0.03 && Math.abs(#ENDPOINT_POSITION_Y-(#y))<0.03 || (#lastButton >-2)"
+						"function":"(Math.abs(#ENDPOINT_POSITION_X-#x)<#tol && Math.abs(#ENDPOINT_POSITION_Y-(#y))<#tol || (#lastButton >-2)"
 					},
 					{
 						"type":"set",
