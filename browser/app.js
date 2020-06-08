@@ -44,6 +44,9 @@ app.get('/selectmodules', function(req, res) {
 app.get('/robotconfiguration', function(req, res) {
   res.sendFile(path.join(__dirname + '/public/html/robot_configuration.html'));
 })
+app.get('/urconfig', function(req, res) {
+  res.sendFile(path.join(__dirname + '/public/html/ur_config.html'));
+})
 app.get('/cuffinteraction', function(req, res) {
   res.sendFile(path.join(__dirname + '/public/html/cuff_interaction.html'));
 })

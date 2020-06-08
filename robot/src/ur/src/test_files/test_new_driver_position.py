@@ -13,13 +13,18 @@ SCARA = [0, -3.14, 0, -3.14, -1.57, 0]
 ROTATE_WRIST = [0, -3.14, 0, -3.14, -1.57, -1]
 ROTATE_WRIST_BACK = [0, -3.14, 0, -3.14, -1.57, 0]
 ZERO = [0, -1.57, 0, -1.57, 0, 0]
+pos_left = [0, -0.78, -0.78, -1.57, 0, 0]
+pos_right = [0, -2.35, 0.78, -1.57, 0, 0]
+IMPE_INIT = [0, -1.57, -1.57, 0, 1.57, 0]
 JOINT_NAMES = ['shoulder_pan_joint', 'shoulder_lift_joint', 'elbow_joint',
                'wrist_1_joint', 'wrist_2_joint', 'wrist_3_joint']
 
 class PositionClient:
 
     def __init__(self):
-        self.initialized = False 
+        self.initialized = False
+        self.lpfilter_counter = 0
+        self.lpfilter = []
 
         rospy.Subscriber('/ur_hardware_interface/robot_program_running', Bool, self.cb_robot_ready)
         rospy.Subscriber('/joint_states', JointState, self.send_command)
@@ -30,7 +35,6 @@ class PositionClient:
         if not self.initialized:
             self.initialized = res.data
             if self.initialized:
-                print "inside ready and initialized"
                 rospy.wait_for_service("set_speed_slider")
                 print "connected to service"
                 try:
@@ -43,8 +47,8 @@ class PositionClient:
                 
 
     def send_command(self, joints):
-        print 'press enter'
-        pause = raw_input()
+        print '1 for left, 2 for right, or 0 to zero position: '
+        cmd = raw_input()
 
         self.client.wait_for_server()
 
@@ -54,7 +58,17 @@ class PositionClient:
         traj_msg.joint_names = JOINT_NAMES
 
         jointPositions_msg = JointTrajectoryPoint()
-        jointPositions_msg.positions = ZERO
+        if (cmd=='0') :
+            jointPositions_msg.positions = ZERO
+        elif (cmd=='1'):
+            jointPositions_msg.positions = pos_left
+        elif (cmd=='2'):
+            jointPositions_msg.positions = pos_right
+        elif (cmd=='3'):
+            jointPositions_msg.positions = IMPE_INIT
+        else:
+            print("invalid command.")
+
         jointPositions_msg.time_from_start = rospy.Duration(3)
 
         traj_msg.points = [jointPositions_msg,]
@@ -62,6 +76,21 @@ class PositionClient:
 
         self.client.send_goal(followJoint_msg)
         self.client.wait_for_result()
+
+    def cb_loop(self, res):
+        if (len(self.lpfilter) < 20):
+            self.lpfilter.append(res.effort[1])
+        else:
+            effort = sum(self.lpfilter)/len(self.lpfilter)
+            self.lpfilter[self.lpfilter_counter] = res.effort[1]
+
+            if (self.lpfilter_counter < 19):
+                self.lpfilter_counter+=1
+            else:
+                self.lpfilter_counter = 0
+            print(effort)
+            rospy.sleep(0.05)
+
 
 if __name__ == '__main__':
     rospy.init_node('request')

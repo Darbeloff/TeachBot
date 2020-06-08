@@ -10,9 +10,11 @@ from std_msgs.msg import Bool, String, Int32, Float64, Float64MultiArray, UInt16
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 from sensor_msgs.msg import JointState
 from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryGoal
-from controller_manager_msgs.srv import SwitchController
+from controller_manager_msgs.srv import SwitchController, ListControllers
 import sensor_msgs
 import threading
+
+from ur_dashboard_msgs.msg import RobotMode
 
 from ur.msg import *
 from ur.srv import *
@@ -39,6 +41,8 @@ class Module():
         self.devMode = False
         self.allowCuffInteraction = False
         self.modeTimer = None
+        self.robot_state = 0
+        self.current_controller = "scaled_pos_traj_controller"
 
         # Custom Control Variables --> used in Admittance Control
         self.control = {
@@ -76,6 +80,7 @@ class Module():
 
         # Publish topics to UR
         self.publish_velocity_to_robot = rospy.Publisher('/joint_group_vel_controller/command', Float64MultiArray, queue_size=1)
+        self.script_command = rospy.Publisher('/ur_hardware_interface/script_command', String, queue_size=1)
         
         # Action Servers
         self.GoToJointAnglesAct = actionlib.SimpleActionServer('/teachbot/GoToJointAngles', GoToJointAnglesAction, execute_cb=self.cb_GoToJointAngles, auto_start=True)
@@ -84,16 +89,63 @@ class Module():
         rospy.Service('/teachbot/audio_duration', AudioDuration, self.rx_audio_duration)
         rospy.Service('/teachbot/set_robot_mode', SetRobotMode, self.cb_SetRobotMode)
 
+        # Service Clients
+        self.switch_controller = rospy.ServiceProxy('controller_manager/switch_controller', SwitchController)
+        self.list_controllers = rospy.ServiceProxy('/controller_manager/list_controllers', ListControllers)
+
         # Action Clients - Publish to robot
         self.joint_traj_client = actionlib.SimpleActionClient('/scaled_pos_traj_controller/follow_joint_trajectory', FollowJointTrajectoryAction)
         self.velocity_traj_client = actionlib.SimpleActionClient('/scaled_vel_traj_controller/follow_joint_trajectory', FollowJointTrajectoryAction)
 
         # Subscribed Topics
-        rospy.Subscriber('/joint_states', sensor_msgs.msg.JointState, self.forwardJointState)
+        # rospy.Subscriber('/joint_states', sensor_msgs.msg.JointState, self.forwardJointState)
+        rospy.Subscriber('/joint_states', sensor_msgs.msg.JointState, self.loop)
         rospy.Subscriber('/wrench', WrenchStamped, self.cb_filter_forces)
+        rospy.Subscriber('/ur_hardware_interface/robot_mode', RobotMode, self.cb_ReadRobotState)
 
+        res = self.switch_controller([],['scaled_pos_traj_controller','joint_group_vel_controller'], 1, True, 10.0)
+        res = self.switch_controller(['scaled_pos_traj_controller'],[], 1, True, 10.0)
 
         rospy.loginfo('TeachBot is initialized and ready to go.')
+        
+    '''
+    Temporary loop for developing and testing some functionalities.
+    '''
+    def loop(self, data):
+
+        print("pos(p) or vel(v) controller?")
+        controller = raw_input()
+        if (controller=='p'):
+            if self.current_controller=='scaled_pos_traj_controller':
+                print('pos controller already running.')
+            else:
+                res = self.switch_controller(['scaled_pos_traj_controller'],[self.current_controller], 2, True, 10.0)
+                if res.ok:
+                    print('pos controller now running.')
+                    self.current_controller = 'scaled_pos_traj_controller'
+
+        elif (controller=='v'):
+            if self.current_controller=='joint_group_vel_controller':
+                print('vel controller already running.')
+            else:
+                res = self.switch_controller(['joint_group_vel_controller'],[self.current_controller], 2, True, 10.0)
+                if res.ok:
+                    print('vel controller now running.')
+                    self.current_controller = 'joint_group_vel_controller'
+
+        else:
+            print("invalid input.")
+
+    '''
+    Read current robot's mode, which is pre-defined in ur_robot_driver. This callback is only to check if the
+    robot is powered on/off, booting, or ready.
+
+    It has nothing to do with SetRobotMode.
+    '''
+    def cb_ReadRobotState(self, data):
+        self.robot_state = data.mode
+        if(data.mode==7):
+            rospy.loginfo('Robot powered on and unlocked, ready to accept commands.')
 
 
     def rx_audio_duration(self,data):
