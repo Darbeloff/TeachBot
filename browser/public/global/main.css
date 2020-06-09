@@ -7,6 +7,18 @@ body{
 	height: 96vh;
 	font-family: 'Slabo 27px', serif;
 	font-size: 1vw;
+	border-color: var(--robot-color);
+	background-color: var(--accent-color);
+}
+
+#screen {
+	display: block;
+	height: 80%;
+}
+
+#subtitle {
+	display: block;
+	height: 20%;
 }
 
 img.home{
@@ -104,6 +116,7 @@ video {
 	object-fit: contain;
 	max-width: 90%;
 	max-height: 100%;
+	border-color: var(--inset-border-color);
 	box-shadow: 5px 10px 4px #676767;
     border-radius: 10px;
     border-style: solid;
@@ -117,3 +130,21 @@ video {
     transform: translate(-50%, -40%);
 }
 
+div.text_box p{
+	display: auto;
+    width: auto;
+    height: 50px;
+    max-height: 50px;
+}
+
+div.container {
+    display: none;/**/
+    margin: auto;
+    position: relative;
+    max-width: 1500px;
+    max-height: 1000px;
+}
+
+p {
+	color: var(--main-font-color);
+}

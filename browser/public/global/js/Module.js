@@ -3,7 +3,6 @@ const DIR = 'https://localhost:8000/';    // Directory containing resources
 const JOINTS = 7;                         // Numer of joints in Sawyer arm
 const VERBOSE = true;                     // Whether or not to print everything
 const BUTTON = {'back': 0, 'show': 1, 'circle': 2, 'square': 3, 'triangle': 4};
-// const ROBOT = 'sawyer';
 const ROBOT = 'sawyer';
 const ARDUINO = 'button_box';
 
@@ -21,17 +20,15 @@ const ARDUINO = 'button_box';
  *
  * @class
  *
- * @param {number}		module_num			The module number. Used to find JSON, audio, and text files.
- * @param {function}	main 				Function to run when all resources have been loaded.
- * @param {Array}		content_elements	List of all HTML elements that have display properties.
+ * @param {number}   module_name The module name. Used to find JSON, audio, and text files.
+ * @param {function} main        Function to run when all resources have been loaded.
  */
-function Module(module_num, main, content_elements) {
-	if (VERBOSE) console.log(`Beginning Module ${module_num}`);
+function Module(module_name, main) {
+	if (VERBOSE) console.log(`Beginning Module ${module_name}`);
 
 	// Instance Variables
-	this.module_num = module_num;											// The index of the current module. TODO: replace with Claire's naming structure
+	this.module_name = module_name;											// The index of the current module. TODO: replace with Claire's naming structure
 	this.main = main;														// The function to run after all resources have been loaded.
-	this.content_elements = content_elements;								// The elements to be loaded. TODO: consider deprecating per Tongxi's suggestion.
 	this.loaded = {'audio':false, 'text':false, 'json':false};				// Dictionary to track which resources have loaded.
 	this.drawings = [];														// Array of objects to draw on the canvas.
 	this.graphic_mode = 'image';											// Current graphic mode. See: set_graphic_mode().
@@ -47,9 +44,9 @@ function Module(module_num, main, content_elements) {
 	 *   Setup ROS communication   *
 	 *******************************/
 	var ros = new ROSLIB.Ros({ url: 'wss://localhost:9090' });
-	ros.on('connection', function() { console.log('Connected to websocket server.'); });
-	ros.on('error', function(error) { console.log('Error connecting to websocket server: ', error); window.alert('Error connecting to websocket server'); });
-	ros.on('close', function() { console.log('Connection to websocket server closed.'); });
+	ros.on('connection', () => console.log('Connected to websocket server.') );
+	ros.on('error', error => window.alert('Error connecting to websocket server') );
+	ros.on('close', () => console.log('Connection to websocket server closed.') );
 
 	// Publishing topics
 	this.camera = new ROSLIB.Topic({
@@ -197,38 +194,107 @@ function Module(module_num, main, content_elements) {
 	/*********************
 	 *   HTML Elements   *
 	 *********************/
-	this.ctx = canvas_obj.getContext('2d');
-	canvas_obj.width = window.innerWidth*0.96;
-	canvas_obj.height = window.innerHeight*0.76;
-	this.ch = canvas_obj.height/100.0;
-	this.cw = canvas_obj.width/100.0;
+	this.canvas = document.getElementById('canvas');
+	this.ctx = canvas.getContext('2d');
+	canvas.width = window.innerWidth*0.96;
+	canvas.height = window.innerHeight*0.76;
+	this.ch = canvas.height/100.0;
+	this.cw = canvas.width/100.0;
 	this.robot_color = getComputedStyle(document.body).getPropertyValue('--robot-color')
 
 	/************************
 	 *   Update Font Size   *
 	 ************************/
-	this.textBoxMaxHeight = document.getElementById("adjustable").scrollHeight;
+	this.textBoxMaxHeight = document.getElementById('subtitle').scrollHeight;
 
 	/******************************
 	 *   Setup Section Sequence   *
 	 ******************************/
-	var jsonPath = DIR + 'js/json/' + this.module_num + '.json';
+	var jsonPath = DIR + this.module_name + '/module.json';
 	var jqhxr = $.getJSON(jsonPath, function(data) {
 		self.sections = data.sections;
-		for (let s=0; s<self.sections.length; s++) {
-			self.sections[s]._textLoaded = false;
-			self.sections[s]._audioLoaded = false;
-		}
-
-		self.loadTextAndAudio();
 	});
 	jqhxr.fail(function() {
 		throw new Error('JSON file not formatted correctly. Go to ' + jsonPath + ' to learn more.')
 	});
 	jqhxr.done(function() {
-		self.loaded['json'] = true;
-		if (self.allLoaded()) { self.main(); }
+		var toLoad = [];
+		var loaded = 0;
+		self.sections.forEach( sec => sec.instructions.forEach( instr => toLoad = toLoad.concat(toLoadInstructionResource(instr)) ) );
+		toLoad.forEach( file => {
+			switch (file.type) {
+				case 'audio':
+					let audio = new Audio();
+					audio.addEventListener('canplaythrough', () => {
+						file.duration = audio.duration*1000;
+						file.loaded = true;
+						loaded++;
+						if (loaded==toLoad.length-1) self.main();
+					}, false);
+					audio.onerror = () => console.log(`Error: "${file.src}" failed to load`);
+					audio.src = file.src;
+					break;
+
+				case 'video':
+					let video = document.createElement('video');
+					video.addEventListener('canplaythrough', () => {
+						file.duration = video.duration*1000;
+						file.loaded = true;
+						loaded++;
+						if (loaded==toLoad.length-1) self.main();
+					}, false);
+					video.onerror = () => console.log(`Error: "${file.src}" failed to load`);
+					video.src = file.src;
+					break;
+
+				case 'image':
+					let img = new Image;
+					img.onload = () => {
+						file.loaded = true;
+						loaded++;
+						if (loaded==toLoad.length-1) self.main();
+					}
+					img.onerror = () => console.log(`Error: "${file.src}" failed to load`);
+					img.src = file.src;
+					break;
+
+				default:
+					throw `Error: File load type "${file.type}" not supported`;
+			}
+		});
 	});
+}
+
+function toLoadInstructionResource(instr) {
+	var toLoad = [];
+	switch (instr.type) {
+		case 'if':
+			instr.if_true.forEach( subinstr => toLoad = toLoad.concat(toLoadInstructionResource(subinstr)) );
+			if (instr.hasOwnProperty('if_false')) instr.if_false.forEach( subinstr => toLoad = toLoad.concat(toLoadInstructionResource(subinstr)) );
+			break;
+
+		case 'while':
+			instr.instructions.forEach( subinstr => toLoad = toLoad.concat(toLoadInstructionResource(subinstr)) );
+			break;
+
+		case 'speak':
+			toLoad.push({type: 'audio', src: instr.src, loaded: false});
+			break;
+
+		case 'set_graphic_mode':
+			if (instr.hasOwnProperty('src')) {
+				switch (instr.mode) {
+					case 'image':
+						toLoad.push({type: 'image', src: instr.src, loaded: false});
+						break;
+					case 'video':
+						toLoad.push({type: 'video', src: instr.src, loaded: false});
+						break;
+				}
+			}
+			break;
+	}
+	return toLoad;
 }
 
 // Callbacks
@@ -283,7 +349,7 @@ Module.prototype.endpointCallback = function(msg) {
 
 /**
  * Loads text and audio.
- */
+ *
 Module.prototype.loadTextAndAudio = function() {
 	// Base of directory containing text
 	this.text_dir = DIR + 'text/module' + this.module_num + '/';
@@ -347,7 +413,7 @@ Module.prototype.loadTextAndAudio = function() {
 			if (self.allLoaded()) { self.main(); }
 		});
 	}
-}
+}*/
 
 /**
  * Play audio file.
@@ -385,7 +451,7 @@ Module.prototype.play = async function(audioFile, duration, text) {
  * @param {string}	[max_font_size='64px']	The maximum allowable font size.
  */
 Module.prototype.adjust_text = function(max_font_size='64px') {
-	var resize_me = document.getElementById('adjustable');
+	var resize_me = document.getElementById('subtitle');
 	resize_me.style.fontSize = max_font_size;
 	while (resize_me.scrollHeight > this.textBoxMaxHeight && parseInt(resize_me.style.fontSize)>2){
 		resize_me.style.fontSize = parseInt(resize_me.style.fontSize) - 1 + 'px';
@@ -409,7 +475,7 @@ Module.prototype.getGoToGoal = function(joint_angles, speed_ratio=0, wait=false)
 	}
 
 	if (typeof joint_angles === 'string') {
-		goalMessage.name = this.hashTokeyVal(joint_angles);
+		goalMessage.name = this.hash2keyVal(joint_angles);
 	} else if (joint_angles instanceof Array) {
 		for (let j=0; j<joint_angles.length; j++) {
 			goalMessage[`j${j}pos`] = joint_angles[j];
@@ -427,7 +493,7 @@ Module.prototype.getGoToGoal = function(joint_angles, speed_ratio=0, wait=false)
 Module.prototype.pub_angle = function(angle) {
 	
 	var req = new ROSLIB.Message({
-		data: this.hashTokeyVal(angle)
+		data: this.hash2keyVal(angle)
 	});
 
 	this.joint_angle.publish(req);
@@ -469,9 +535,9 @@ Module.prototype.allLoaded = function() {
  * @param {boolean}	[clearCanvas=false]	Whether or not to also clear the entire canvas.
  */
 Module.prototype.displayOff = function(clearCanvas=false) {
-	this.content_elements.forEach(function(elem) {
-		elem.style.display = 'none';
-	});
+	document.getElementById('image').style.display = 'none';
+	document.getElementById('canvas_container').style.display = 'none';
+	document.getElementById('video').style.display = 'none';
 	if (clearCanvas) {
 		this.drawings = [];
 		this.ctx.clearRect(0,0,100*this.cw,100*this.ch);
@@ -691,9 +757,9 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 				var goal_AdjustPoseBy = new ROSLIB.Goal({
 					actionClient: this.AdjustPoseByAct,
 					goalMessage: {
-						geometry: this.hashTokeyVal(instr.geometry),
-						axis: this.hashTokeyVal(instr.axis),
-						amount: this.hashTokeyVal(instr.amount)
+						geometry: this.hash2keyVal(instr.geometry),
+						axis: this.hash2keyVal(instr.axis),
+						amount: this.hash2keyVal(instr.amount)
 					}
 				});
 				goal_AdjustPoseBy.on('result', function(result){
@@ -709,9 +775,9 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 				var goal_AdjustPoseTo = new ROSLIB.Goal({
 					actionClient: this.AdjustPoseToAct,
 					goalMessage:{
-						geometry: this.hashTokeyVal(instr.geometry),
-						axis: this.hashTokeyVal(instr.axis),
-						amount: this.hashTokeyVal(instr.amount)
+						geometry: this.hash2keyVal(instr.geometry),
+						axis: this.hash2keyVal(instr.axis),
+						amount: this.hash2keyVal(instr.amount)
 					}
 				});
 				goal_AdjustPoseTo.on('result', function(result){
@@ -1059,11 +1125,11 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 				var goal_GoToCartesianPose = new ROSLIB.Goal({
 					actionClient: this.GoToCartesianPoseAct,
 					goalMessage:{
-						position: this.hashTokeyVal(instr.position),
-						orientation: this.hashTokeyVal(instr.orientation),
-						relative_pose: this.hashTokeyVal(instr.relative_pose),
-						joint_angles: this.hashTokeyVal(instr.joint_angles),
-						endpoint_pose: this.hashTokeyVal(instr.endpoint_pose)
+						position: this.hash2keyVal(instr.position),
+						orientation: this.hash2keyVal(instr.orientation),
+						relative_pose: this.hash2keyVal(instr.relative_pose),
+						joint_angles: this.hash2keyVal(instr.joint_angles),
+						endpoint_pose: this.hash2keyVal(instr.endpoint_pose)
 					}
 				});
 				goal_GoToCartesianPose.on('result', function(result){
@@ -1075,8 +1141,8 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 
 			case 'if':
 				checkInstruction(instr, ['conditional','if_true'], instructionAddr);
-				console.log((this.hashTokeyVal(instr.conditional)))
-				if (eval(this.hashTokeyVal(instr.conditional))) {
+				console.log((this.hash2keyVal(instr.conditional)))
+				if (eval(this.hash2keyVal(instr.conditional))) {
 					instructionAddr.push(true);
 					instructionAddr.push(0);
 					this.start(instructionAddr);
@@ -1172,7 +1238,7 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 			case 'log':
 				checkInstruction(instr, ['message'], instructionAddr);
 
-				console.log(this.hashTokeyVal(instr.message));
+				console.log(this.hash2keyVal(instr.message));
 
 				this.start(this.getNextAddress(instructionAddr));
 				break;
@@ -1206,7 +1272,7 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 
 				var audio_index = instr.audio_index;
 				if (typeof audio_index === 'string') {
-					audio_index = eval(this.hashTokeyVal(audio_index));
+					audio_index = eval(this.hash2keyVal(audio_index));
 				}
 
 				this.play(this.thisSection._audiofiles_mp3[audio_index], this.thisSection._audio_duration[audio_index], this.thisSection._textArray[audio_index]);
@@ -1333,7 +1399,7 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 
 				if (VERBOSE) console.log(`Setting #${instr.key} to ${instr.val}`);
 				if (typeof instr.val === 'string') {
-					this.dictionary[instr.key] = eval(this.hashTokeyVal(instr.val));
+					this.dictionary[instr.key] = eval(this.hash2keyVal(instr.val));
 				} else {
 					this.dictionary[instr.key] = instr.val;
 				}
@@ -1372,6 +1438,24 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 				cv_image.src = cv_image_url;
 
 				break;
+
+			case 'speak':
+				checkInstruction(instr, ['text', 'src'], instructionAddr);
+
+				let audio = document.getElementById('audio');
+				audio.src = instr.src;
+				audio.play();
+
+				subtitle.innerHTML = instr.text;
+				this.adjust_text();
+
+				// Inform robot for how long current audio file will play.
+				this.UpdateAudioDurationSrv.callService(new ROSLIB.ServiceRequest({audio_duration: audio.duration}), result => {return});
+
+				// Log action.
+				if (VERBOSE) console.log('Playing ' + instr.src + ', duration ' + Math.round(audio.duration) + 's.');
+
+				break;
 /*
 			case 'update':
 
@@ -1384,7 +1468,7 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 			case 'while':
 				checkInstruction(instr, ['conditional'], instructionAddr);
 		
-				if (eval(this.hashTokeyVal(instr.conditional))) {
+				if (eval(this.hash2keyVal(instr.conditional))) {
 					instructionAddr.push(0);
 					this.start(instructionAddr);
 				} else {
@@ -1407,13 +1491,13 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
  *
  * Example:
  *  >> module.dictionary.a = 314;
- *  >> console.log(module.hashTokeyVal('I have #a apples.'));
+ *  >> console.log(module.hash2keyVal('I have #a apples.'));
  *     I have 314 apples.
  *
  * @param {string}	str	A string to process.
  * @return {object}	The processed string with references replaced.
  */
-Module.prototype.hashTokeyVal = function(str) {
+Module.prototype.hash2keyVal = function(str) {
 	switch (typeof str) {
 		case 'string':
 			try {

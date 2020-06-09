@@ -1,9 +1,0 @@
-Welcome to the last lesson of the gateway module.
-This last lesson will be about tying everything together from the past three lessons and applying what you've learned to real life.
-The first thing we'll talk about is machine tending.
-There are a ton of machines at machine shops that are really useful for manufacturing, such as mills and lathes.
-With that in mind, the first thing I'm going to do is apply the concepts we learned about pick and place to a mill. 
-As this box comes down the conveyor, I stop it with the event based programming we learned in module 3, as it passes into the pick up location.
-Using my knowledge of waypoints and kinematics, I plan my motion to pick up the box.
-I know where I want to place the box according to my encoder values, so I move the box into the CNC mill. 
-Lastly, I place the box with a straight motion in the correct orientation and release my gripper.

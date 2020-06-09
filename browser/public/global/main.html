@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Nuts & Bolts</title>
+
+	<link rel="stylesheet" type="text/css" href="https://localhost:8000/global/sawyer.css">
+	<link rel="stylesheet" type="text/css" href="https://localhost:8000/global/main.css">
+	<link rel="icon" href="https://localhost:8000/global/favicon.png">
+
+	<!-- Structural Utilities -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script type="text/javascript" src='https://lib.smartsparrow.com/simcapi-js-3.0.6.min.js'></script>
+	<script src="https://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+	<script type="text/javascript" src="https://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
+	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/gh/jquery-textfill/jquery-textfill@0.6.0/source/jquery.textfill.min.js"></script>
+
+	<!-- TeachBot Utilities -->
+	<script src="https://localhost:8000/global/js/utils/arc3pt.js"></script>
+	<script src="https://localhost:8000/global/js/utils/display_choices.js"></script>
+	<script src="https://localhost:8000/global/js/utils/draw_ball.js"></script>
+	<script src="https://localhost:8000/global/js/utils/draw_bar.js"></script>
+	<script src="https://localhost:8000/global/js/utils/draw_goal.js"></script>
+	<script src="https://localhost:8000/global/js/utils/draw_pos_orien.js"></script>
+	<script src="https://localhost:8000/global/js/utils/draw_odometer.js"></script>
+	<script src="https://localhost:8000/global/js/utils/draw_rectangle.js"></script>
+	<script src="https://localhost:8000/global/js/utils/draw_spring.js"></script>
+	<script src="https://localhost:8000/global/js/utils/draw_encoder.js"></script>
+	<script src="https://localhost:8000/global/js/utils/JSONcopy.js"></script>
+	<script src="https://localhost:8000/global/js/utils/sleep.js"></script>
+
+	<!-- TeachBot Module -->
+	<script type="text/javascript" src="https://localhost:8000/global/js/Module.js"></script>
+	<script type="text/javascript" src="https://localhost:8000/global/js/instructions/draw.js"></script>
+	<script type="text/javascript" src="https://localhost:8000/global/js/instructions/numeric_input.js"></script>
+	<script type="text/javascript" src="https://localhost:8000/global/js/instructions/set_graphic_mode.js"></script>
+	<script type="text/javascript" src="https://localhost:8000/global/js/instructions/set_robot_mode.js"></script>
+	<script type="text/javascript" src="https://localhost:8000/global/js/instructions/wait.js"></script>
+</head>
+
+<body>
+	<div id="screen">
+		<img id="image" class="welcome" src="https://localhost:8000/global/logo.png" style="display: none;">
+		<div id="canvas_container" style="display: none;"> <canvas id="canvas"></canvas> </div>
+		<video id="video" class="centered" style="display: none;" preload></video>
+		<audio id="audio"></audio>
+	</div>
+	<div id='subtitle'>Loading...</div>
+</body>
+
+<script type="text/javascript" src="https://localhost:8000/global/js/main.js"></script>
+
+<!-- Display Pointer Position -->
+<!-- <script type="text/javascript" src="https://localhost:8000/js/utils/displayPointerPosition.js"></script> -->
+
+</html>

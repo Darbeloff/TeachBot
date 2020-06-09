@@ -3,9 +3,9 @@
 		"id": "intro",
 		"instructions": [
 			{
-				"//":"Hello, my name is TeachBot. It's nice to meet you.",
-				"type":"play",
-				"audio_index":0,
+				"type":"speak",
+				"text":"Hello, my name is TeachBot. It's nice to meet you.",
+				"src":"Nuts_and_Bolts/intro/line0.mp3",
 				"delay":true
 			},
 			{
@@ -18,9 +18,9 @@
 		"id": "OneMotor",
 		"instructions": [
 			{
-				"//":"Please stand back so I can show you something.",
-				"type":"play",
-				"audio_index":0,
+				"type":"speak",
+				"text":"Please stand back so I can show you something.",
+				"src":"Nuts_and_Bolts/OneMotor/line0.mp3",
 				"delay":true
 			},
 			{
@@ -28,15 +28,16 @@
 				"joint_angles":"joint_motor_animation_0"
 			},
 			{
-				"//":"Want to know how I did that? Inside my arm I have a bunch of electronic things called electric motors. They let me move my arm, like how muscles move yours. Here, take a look.",
-				"type":"play",
-				"audio_index":1,
+				"type":"speak",
+				"text":"Want to know how I did that? Inside my arm I have a bunch of electronic things called electric motors. They let me move my arm, like how muscles move yours. Here, take a look.",
+				"src":"Nuts_and_Bolts/OneMotor/line1.mp3",
 				"delay":true,
 				"skippable": true
 			},
 			{
 				"type":"set_graphic_mode",
 				"mode":"video",
+				"src":"Nuts_and_Bolts/OneMotor/motor_animation.mp4",
 				"skippable":true
 			},
 			{
@@ -75,12 +76,12 @@
 			{
 				"type":"set_graphic_mode",
 				"mode":"image",
-				"location":"images/Welcome.png"
+				"src":"global/logo.png"
 			},
 			{
-				"//":"Just by looking, how many motors do you think I have in my arm? To input your answer, use the white buttons on the button box next to you to go up or down in value. Then press any colored button to submit your answer.",
-				"type":"play",
-				"audio_index":0,
+				"type":"speak",
+				"text":"Just by looking, how many motors do you think I have in my arm? To input your answer, use the white buttons on the button box next to you to go up or down in value. Then press any colored button to submit your answer.",
+				"src":"Nuts_and_Bolts/MultipleMotors/line0.mp3",
 				"delay":false
 			},
 			{
@@ -88,9 +89,9 @@
 				"skippable":false
 			},
 			{
-				"//":"Step back and we'll count them together.",
-				"type":"play",
-				"audio_index":1,
+				"type":"speak",
+				"text":"Step back and we'll count them together.",
+				"src":"Nuts_and_Bolts/MultipleMotors/line1.mp3",
 				"delay":true
 			},
 			{
@@ -102,9 +103,9 @@
 				"joint_angles":"joint_motor_animation_0"
 			},
 			{
-				"//":"Pay close attention while I move each motor individually. Try to count how many motors I have.",
-				"type":"play",
-				"audio_index":2,
+				"type":"speak",
+				"text":"Pay close attention while I move each motor individually. Try to count how many motors I have.",
+				"src":"Nuts_and_Bolts/MultipleMotors/line2.mp3",
 				"delay":true
 			},
 			{
@@ -134,9 +135,9 @@
 				]
 			},
 			{
-				"//":"How many motors did you count? Use the white buttons on the button box next to you to go up or down in value. Then, press any colored button to submit your answer.",
-				"type":"play",
-				"audio_index":3,
+				"type":"speak",
+				"text":"How many motors did you count? Use the white buttons on the button box next to you to go up or down in value. Then, press any colored button to submit your answer.",
+				"src":"Nuts_and_Bolts/MultipleMotors/line3.mp3",
 				"delay":false
 			},
 			{
@@ -148,9 +149,9 @@
 				"conditional":"#wheelVal==7",
 				"if_true":[
 					{
-						"//":"Good job! Now, please stand back so I can show you something else.",
-						"type":"play",
-						"audio_index":4,
+						"type":"speak",
+						"text":"Good job! Now, please stand back so I can show you something else.",
+						"src":"Nuts_and_Bolts/MultipleMotors/line4.mp3",
 						"delay":true
 					}
 				],
@@ -160,25 +161,25 @@
 						"conditional":"#wheelVal==14",
 						"if_true":[
 							{
-								"//":"Not quite. Remember that each motor can move in two directions: clockwise and counterclockwise.",
-								"type":"play",
-								"audio_index":5,
+								"type":"speak",
+								"text":"Not quite. Remember that each motor can move in two directions: clockwise and counterclockwise.",
+								"src":"Nuts_and_Bolts/MultipleMotors/line5.mp3",
 								"delay":true
 							}
 						],
 						"if_false":[
 							{
-								"//":"Not quite.",
-								"type":"play",
-								"audio_index":6,
+								"type":"speak",
+								"text":"Not quite.",
+								"src":"Nuts_and_Bolts/MultipleMotors/line6.mp3",
 								"delay":true
 							}
 						]
 					},
 					{
-						"//":"Let's count them together. Please stand back.",
-						"type":"play",
-						"audio_index":7,
+						"type":"speak",
+						"text":"Let's count them together. Please stand back.",
+						"src":"Nuts_and_Bolts/MultipleMotors/line7.mp3",
 						"delay":true
 					},
 					{
@@ -194,12 +195,6 @@
 						"type":"while",
 						"conditional":"#j<JOINTS",
 						"instructions":[
-							{
-								"//":"#<the number I'm on>",
-								"type":"play",
-								"audio_index":"#j+10",
-								"delay":false
-							},
 							{
 								"type":"goToJointAngles",
 								"joint_angles":"joint_test[#j]",
@@ -218,9 +213,9 @@
 						]
 					},
 					{
-						"//":"I have seven motors. Now, please stand back so I can show you something else.",
-						"type":"play",
-						"audio_index":15,
+						"type":"speak",
+						"text":"I have seven motors. Now, please stand back so I can show you something else.",
+						"src":"Nuts_and_Bolts/MultipleMotors/line15.mp3",
 						"delay":true
 					}
 				]
@@ -243,9 +238,9 @@
 				"joint_angles":"joint_dof_start"
 			},
 			{
-				"//":"Like most of my human coworkers, I also have a shoulder, an elbow, and a wrist. For simplicity, I'll call this one my shoulder,",
-				"type":"play",
-				"audio_index":0,
+				"type":"speak",
+				"text":"Like most of my human coworkers, I also have a shoulder, an elbow, and a wrist. For simplicity, I'll call this one my shoulder,",
+				"src":"Nuts_and_Bolts/encoders/line0.mp3",
 				"delay":true
 			},
 			{
@@ -257,9 +252,9 @@
 				"joint_angles":"joint_dof_start"
 			},
 			{
-				"//":"this one my elbow,",
-				"type":"play",
-				"audio_index":1,
+				"type":"speak",
+				"text":"this one my elbow,",
+				"src":"Nuts_and_Bolts/encoders/line1.mp3",
 				"delay":true
 			},
 			{
@@ -271,9 +266,9 @@
 				"joint_angles":"joint_dof_start"
 			},
 			{
-				"//":"and this one my wrist.",
-				"type":"play",
-				"audio_index":2,
+				"type":"speak",
+				"text":"and this one my wrist.",
+				"src":"Nuts_and_Bolts/encoders/line2.mp3",
 				"delay":true
 			},
 			{
@@ -285,9 +280,9 @@
 				"joint_angles":"joint_dof_start"
 			},
 			{
-				"//":"But how do I tell where my arm is? How do I know how far I've rotated each motor? I'm going to unlock my shoulder. Try pushing my arm. I'll display how much I think you've turned it on the screen. When you're finished, press any button on the box to let me know.",
-				"type":"play",
-				"audio_index":3,
+				"type":"speak",
+				"text":"But how do I tell where my arm is? How do I know how far I've rotated each motor? I'm going to unlock my shoulder. Try pushing my arm. I'll display how much I think you've turned it on the screen. When you're finished, press any button on the box to let me know.",
+				"src":"Nuts_and_Bolts/encoders/line3.mp3",
 				"delay":false
 			},
 			{
@@ -324,9 +319,9 @@
 				"mode":"image"
 			},
 			{
-				"//":"Let me show you how I know. Please stand back.",
-				"type":"play",
-				"audio_index":4,
+				"type":"speak",
+				"text":"Let me show you how I know. Please stand back.",
+				"src":"Nuts_and_Bolts/encoders/line4.mp3",
 				"delay":true
 			},
 			{
@@ -337,9 +332,9 @@
 				"type":"encode"
 			},
 			{
-				"//":"This device is called an encoder. Every motor in my arm has one. These encoders can measure the angles of each of my motors.",
-				"type":"play",
-				"audio_index":5,
+				"type":"speak",
+				"text":"This device is called an encoder. Every motor in my arm has one. These encoders can measure the angles of each of my motors.",
+				"src":"Nuts_and_Bolts/encoders/line5.mp3",
 				"delay":true
 			},
 			{
@@ -354,9 +349,9 @@
 				"mode":"image"
 			},
 			{
-				"//":"Now I'm going to lock my shoulder and unlock my wrist. Try pushing my hand. When you're done, press any button on the box.",
-				"type":"play",
-				"audio_index":6,
+				"type":"speak",
+				"text":"Now I'm going to lock my shoulder and unlock my wrist. Try pushing my hand. When you're done, press any button on the box.",
+				"src":"Nuts_and_Bolts/encoders/line6.mp3",
 				"delay":false
 			},
 			{
@@ -389,9 +384,9 @@
 				"mode":"position"
 			},
 			{
-				"//":"So far I've only unlocked one motor at a time. Let's try unlocking both my shoulder and wrist motors. Push on my arm again and see what happens. When you're done, press any button on the box.",
-				"type":"play",
-				"audio_index":7,
+				"type":"speak",
+				"text":"So far I've only unlocked one motor at a time. Let's try unlocking both my shoulder and wrist motors. Push on my arm again and see what happens. When you're done, press any button on the box.",
+				"src":"Nuts_and_Bolts/encoders/line7.mp3",
 				"delay":false
 			},
 			{
@@ -429,9 +424,9 @@
 				"mode":"image"
 			},
 			{
-				"//":"Good! Now, before we go further, how many encoders do you think I have in my arm? Step back so I can reset my position. Again, use the white buttons on the box to change the number. Then, press any colored button to submit your answer.",
-				"type":"play",
-				"audio_index":8,
+				"type":"speak",
+				"text":"Good! Now, before we go further, how many encoders do you think I have in my arm? Step back so I can reset my position. Again, use the white buttons on the box to change the number. Then, press any colored button to submit your answer.",
+				"src":"Nuts_and_Bolts/encoders/line8.mp3",
 				"delay":true
 			},
 			{
@@ -447,17 +442,17 @@
 				"conditional":"#wheelVal==7",
 				"if_true":[
 					{
-						"//":"Good job!",
-						"type":"play",
-						"audio_index":9,
+						"type":"speak",
+						"text":"Good job!",
+						"src":"Nuts_and_Bolts/encoders/line9.mp3",
 						"delay":true
 					}
 				],
 				"if_false":[
 					{
-						"//":"Not quite. If I have one encoder for every motor, how many encoders do I have? Use the white buttons on the box to change the number. Then, press any colored button to submit your answer.",
-						"type":"play",
-						"audio_index":10,
+						"text":"Not quite. If I have one encoder for every motor, how many encoders do I have? Use the white buttons on the box to change the number. Then, press any colored button to submit your answer.",
+						"type":"speak",
+						"src":"Nuts_and_Bolts/encoders/line10.mp3",
 						"delay":true
 					},
 					{
@@ -467,9 +462,9 @@
 				]
 			},
 			{
-				"//":"Now grab and move my arm again. I've unlocked all of my motors, so my arm might drift around a little. Go ahead and grab it anyway while watching the projection to see what I sense as you move each motor. When you're done, press any button on the box.",
-				"type":"play",
-				"audio_index":11,
+				"text":"Now grab and move my arm again. I've unlocked all of my motors, so my arm might drift around a little. Go ahead and grab it anyway while watching the projection to see what I sense as you move each motor. When you're done, press any button on the box.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/encoders/line11.mp3",
 				"delay":false
 			},
 			{
@@ -573,9 +568,9 @@
 				"mode":"position"
 			},
 			{
-				"//":"Using my encoders, I can measure the angles of all seven of my motors. Please stand back so I can reset my position.",
-				"type":"play",
-				"audio_index":12,
+				"text":"Using my encoders, I can measure the angles of all seven of my motors. Please stand back so I can reset my position.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/encoders/line12.mp3",
 				"delay":true
 			},
 			{
@@ -597,9 +592,9 @@
 				"clear":true
 			},
 			{
-				"//":"Now let's talk about why I have so many motors.",
-				"type":"play",
-				"audio_index":0,
+				"text":"Now let's talk about why I have so many motors.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/2dPosition/line0.mp3",
 				"delay":true
 			},
 			{
@@ -608,9 +603,9 @@
 				"wait":true
 			},
 			{
-				"//":"Having so many motors is really important. If I can only move my elbow,",
-				"type":"play",
-				"audio_index":1,
+				"text":"Having so many motors is really important. If I can only move my elbow,",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/2dPosition/line1.mp3",
 				"delay":true
 			},
 			{
@@ -634,9 +629,9 @@
 				"joint_angles":"kinematics_init_pos"
 			},
 			{
-				"//":"I can only reach points along this curve. So, if I want to reach this point,",
-				"type":"play",
-				"audio_index":2,
+				"text":"I can only reach points along this curve. So, if I want to reach this point,",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/2dPosition/line2.mp3",
 				"delay":true
 			},
 			{
@@ -653,9 +648,9 @@
 				"fillStyle": "#7c2629"
 			},
 			{
-				"//":"I'll need to move another motor, too!",
-				"type":"play",
-				"audio_index":3,
+				"text":"I'll need to move another motor, too!",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/2dPosition/line3.mp3",
 				"delay":true
 			},
 			{
@@ -663,9 +658,9 @@
 				"joint_angles":"joint_dot_1"
 			},
 			{
-				"//":"I'm going to move my hand back to where it was and use the display to show the same arc as before.",
-				"type":"play",
-				"audio_index":4,
+				"text":"I'm going to move my hand back to where it was and use the display to show the same arc as before.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/2dPosition/line4.mp3",
 				"delay":true
 			},
 			{
@@ -685,9 +680,9 @@
 				"joint_angles":"kinematics_init_pos"
 			},
 			{
-				"//":"If I want to reach that point, I only need to move one motor, my wrist.",
-				"type":"play",
-				"audio_index":5,
+				"text":"If I want to reach that point, I only need to move one motor, my wrist.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/2dPosition/line5.mp3",
 				"delay":true
 			},
 			{
@@ -704,9 +699,9 @@
 				"fillStyle": "#7c2629"
 			},
 			{
-				"//":"How many motors will I need to use to reach this new point? When you think you know the answer, push my arm to the point to see if you were right.",
-				"type":"play",
-				"audio_index":6,
+				"text":"How many motors will I need to use to reach this new point? When you think you know the answer, push my arm to the point to see if you were right.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/2dPosition/line6.mp3",
 				"delay":false
 			},
 			{
@@ -726,9 +721,9 @@
 				"mode":"position"
 			},
 			{
-				"//":"I only needed to use one motor, but it was my elbow, not my wrist.",
-				"type":"play",
-				"audio_index":7,
+				"text":"I only needed to use one motor, but it was my elbow, not my wrist.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/2dPosition/line7.mp3",
 				"delay":true
 			},
 			{
@@ -736,9 +731,9 @@
 				"joint_angles":"joint_dot_2"
 			},
 			{
-				"//":"With my wrist motor, I could move along this curve,",
-				"type":"play",
-				"audio_index":8,
+				"text":"With my wrist motor, I could move along this curve,",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/2dPosition/line8.mp3",
 				"delay":true
 			},
 			{
@@ -762,9 +757,9 @@
 				"joint_angles":"joint_ortho_kin"
 			},
 			{
-				"//":"But with my elbow motor, I can move along this curve.",
-				"type":"play",
-				"audio_index":9,
+				"text":"But with my elbow motor, I can move along this curve.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/2dPosition/line9.mp3",
 				"delay":true
 			},
 			{
@@ -806,9 +801,9 @@
 				"joint_angles":"joint_dot_3_init"
 			},
 			{
-				"//":"Let's try another. If I want to move to this point, how many movements will I have to make if I can only move one motor at a time? Just like before, I'm going to unlock my elbow motor for you to push my hand toward the point. If you want to switch to moving my wrist motor, press any button on the box.",
-				"type":"play",
-				"audio_index":10,
+				"text":"Let's try another. If I want to move to this point, how many movements will I have to make if I can only move one motor at a time? Just like before, I'm going to unlock my elbow motor for you to push my hand toward the point. If you want to switch to moving my wrist motor, press any button on the box.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/2dPosition/line10.mp3",
 				"delay":false
 			},
 			{
@@ -827,9 +822,9 @@
 				"mode":"position"
 			},
 			{
-				"//":"Now I've locked my elbow and unlocked my wrist. You can switch back and forth at any time by pressing any button on the box.",
-				"type":"play",
-				"audio_index":11,
+				"text":"Now I've locked my elbow and unlocked my wrist. You can switch back and forth at any time by pressing any button on the box.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/2dPosition/line11.mp3",
 				"delay":false
 			},
 			{
@@ -905,9 +900,9 @@
 				"mode":"position"
 			},
 			{
-				"//":"Great! Now let me try.",
-				"type":"play",
-				"audio_index":12,
+				"text":"Great! Now let me try.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/2dPosition/line12.mp3",
 				"delay":true
 			},
 			{
@@ -923,9 +918,9 @@
 				"joint_angles":"joint_dot_3"
 			},
 			{
-				"//":"I took two steps to get there.",
-				"type":"play",
-				"audio_index":13,
+				"text":"I took two steps to get there.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/2dPosition/line13.mp3",
 				"delay":true
 			},
 			{
@@ -934,9 +929,9 @@
 				"wait":true 
 			},
 			{
-				"//":"First, I moved this motor,",
-				"type":"play",
-				"audio_index":14,
+				"text":"First, I moved this motor,",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/2dPosition/line14.mp3",
 				"delay":true
 			},
 			{
@@ -944,9 +939,9 @@
 				"joint_angles":"joint_dot_3_2_1"
 			},
 			{
-				"//":"then this one.",
-				"type":"play",
-				"audio_index":15,
+				"text":"then this one.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/2dPosition/line15.mp3",
 				"delay":true
 			},
 			{
@@ -954,9 +949,9 @@
 				"joint_angles":"joint_dot_3"
 			},
 			{
-				"//":"I can also travel in four steps",
-				"type":"play",
-				"audio_index":16,
+				"text":"I can also travel in four steps",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/2dPosition/line16.mp3",
 				"delay":true
 			},
 			{
@@ -981,9 +976,9 @@
 				"joint_angles":"joint_dot_3"
 			},
 			{
-				"//":"or eight steps.",
-				"type":"play",
-				"audio_index":17,
+				"text":"or eight steps.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/2dPosition/line17.mp3",
 				"delay":true
 			},
 			{
@@ -1024,9 +1019,9 @@
 				"joint_angles":"joint_dot_3"
 			},
 			{
-				"//":"Notice how, the more steps I take, the shorter each step is and the less time I spend using my wrist before switching to my elbow. If I keep increasing the number of steps, eventually there won't be any time at all between when I am using my wrist and when I am using my elbow, like this.",
-				"type":"play",
-				"audio_index":18,
+				"text":"Notice how, the more steps I take, the shorter each step is and the less time I spend using my wrist before switching to my elbow. If I keep increasing the number of steps, eventually there won't be any time at all between when I am using my wrist and when I am using my elbow, like this.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/2dPosition/line18.mp3",
 				"delay":true
 			},
 			{
@@ -1042,15 +1037,15 @@
 				"type":"clearRect"
 			},
 			{
-				"//":"By combining all of the motions I can make with just one of my motors, I can move my hand freely through a large space!",
-				"type":"play",
-				"audio_index":19,
+				"text":"By combining all of the motions I can make with just one of my motors, I can move my hand freely through a large space!",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/2dPosition/line19.mp3",
 				"delay":true
 			},
 			{
-				"//":"Grab my hand and see how large my range of motion is. I've unlocked all my motors, so my arm might drift around again. Go ahead and grab it anyway. When you're done, press any button on the box.",
-				"type":"play",
-				"audio_index":20,
+				"text":"Grab my hand and see how large my range of motion is. I've unlocked all my motors, so my arm might drift around again. Go ahead and grab it anyway. When you're done, press any button on the box.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/2dPosition/line20.mp3",
 				"delay":false
 			},
 			{
@@ -1072,9 +1067,9 @@
 				"mode":"position"
 			},
 			{
-				"//":"Please stand back so that I can reset my position.",
-				"type":"play",
-				"audio_index":21,
+				"text":"Please stand back so that I can reset my position.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/2dPosition/line21.mp3",
 				"delay":true
 			},
 			{
@@ -1091,15 +1086,15 @@
 		"id":"1dOrientation",
 		"instructions":[
 			{
-				"//":"Now that you've learned the concept of position, let's talk about orientation.",
-				"type":"play",
-				"audio_index":0,
+				"text":"Now that you've learned the concept of position, let's talk about orientation.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/1dOrientation/line0.mp3",
 				"delay":true
 			},
 			{
-				"//":"Pay attention to my gripper and see how it moves.",
-				"type":"play",
-				"audio_index":1,
+				"text":"Pay attention to my gripper and see how it moves.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/1dOrientation/line1.mp3",
 				"delay":true
 			},
 			{
@@ -1147,9 +1142,9 @@
 				"joint_angles":"point_a"
 			},
 			{
-				"//":"Now let's talk about a new concept, feedback. I've projected some points onto the table. Push my arm so that my shadow is on point B.",
-				"type":"play",
-				"audio_index":0,
+				"text":"Now let's talk about a new concept, feedback. I've projected some points onto the table. Push my arm so that my shadow is on point B.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/feedback/line0.mp3",
 				"delay":false
 			},
 			{
@@ -1169,9 +1164,9 @@
 				"mode":"position"
 			},
 			{
-				"//":"Great! Thanks. Now I'm going to move to point B on my own.",
-				"type":"play",
-				"audio_index":1,
+				"text":"Great! Thanks. Now I'm going to move to point B on my own.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/feedback/line1.mp3",
 				"delay":true
 			},
 			{
@@ -1183,9 +1178,9 @@
 				"joint_angles":"point_c"
 			},
 			{
-				"//":"Oops! This time I overshot to a new point, C.",
-				"type":"play",
-				"audio_index":2,
+				"text":"Oops! This time I overshot to a new point, C.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/feedback/line2.mp3",
 				"delay":true
 			},
 			{
@@ -1198,9 +1193,9 @@
 				"label": "C"
 			},
 			{
-				"//":"Can you correct my position back to point B?",
-				"type":"play",
-				"audio_index":3,
+				"text":"Can you correct my position back to point B?",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/feedback/line3.mp3",
 				"delay":false
 			},
 			{
@@ -1220,9 +1215,9 @@
 				"mode":"position"
 			},
 			{
-				"//":"Thank you! At any point, I know the position of my arm because of my encoder. Here is position A,",
-				"type":"play",
-				"audio_index":4,
+				"text":"Thank you! At any point, I know the position of my arm because of my encoder. Here is position A,",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/feedback/line4.mp3",
 				"delay":true
 			},
 			{
@@ -1241,9 +1236,9 @@
 				"label": "A"
 			},
 			{
-				"//":"here is position B,",
-				"type":"play",
-				"audio_index":5,
+				"text":"here is position B,",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/feedback/line5.mp3",
 				"delay":true
 			},
 			{
@@ -1262,9 +1257,9 @@
 				"label": "B"
 			},
 			{
-				"//":"and here is position C.",
-				"type":"play",
-				"audio_index":6,
+				"text":"and here is position C.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/feedback/line6.mp3",
 				"delay":true
 			},
 			{
@@ -1283,15 +1278,15 @@
 				"label": "C"
 			},
 			{
-				"//":"I compare my encoder reading at my current position, C, against the destination encoder position, B. If C is smaller than B, I push right. If C is longer than B, I push left. The 'feedback' from my encoders helps me decide which way to go to get to my destination. Now, please stand back.",
-				"type":"play",
-				"audio_index":7,
+				"text":"I compare my encoder reading at my current position, C, against the destination encoder position, B. If C is smaller than B, I push right. If C is longer than B, I push left. The 'feedback' from my encoders helps me decide which way to go to get to my destination. Now, please stand back.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/feedback/line7.mp3",
 				"delay":true
 			},
 			{
 				"type":"set_graphic_mode",
 				"mode":"image",
-				"location":"images/Welcome.png"
+				"src":"global/logo.png"
 			},
 			{
 				"type":"goToJointAngles",
@@ -1303,9 +1298,9 @@
 				"wait":true
 			},
 			{
-				"//":"But that's only one demonstration of feedback. Let me show you another one. Try gently pushing down on my arm. Can you notice the difference?",
-				"type":"play",
-				"audio_index":8,
+				"text":"But that's only one demonstration of feedback. Let me show you another one. Try gently pushing down on my arm. Can you notice the difference?",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/feedback/line8.mp3",
 				"delay":false
 			},
 			{
@@ -1317,9 +1312,9 @@
 				"store_answer_in":"wait_output"
 			},
 			{
-				"//":"Watch the projection as you push my arm. I've put up a little display showing how far you've pushed my arm and how much force I'm using to push back. The further you push my arm, the harder I tell my motors to push back. It should feel a little bit like a rubber band: the more you displace it, the harder it will want to spring back into its original position. When you're done, press any button on the box.",
-				"type":"play",
-				"audio_index":9,
+				"text":"Watch the projection as you push my arm. I've put up a little display showing how far you've pushed my arm and how much force I'm using to push back. The further you push my arm, the harder I tell my motors to push back. It should feel a little bit like a rubber band: the more you displace it, the harder it will want to spring back into its original position. When you're done, press any button on the box.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/feedback/line9.mp3",
 				"delay":false
 			},
 			{
@@ -1344,9 +1339,9 @@
 				"ways":false
 			},
 			{
-				"//":"Before, I was using the feedback from my encoders to go somewhere new. Now, I'm using feedback to stay in one place. What am I using to know when my arm is moving? Please stand back so I can reset my arm position.",
-				"type":"play",
-				"audio_index":10,
+				"text":"Before, I was using the feedback from my encoders to go somewhere new. Now, I'm using feedback to stay in one place. What am I using to know when my arm is moving? Please stand back so I can reset my arm position.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/feedback/line10.mp3",
 				"delay":false
 			},
 			{
@@ -1366,17 +1361,17 @@
 				"conditional":"#wheelVal==5",
 				"if_true":[
 					{
-						"//":"That's right! I measured my arm positions, and created a force to push my arm back.",
-						"type":"play",
-						"audio_index":11,
+						"text":"That's right! I measured my arm positions, and created a force to push my arm back.",
+						"type":"speak",
+						"src":"Nuts_and_Bolts/feedback/line11.mp3",
 						"delay":true
 					}
 				],
 				"if_false":[
 					{
-						"//":"Not quite. Do you remember pushing my arm and I knew how far I moved?",
-						"type":"play",
-						"audio_index":12,
+						"text":"Not quite. Do you remember pushing my arm and I knew how far I moved?",
+						"type":"speak",
+						"src":"Nuts_and_Bolts/feedback/line12.mp3",
 						"delay":true
 					},
 					{
@@ -1388,17 +1383,17 @@
 						"conditional":"#wheelVal==5",
 						"if_true":[
 							{
-								"//":"That's right! I measured my arm positions, and created a force to push my arm back.",
-								"type":"play",
-								"audio_index":11,
+								"text":"That's right! I measured my arm positions, and created a force to push my arm back.",
+								"type":"speak",
+								"src":"Nuts_and_Bolts/feedback/line11.mp3",
 								"delay":true
 							}
 						],
 						"if_false":[
 							{
-								"//":"Sorry, that is incorrect. The correct answer is encoders.",
-								"type":"play",
-								"audio_index":13,
+								"text":"Sorry, that is incorrect. The correct answer is encoders.",
+								"type":"speak",
+								"src":"Nuts_and_Bolts/feedback/line13.mp3",
 								"delay":true
 							}
 						]
@@ -1419,9 +1414,9 @@
 				"mode":"image"
 			},
 			{
-				"//":"The final lesson of the day is about waypoints. Just like how your phone or computer can save pictures and music in its memory, I use my memory to remember different arm positions. Specifically, whenever you move my arm, I read all of my encoders so that, if I want to, I can return to this exact position. I call that remembered position a 'waypoint.'",
-				"type":"play",
-				"audio_index":0,
+				"text":"The final lesson of the day is about waypoints. Just like how your phone or computer can save pictures and music in its memory, I use my memory to remember different arm positions. Specifically, whenever you move my arm, I read all of my encoders so that, if I want to, I can return to this exact position. I call that remembered position a 'waypoint.'",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/waypoints/line0.mp3",
 				"delay":true
 			},
 			{
@@ -1429,15 +1424,15 @@
 				"joint_angles":"default"
 			},
 			{
-				"//":"Let's try an example. I'm going to show you a series of arm positions. After each one, I'll unlock my arm and ask you to move it to that position and press any button on the box.",
-				"type":"play",
-				"audio_index":1,
+				"text":"Let's try an example. I'm going to show you a series of arm positions. After each one, I'll unlock my arm and ask you to move it to that position and press any button on the box.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/waypoints/line1.mp3",
 				"delay":true
 			},
 			{
-				"//":"Start by pulling my arm so it's extended all the way and matches the image on the projector. When it's in the right position, press any button on the box and I'll record the position as a waypoint.",
-				"type":"play",
-				"audio_index":2,
+				"text":"Start by pulling my arm so it's extended all the way and matches the image on the projector. When it's in the right position, press any button on the box and I'll record the position as a waypoint.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/waypoints/line2.mp3",
 				"delay":false
 			},
 			{
@@ -1454,7 +1449,7 @@
 			{
 				"type":"set_graphic_mode",
 				"mode":"image",
-				"location":"images/hokeypokey_out.png"
+				"src":"Nuts_and_Bolts/waypoints/hokeypokey_out.png"
 			},
 			{
 				"type":"wait",
@@ -1466,9 +1461,9 @@
 				"ways":true
 			},
 			{
-				"//":"Good! Now, push my arm in so it's close to my torso. When it's in the right position, press any button on the box.",
-				"type":"play",
-				"audio_index":3,
+				"text":"Good! Now, push my arm in so it's close to my torso. When it's in the right position, press any button on the box.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/waypoints/line3.mp3",
 				"delay":false
 			},
 			{
@@ -1485,7 +1480,7 @@
 			{
 				"type":"set_graphic_mode",
 				"mode":"image",
-				"location":"images/hokeypokey_in.png"
+				"src":"Nuts_and_Bolts/waypoints/hokeypokey_in.png"
 			},
 			{
 				"type":"wait",
@@ -1497,9 +1492,9 @@
 				"ways":true
 			},
 			{
-				"//":"Now pull my arm back out and press any button on the box.",
-				"type":"play",
-				"audio_index":4,
+				"text":"Now pull my arm back out and press any button on the box.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/waypoints/line4.mp3",
 				"delay":false
 			},
 			{
@@ -1516,7 +1511,7 @@
 			{
 				"type":"set_graphic_mode",
 				"mode":"image",
-				"location":"images/hokeypokey_out.png"
+				"src":"Nuts_and_Bolts/waypoints/hokeypokey_out.png"
 			},
 			{
 				"type":"wait",
@@ -1528,9 +1523,9 @@
 				"ways":true
 			},
 			{
-				"//":"Now rotate my torso this way and press any button on the box.",
-				"type":"play",
-				"audio_index":5,
+				"text":"Now rotate my torso this way and press any button on the box.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/waypoints/line5.mp3",
 				"delay":false
 			},
 			{
@@ -1547,7 +1542,7 @@
 			{
 				"type":"set_graphic_mode",
 				"mode":"image",
-				"location":"images/hokeypokey_rot1.png"
+				"src":"Nuts_and_Bolts/waypoints/hokeypokey_rot1.png"
 			},
 			{
 				"type":"wait",
@@ -1559,9 +1554,9 @@
 				"ways":true
 			},
 			{
-				"//":"Finally, rotate my torso that way and press any button on the box.",
-				"type":"play",
-				"audio_index":6,
+				"text":"Finally, rotate my torso that way and press any button on the box.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/waypoints/line6.mp3",
 				"delay":false
 			},
 			{
@@ -1578,7 +1573,7 @@
 			{
 				"type":"set_graphic_mode",
 				"mode":"image",
-				"location":"images/hokeypokey_rot2.png"
+				"src":"Nuts_and_Bolts/waypoints/hokeypokey_rot2.png"
 			},
 			{
 				"type":"wait",
@@ -1590,20 +1585,20 @@
 				"ways":true
 			},
 			{
-				"//":"Great job! Now, I'll play back each waypoint. As I move from one waypoint to another, do the same motion with your arm.",
-				"type":"play",
-				"audio_index":7,
+				"text":"Great job! Now, I'll speak back each waypoint. As I move from one waypoint to another, do the same motion with your arm.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/waypoints/line7.mp3",
 				"delay":true
 			},
 			{
 				"type":"set_graphic_mode",
 				"mode":"image",
-				"location":"images/hokeypokey_out.png"
+				"src":"Nuts_and_Bolts/waypoints/hokeypokey_out.png"
 			},
 			{
-				"//":"First, you put my arm in.",
-				"type":"play",
-				"audio_index":8,
+				"text":"First, you put my arm in.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/waypoints/line8.mp3",
 				"delay":false
 			},
 			{
@@ -1612,15 +1607,15 @@
 				"wait":true
 			},
 			{
-				"//":"You put my arm out.",
-				"type":"play",
-				"audio_index":9,
+				"text":"You put my arm out.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/waypoints/line9.mp3",
 				"delay":false
 			},
 			{
 				"type":"set_graphic_mode",
 				"mode":"image",
-				"location":"images/hokeypokey_in.png"
+				"src":"Nuts_and_Bolts/waypoints/hokeypokey_in.png"
 			},
 			{
 				"type":"goToJointAngles",
@@ -1628,15 +1623,15 @@
 				"wait":true
 			},
 			{
-				"//":"You put my arm in,",
-				"type":"play",
-				"audio_index":10,
+				"text":"You put my arm in,",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/waypoints/line10.mp3",
 				"delay":false
 			},
 			{
 				"type":"set_graphic_mode",
 				"mode":"image",
-				"location":"images/hokeypokey_out.png"
+				"src":"Nuts_and_Bolts/waypoints/hokeypokey_out.png"
 			},
 			{
 				"type":"goToJointAngles",
@@ -1644,15 +1639,15 @@
 				"wait":true
 			},
 			{
-				"//":"And you learned all about, how to set up waypoints and make my motors turn around,",
-				"type":"play",
-				"audio_index":11,
+				"text":"And you learned all about, how to set up waypoints and make my motors turn around,",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/waypoints/line11.mp3",
 				"delay":false
 			},
 			{
 				"type":"set_graphic_mode",
 				"mode":"image",
-				"location":"images/hokeypokey_rot1.png"
+				"src":"Nuts_and_Bolts/waypoints/hokeypokey_rot1.png"
 			},
 			{
 				"type":"goToJointAngles",
@@ -1661,7 +1656,7 @@
 			{
 				"type":"set_graphic_mode",
 				"mode":"image",
-				"location":"images/hokeypokey_rot2.png"
+				"src":"Nuts_and_Bolts/waypoints/hokeypokey_rot2.png"
 			},
 			{
 				"type":"goToJointAngles",
@@ -1680,12 +1675,12 @@
 			{
 				"type":"set_graphic_mode",
 				"mode":"image",
-				"location":"images/Welcome.png"
+				"src":"global/logo.png"
 			},
 			{
-				"//":"And that's what it's all about! High two!",
-				"type":"play",
-				"audio_index":0,
+				"text":"And that's what it's all about! High two!",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/end/line0.mp3",
 				"delay":false
 			},
 			{
@@ -1706,17 +1701,17 @@
 				"conditional":"#wait_output==true",
 				"if_true":[
 					{
-						"//":"As you can probably imagine, playback control can be used for more than just dancing. Today, you recorded my arm positions and played them back to make me do the hokey pokey, but you can also record sequences to make me move equipment, package parts, and more!",
-						"type":"play",
-						"audio_index":3,
+						"text":"As you can probably imagine, playback control can be used for more than just dancing. Today, you recorded my arm positions and played them back to make me do the hokey pokey, but you can also record sequences to make me move equipment, package parts, and more!",
+						"type":"speak",
+						"src":"Nuts_and_Bolts/end/line3.mp3",
 						"delay":true
 					}
 				],
 				"if_false":[
 					{
-						"//":"I only have two fingers, so instead of a high five I can only give high two's. High two!",
-						"type":"play",
-						"audio_index":1,
+						"text":"I only have two fingers, so instead of a high five I can only give high two's. High two!",
+						"type":"speak",
+						"src":"Nuts_and_Bolts/end/line1.mp3",
 						"delay":true
 					},
 					{
@@ -1732,23 +1727,23 @@
 						"conditional":"#wait_output",
 						"if_true":[
 							{
-								"//":"As you can probably imagine, playback control can be used for more than just dancing. Today, you recorded my arm positions and played them back to make me do the hokey pokey, but you can also record sequences to make me move equipment, package parts, and more!",
-								"type":"play",
-								"audio_index":3,
+								"text":"As you can probably imagine, playback control can be used for more than just dancing. Today, you recorded my arm positions and played them back to make me do the hokey pokey, but you can also record sequences to make me move equipment, package parts, and more!",
+								"type":"speak",
+								"src":"Nuts_and_Bolts/end/line3.mp3",
 								"delay":true
 							}
 						],
 						"if_false":[
 							{
-								"//":"Okay,",
-								"type":"play",
-								"audio_index":2,
+								"text":"Okay,",
+								"type":"speak",
+								"src":"Nuts_and_Bolts/end/line2.mp3",
 								"delay":true
 							},
 							{
-								"//":"As you can probably imagine, playback control can be used for more than just dancing. Today, you recorded my arm positions and played them back to make me do the hokey pokey, but you can also record sequences to make me move equipment, package parts, and more!",
-								"type":"play",
-								"audio_index":3,
+								"text":"As you can probably imagine, playback control can be used for more than just dancing. Today, you recorded my arm positions and played them back to make me do the hokey pokey, but you can also record sequences to make me move equipment, package parts, and more!",
+								"type":"speak",
+								"src":"Nuts_and_Bolts/end/line3.mp3",
 								"delay":true
 							}
 						]
@@ -1756,9 +1751,9 @@
 				]
 			},
 			{
-				"//":"Great job! You have completed the first learning module.",
-				"type":"play",
-				"audio_index":4,
+				"text":"Great job! You have completed the first learning module.",
+				"type":"speak",
+				"src":"Nuts_and_Bolts/end/line4.mp3",
 				"delay":true
 			}
 		]
