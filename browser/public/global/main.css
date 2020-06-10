@@ -1,6 +1,4 @@
 body{
-	/*background is gray and border is the color*/
-	/*of the robot. */
 	border-style: solid;
 	border-width: 2vh;
 	margin: 0;
@@ -12,15 +10,34 @@ body{
 }
 
 #screen {
-	display: block;
+	display: flex;
 	height: 80%;
+	justify-content: center;
+	align-items: center;
 }
+	#screen * {
+		max-width: 100%;
+		max-height: 100%;
+	}
 
 #subtitle {
 	display: block;
 	height: 20%;
+	padding: 0 1%;
 }
 
+video {
+	object-fit: contain;
+	max-width: 90% !important;
+	max-height: 90% !important;
+	border-color: var(--inset-border-color);
+	box-shadow: 5px 10px 4px #676767;
+    border-radius: 10px;
+    border-style: solid;
+    border-width: 6px;
+}
+
+/*
 img.home{
 	margin-top: 12vh;
 	width: 80vh;
@@ -111,18 +128,6 @@ img.welcome {
 	transform: translate(-50%, -10%);
 }
 
-video {
-	display: none;
-	object-fit: contain;
-	max-width: 90%;
-	max-height: 100%;
-	border-color: var(--inset-border-color);
-	box-shadow: 5px 10px 4px #676767;
-    border-radius: 10px;
-    border-style: solid;
-    border-width: 6px;
-}
-
 .centered {
     position: absolute;
     top: 40%;
@@ -138,7 +143,7 @@ div.text_box p{
 }
 
 div.container {
-    display: none;/**/
+    display: none;
     margin: auto;
     position: relative;
     max-width: 1500px;
@@ -148,3 +153,4 @@ div.container {
 p {
 	color: var(--main-font-color);
 }
+*/

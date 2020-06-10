@@ -1,8 +1,6 @@
 'use strict'
 
-const BASE_URL = 'https://localhost:8000/';
-
-var module_name = window.location.href.substring(BASE_URL.length+1);
+var module_name = window.location.href.substring(DIR.length+1);
 console.log(module_name);
 
 /*******************************

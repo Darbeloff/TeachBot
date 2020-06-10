@@ -1,11 +1,3 @@
-// Constants
-const DIR = 'https://localhost:8000/';    // Directory containing resources
-const JOINTS = 7;                         // Numer of joints in Sawyer arm
-const VERBOSE = true;                     // Whether or not to print everything
-const BUTTON = {'back': 0, 'show': 1, 'circle': 2, 'square': 3, 'triangle': 4};
-const ROBOT = 'sawyer';
-const ARDUINO = 'button_box';
-
 /**
  * A learning module for TeachBot.
  *
@@ -29,13 +21,13 @@ function Module(module_name, main) {
 	// Instance Variables
 	this.module_name = module_name;											// The index of the current module. TODO: replace with Claire's naming structure
 	this.main = main;														// The function to run after all resources have been loaded.
-	this.loaded = {'audio':false, 'text':false, 'json':false};				// Dictionary to track which resources have loaded.
+	this.media = new Map();
 	this.drawings = [];														// Array of objects to draw on the canvas.
 	this.graphic_mode = 'image';											// Current graphic mode. See: set_graphic_mode().
 	this.canvas_frame_req;													// Animation frame request. See: set_graphic_mode().
 	this.button = 'none';
 	this.program = [];
-	this.free_mode = false
+	this.free_mode = false;
 	
 	// Initialize self to module for use in event callbacks
 	self = this;
@@ -232,7 +224,9 @@ function Module(module_name, main) {
 						if (loaded==toLoad.length-1) self.main();
 					}, false);
 					audio.onerror = () => console.log(`Error: "${file.src}" failed to load`);
+					audio.id = HTML_AUDIO;
 					audio.src = file.src;
+					self.media.set(audio.src, audio);
 					break;
 
 				case 'video':
@@ -244,7 +238,9 @@ function Module(module_name, main) {
 						if (loaded==toLoad.length-1) self.main();
 					}, false);
 					video.onerror = () => console.log(`Error: "${file.src}" failed to load`);
+					video.id = HTML_VIDEO;
 					video.src = file.src;
+					self.media.set(video.src, video);
 					break;
 
 				case 'image':
@@ -255,7 +251,9 @@ function Module(module_name, main) {
 						if (loaded==toLoad.length-1) self.main();
 					}
 					img.onerror = () => console.log(`Error: "${file.src}" failed to load`);
+					img.id = HTML_IMG;
 					img.src = file.src;
+					self.media.set(img.src, img);
 					break;
 
 				default:
@@ -420,27 +418,29 @@ Module.prototype.loadTextAndAudio = function() {
  *
  * Plays a given audio file.
  *
- * @param {string}	audioFile 	URL of audio file.
- * @param {number}	duration 	Duration of audio file in milliseconds.
- * @param {string} 	text 		Text to display on screen while playing audio.
+ * @param  {string}	 audioFile  URL of audio file.
+ * @param  {string}  text       Text to display on screen while playing audio.
+ * @return {Object}             Promise resolvd upon competion of audio file.
  */
-Module.prototype.play = async function(audioFile, duration, text) {
+Module.prototype.play = async function(audioFile, text) {
 	// Play audio.
-	player.src = audioFile;
-	player.play();
+	document.getElementById(HTML_AUDIO).replaceWith(this.media.get(audioFile));
+	let audio = document.getElementById(HTML_AUDIO);
+	audio.play();
 
-	// Update text on screen.
-	adjustable.innerHTML = text;
-	this.adjust_text();
-
-	// Convert units of duration from [ms]->[s]
-	duration/=1000.0;
+	// Update subtitle.
+	if (text) {
+		subtitle.innerHTML = text;
+		this.adjust_text();
+	}
 
 	// Inform robot for how long current audio file will play.
-	this.UpdateAudioDurationSrv.callService(new ROSLIB.ServiceRequest({audio_duration: duration}), result => {return});
+	this.UpdateAudioDurationSrv.callService(new ROSLIB.ServiceRequest({audio_duration: audio.duration}), result => {return});
 
 	// Log action.
-	if (VERBOSE) console.log('Playing ' + audioFile + ', duration ' + Math.round(duration) + 's.');
+	if (VERBOSE) console.log('Playing ' + audioFile + ', duration ' + Math.round(audio.duration) + 's.');
+
+	return sleep(audio.duration*1000);
 }
 
 /**
@@ -535,9 +535,9 @@ Module.prototype.allLoaded = function() {
  * @param {boolean}	[clearCanvas=false]	Whether or not to also clear the entire canvas.
  */
 Module.prototype.displayOff = function(clearCanvas=false) {
-	document.getElementById('image').style.display = 'none';
+	document.getElementById(HTML_IMG).style.display = 'none';
 	document.getElementById('canvas_container').style.display = 'none';
-	document.getElementById('video').style.display = 'none';
+	document.getElementById(HTML_VIDEO).style.display = 'none';
 	if (clearCanvas) {
 		this.drawings = [];
 		this.ctx.clearRect(0,0,100*this.cw,100*this.ch);
@@ -1259,7 +1259,7 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 				goal_ButtonPress.send();
 
 				break;
-
+/*
 			case 'play':
 				checkInstruction(instr, ['audio_index','delay'], instructionAddr);
 				if (instr.hasOwnProperty('//')) {
@@ -1290,7 +1290,7 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 
 				this.start(this.getNextAddress(instructionAddr));
 				break;
-
+*/
 			case 'pressed_button':
 				this.button_topic.subscribe(async function(message) {
 					if (VERBOSE) console.log('Pressed: ' + message.data);
@@ -1442,19 +1442,13 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 			case 'speak':
 				checkInstruction(instr, ['text', 'src'], instructionAddr);
 
-				let audio = document.getElementById('audio');
-				audio.src = instr.src;
-				audio.play();
+				var p = this.play(DIR+instr.src, instr.text);
 
-				subtitle.innerHTML = instr.text;
-				this.adjust_text();
-
-				// Inform robot for how long current audio file will play.
-				this.UpdateAudioDurationSrv.callService(new ROSLIB.ServiceRequest({audio_duration: audio.duration}), result => {return});
-
-				// Log action.
-				if (VERBOSE) console.log('Playing ' + instr.src + ', duration ' + Math.round(audio.duration) + 's.');
-
+				if (instr.hasOwnProperty('delay') && instr.delay) {
+					p.then(() => this.start(this.getNextAddress(instructionAddr)));
+				} else {
+					this.start(this.getNextAddress(instructionAddr));
+				}
 				break;
 /*
 			case 'update':

@@ -16,6 +16,20 @@
 	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/gh/jquery-textfill/jquery-textfill@0.6.0/source/jquery.textfill.min.js"></script>
 
+	<!-- JS Header -->
+	<script type="text/javascript">
+		const DIR = 'https://localhost:8000/';    // Directory containing resources
+		const JOINTS = 7;                         // Numer of joints in Sawyer arm
+		const VERBOSE = true;                     // Whether or not to print everything
+		const BUTTON = {'back': 0, 'show': 1, 'circle': 2, 'square': 3, 'triangle': 4};
+		const ROBOT = 'sawyer';
+		const ARDUINO = 'button_box';
+		const HTML_IMG = 'image';
+		const HTML_AUDIO = 'audio';
+		const HTML_VIDEO = 'video';
+		const HTML_CANVAS = 'canvas';
+	</script>
+
 	<!-- TeachBot Utilities -->
 	<script src="https://localhost:8000/global/js/utils/arc3pt.js"></script>
 	<script src="https://localhost:8000/global/js/utils/display_choices.js"></script>
@@ -40,11 +54,11 @@
 </head>
 
 <body>
+	<audio id="audio"></audio>
 	<div id="screen">
-		<img id="image" class="welcome" src="https://localhost:8000/global/logo.png" style="display: none;">
+		<img id="image" class="welcome" src="https://localhost:8000/global/logo.png">
 		<div id="canvas_container" style="display: none;"> <canvas id="canvas"></canvas> </div>
 		<video id="video" class="centered" style="display: none;" preload></video>
-		<audio id="audio"></audio>
 	</div>
 	<div id='subtitle'>Loading...</div>
 </body>

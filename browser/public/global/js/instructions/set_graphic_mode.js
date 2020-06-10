@@ -21,22 +21,26 @@ Module.prototype.set_graphic_mode = function(instr, instructionAddr) {
 
 	switch (instr.mode) {
 		case 'image':
-			if (instr.hasOwnProperty('location')) {
-				image.src = DIR + instr.location;
+			var image = document.getElementById(HTML_IMG);
+			if (instr.hasOwnProperty('src')) {
+				image.replaceWith(this.media.get(DIR+instr.src));
+				image = document.getElementById(HTML_IMG);
 			}
 			image.style.display = 'initial';
-
 
 			break;
 
 		case 'video':
-			animator.style.display = 'initial';
-			animator.play();
+			var video = document.getElementById(HTML_VIDEO);
+			video.replaceWith(this.media.get(DIR+instr.src));
+			video = document.getElementById(HTML_VIDEO);
+			video.style.display = 'initial';
+			video.play();
 			
 			break;
 
 		case 'camerabw_graphic':
-				canvas_obj.style.display = 'initial';
+				document.getElementById('canvas_container').style.display = 'initial';
 				var cv_image_url = DIR + 'images/cv_1.png';
 				var bw_image = new Image();
 
@@ -50,7 +54,7 @@ Module.prototype.set_graphic_mode = function(instr, instructionAddr) {
 				break;
 
 		case 'camera_color_graphic':
-				canvas_obj.style.display = 'initial';
+				document.getElementById('canvas_container').style.display = 'initial';
 				var cv_image_url = DIR + 'images/cv_2.png';
 				var color_image = new Image();
 
@@ -64,7 +68,7 @@ Module.prototype.set_graphic_mode = function(instr, instructionAddr) {
 				break;
 
 		case 'canvas':
-			canvas_obj.style.display = 'initial';
+			document.getElementById('canvas_container').style.display = 'initial';
 			if (instr.hasOwnProperty('clear') && instr.clear) {
 				this.drawings = [];
 			}
@@ -86,21 +90,21 @@ Module.prototype.set_graphic_mode = function(instr, instructionAddr) {
 			break;
 
 		case 'multiple choice':
-			canvas_obj.style.display = 'initial';
+			document.getElementById('canvas_container').style.display = 'initial';
 			display_choices(m.ctx, ['Motors','Buttons','Cameras','Encoders','Wheels'], DIR + 'images/new_button_box.JPG');
 
 			break;
 
 		case 'numeric input':
-			canvas_obj.style.display = 'initial';
+			document.getElementById('canvas_container').style.display = 'initial';
 			wheel_val = 0
 			draw_odometer(m.ctx, odometer_url, wheel_val);
-			//canvas_obj.width = canvas_obj.width;
+			//document.getElementById(HTML_CANVAS).width = document.getElementById(HTML_CANVAS).width;
 
 			break;
 
 		case 'pos_orient':
-			canvas_obj.style.display = 'initial';
+			document.getElementById('canvas_container').style.display = 'initial';
 			var orient_bw_url = DIR + 'images/orientation_bw.png';
 			var orient_color_url = DIR + 'images/orientation_color.png';
 			var position_bw_url = DIR + 'images/position_bw.png';
@@ -111,7 +115,7 @@ Module.prototype.set_graphic_mode = function(instr, instructionAddr) {
 			break;
 
 		case 'projection':
-			canvas_obj.style.display = 'initial';
+			document.getElementById('canvas_container').style.display = 'initial';
 
 			this.position.subscribe(async function(message) {
 					// if (VERBOSE) console.log(message.j1);
@@ -149,7 +153,7 @@ Module.prototype.set_graphic_mode = function(instr, instructionAddr) {
 };
 
 Module.prototype.drawCanvas = function(timestamp) {
-	canvas_obj.style.display = 'initial';
+	document.getElementById(HTML_CANVAS).style.display = 'initial';
 	this.ctx.clearRect(0,0,100*this.cw,100*this.ch);
 
 	this.drawings.forEach(function(obj, ind) {
