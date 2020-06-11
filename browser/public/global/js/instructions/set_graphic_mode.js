@@ -159,9 +159,9 @@ Module.prototype.drawCanvas = function(timestamp) {
 	this.drawings.forEach(function(obj, ind) {
 		switch (obj.shape) {
 			case 'ball':
-				var cx = eval(self.hashTokeyVal(obj.cx))*self.cw;
-				var cy = eval(self.hashTokeyVal(obj.cy))*self.ch;
-				var r = eval(self.hashTokeyVal(obj.r))*self.ch;
+				var cx = eval(self.hash2keyVal(obj.cx))*self.cw;
+				var cy = eval(self.hash2keyVal(obj.cy))*self.ch;
+				var r = eval(self.hash2keyVal(obj.r))*self.ch;
 				var fillStyle = obj.fillStyle;
 
 				draw_ball(self.ctx, cx, cy, r, fillStyle, obj.label);
@@ -169,37 +169,37 @@ Module.prototype.drawCanvas = function(timestamp) {
 				break;
 
 			case 'bar':
-				var x = eval(self.hashTokeyVal(obj.x))*self.cw;
-				var y = eval(self.hashTokeyVal(obj.y))*self.ch;
-				var width = eval(self.hashTokeyVal(obj.width))*self.cw;
-				var max_height = eval(self.hashTokeyVal(obj.max_height))*self.ch;
-				var height_percent = eval(self.hashTokeyVal(obj.height_percent));
-				var fillStyle = eval(self.hashTokeyVal(obj.fillStyle));
+				var x = eval(self.hash2keyVal(obj.x))*self.cw;
+				var y = eval(self.hash2keyVal(obj.y))*self.ch;
+				var width = eval(self.hash2keyVal(obj.width))*self.cw;
+				var max_height = eval(self.hash2keyVal(obj.max_height))*self.ch;
+				var height_percent = eval(self.hash2keyVal(obj.height_percent));
+				var fillStyle = eval(self.hash2keyVal(obj.fillStyle));
 
 				draw_bar_new(m.ctx, x, y, width, max_height, height_percent, fillStyle, obj.label, obj.label_align);
 
 				break;
 
 			case 'arc':
-				var x1 = eval(self.hashTokeyVal(obj.x1))*self.cw;
-				var y1 = eval(self.hashTokeyVal(obj.y1))*self.ch;
-				var x2 = eval(self.hashTokeyVal(obj.x2))*self.cw;
-				var y2 = eval(self.hashTokeyVal(obj.y2))*self.ch;
-				var x3 = eval(self.hashTokeyVal(obj.x3))*self.cw;
-				var y3 = eval(self.hashTokeyVal(obj.y3))*self.ch;
-				var ccw = eval(self.hashTokeyVal(obj.ccw));
+				var x1 = eval(self.hash2keyVal(obj.x1))*self.cw;
+				var y1 = eval(self.hash2keyVal(obj.y1))*self.ch;
+				var x2 = eval(self.hash2keyVal(obj.x2))*self.cw;
+				var y2 = eval(self.hash2keyVal(obj.y2))*self.ch;
+				var x3 = eval(self.hash2keyVal(obj.x3))*self.cw;
+				var y3 = eval(self.hash2keyVal(obj.y3))*self.ch;
+				var ccw = eval(self.hash2keyVal(obj.ccw));
 
 				arc3pt(self.ctx, x1, y1, x2, y2, x3, y3, ccw);
 
 				break;
 				
 			case 'rectangle':
-				var x = eval(self.hashTokeyVal(obj.x))*self.cw;
-				var y = eval(self.hashTokeyVal(obj.y))*self.ch;
-				var width = eval(self.hashTokeyVal(obj.width))*self.cw;
-				var height = eval(self.hashTokeyVal(obj.height))*self.ch;
+				var x = eval(self.hash2keyVal(obj.x))*self.cw;
+				var y = eval(self.hash2keyVal(obj.y))*self.ch;
+				var width = eval(self.hash2keyVal(obj.width))*self.cw;
+				var height = eval(self.hash2keyVal(obj.height))*self.ch;
 				if (obj.hasOwnProperty('rotate')) {
-					var rotate = eval(self.hashTokeyVal(obj.rotate));
+					var rotate = eval(self.hash2keyVal(obj.rotate));
 					draw_rectangle(self.ctx, x, y, width, height, rotate);
 				} else {
 					draw_rectangle(self.ctx, x, y, width, height);

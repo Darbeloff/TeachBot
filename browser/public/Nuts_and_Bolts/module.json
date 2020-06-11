@@ -329,7 +329,8 @@
 				"joint_angles":"pos_encoder_video"
 			},
 			{
-				"type":"encode"
+				"type":"drawCustom",
+				"script":"https://localhost:8000/global/js/utils/draw_encoder.js"
 			},
 			{
 				"type":"speak",

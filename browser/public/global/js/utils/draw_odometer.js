@@ -71,4 +71,4 @@ function draw_odometer(ctx_in, odometer_url, wheel_val) {
     imgb.src = odometer_url;
 }
 
-var odometer_url = 'https://localhost:8000/images/new_scroll.JPG';
+var odometer_url = 'https://localhost:8000/global/new_scroll.JPG';

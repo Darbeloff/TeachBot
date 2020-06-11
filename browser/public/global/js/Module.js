@@ -1050,6 +1050,25 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 
 				break;
 
+			case 'drawCustom':
+				// TODO: Replace with set_graphic_mode canvas
+				checkInstruction(instr, ['script'], instructionAddr);
+
+				var script = document.createElement('SCRIPT');
+				script.src = instr.script;
+				document.head.appendChild(script);
+				console.log(script);
+
+				if (instr.hasOwnProperty('delay')) {
+					if (instr.delay) {
+
+					} else {
+						this.start(this.getNextAddress(instructionAddr));
+					}
+				}
+
+				break;
+
 			case 'drawPosOrien':
 				var orient_bw_url = DIR + 'images/orientation_bw.png';
 				var orient_color_url = DIR + 'images/orientation_color.png';
@@ -1058,7 +1077,7 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 
 				draw_pos_orien(self.ctx,3,300,400,position_color_url,position_bw_url, orient_color_url, orient_bw_url)
 
-				this.start(self.getNextAddress(instructionAddr));
+				this.start(this.getNextAddress(instructionAddr));
 
 				break;
 
