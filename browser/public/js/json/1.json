@@ -3,505 +3,313 @@
 		"id": "intro",
 		"instructions": [
 			{
-				"type":"set_graphic_mode",
-				"mode":"image"
-			},
-			{
-				"type": "set_graphic_mode",
-				"mode": "canvas"
-			},
-			{
-				"type":"draw",
-				"shape":"rectangle",
-				"x":76,
-				"y":69,
-				"width":11,
-				"height":10
-			},
-			{
-				"type":"draw",
-				"shape":"rectangle",
-				"x":57.8,
-				"y":69,
-				"width":11,
-				"height":10,
-				"rotate":90
-			},
-			{
-				"type":"draw",
-				"shape":"rectangle",
-				"x":40.8,
-				"y":69,
-				"width":11,
-				"height":10,
-				"rotate":90
-			},
-			{
-				"type":"draw",
-				"shape":"rectangle",
-				"x":41.5,
-				"y":33.8,
-				"width":11,
-				"height":10
-			},
-			{
-				"type":"draw",
-				"shape":"rectangle",
-				"x":66,
-				"y":33,
-				"width":17,
-				"height":13
-			},
-			{
-				"type":"draw",
-				"shape":"rectangle",
-				"x":19,
-				"y":67,
-				"width":17,
-				"height":19
-			},
-			{
-				"//":"0: Today, we will be learning about the gripper. Many of today's activities will involve the boxes and bins on the table.",
+				"//":"Hello, my name is TeachBot. It's nice to meet you.",
 				"type":"play",
 				"audio_index":0,
 				"delay":true
 			},
 			{
-				"//":"1: So, let's get started. I'm going to grab Box 1 with my hands.",
-				"type":"play",
-				"audio_index":1,
-				"delay":true
-			},
-			{
-				"type":"goToJointAngles",
-				"joint_angles":"avoid_collision"
-			},
-			{
-				"type":"goToJointAngles",
-				"joint_angles":"fail_init_joint_arg"
-			},
-			{
-				"type":"adjustPoseTo",
-				"geometry":"position",
-				"axis":"z",
-				"amount":"Module.Z_TABLE+Module.BOX_HEIGHT-0.02"
-			},
-			{
-				"type":"gripper",
-				"grip":true
-			},
-			{
-				"//":"3: Oh, that's embarrassing. Let me try again. I think I know what I did wrong. Would you please move the box back into the designated area? Press any button on the box when you've done so.",
-				"type":"play",
-				"audio_index":2,
-				"delay":false
-			},
-			{
-				"type":"goToCartesianPose",
-				"position":"None",
-				"orientation":"None",
-				"relative_pose":"None",
-				"joint_angles":"fail_init_joint_arg",
-				"endpoint_pose":"None"
-			},
-			{
-				"type":"gripper",
-				"grip":false
-			},
-			{
-				"type":"wait",
-				"for":"user input"
-			},
-			{
-				"type":"proceed",
-				"to_section":"1Dof"
+				"type": "proceed",
+				"to_section": "OneMotor"
 			}
 		]
 	},
 	{
-		"id": "1Dof",
-		"instructions":[
+		"id": "OneMotor",
+		"instructions": [
 			{
-				"//":"0: The first important concept to learn is the one I just messed up: orientation. As you saw, my hand can't grab the object like this. But...",
+				"//":"Please stand back so I can show you something.",
 				"type":"play",
 				"audio_index":0,
 				"delay":true
 			},
 			{
-				"//":"1: ...if I change the orientation of my hand, I can pick up this object.",
+				"type":"goToJointAngles",
+				"joint_angles":"joint_motor_animation_0"
+			},
+			{
+				"//":"Want to know how I did that? Inside my arm I have a bunch of electronic things called electric motors. They let me move my arm, like how muscles move yours. Here, take a look.",
 				"type":"play",
 				"audio_index":1,
-				"delay":false
+				"delay":true,
+				"skippable": true
+			},
+			{
+				"type":"set_graphic_mode",
+				"mode":"video",
+				"skippable":true
 			},
 			{
 				"type":"goToJointAngles",
-				"joint_angles":"success_pickup_box1"
+				"joint_angles":"joint_motor_animation_1",
+				"speed_ratio":0.225,
+				"skippable":true
 			},
 			{
-				"type":"adjustPoseTo",
-				"geometry":"position",
-				"axis":"z",
-				"amount":"Module.Z_TABLE+Module.BOX_HEIGHT/2"
+				"type":"goToJointAngles",
+				"joint_angles":"joint_motor_animation_0",
+				"speed_ratio":0.225,
+				"skippable":true
 			},
 			{
-				"type":"gripper",
-				"grip":true
+				"type":"goToJointAngles",
+				"joint_angles":"joint_motor_animation_1",
+				"speed_ratio":0.225,
+				"skippable":true
 			},
 			{
-				"type":"goToCartesianPose",
-				"position":"None",
-				"orientation":"None",
-				"relative_pose":"None",
-				"joint_angles":"success_pickup_box1",
-				"endpoint_pose":"None"
+				"type":"goToJointAngles",
+				"joint_angles":"joint_motor_animation_0",
+				"speed_ratio":0.225,
+				"skippable":true
 			},
 			{
-				"type":"adjustPoseTo",
-				"geometry":"position",
-				"axis":"z",
-				"amount":"Module.Z_TABLE+Module.BOX_HEIGHT/2"
+				"type": "proceed",
+				"to_section": "MultipleMotors"
+			}
+		]
+	},
+	{
+		"id": "MultipleMotors",
+		"instructions": [
+			{
+				"type":"set_graphic_mode",
+				"mode":"image",
+				"location":"images/Welcome.png"
 			},
 			{
-				"type":"gripper",
-				"grip":false
-			},
-			{
-				"type":"goToCartesianPose",
-				"position":"None",
-				"orientation":"None",
-				"relative_pose":"None",
-				"joint_angles":"success_pickup_box1",
-				"endpoint_pose":"None"
-			},
-			{
-				"type":"goToCartesianPose",
-				"position":"None",
-				"orientation":"None",
-				"relative_pose":"None",
-				"joint_angles":"above_second_box_joint_arg",
-				"endpoint_pose":"None"
-			},
-			{
-				"//":"2: Now you try. I have moved my hand over Box 2. Can you rotate my wrist so I can pick up Box 2? When you're ready for me to pick up the box, press any button on the box.",
+				"//":"Just by looking, how many motors do you think I have in my arm? To input your answer, use the white buttons on the button box next to you to go up or down in value. Then press any colored button to submit your answer.",
 				"type":"play",
-				"audio_index":2,
+				"audio_index":0,
 				"delay":false
 			},
 			{
+				"type":"numeric_input",
+				"skippable":false
+			},
+			{
+				"//":"Step back and we'll count them together.",
+				"type":"play",
+				"audio_index":1,
+				"delay":true
+			},
+			{
+				"type":"set_graphic_mode",
+				"mode":"image"
+			},
+			{
+				"type":"goToJointAngles",
+				"joint_angles":"joint_motor_animation_0"
+			},
+			{
+				"//":"Pay close attention while I move each motor individually. Try to count how many motors I have.",
+				"type":"play",
+				"audio_index":2,
+				"delay":true
+			},
+			{
 				"type":"set",
-				"key":"p",
-				"val":false
+				"key":"j",
+				"val":0
 			},
 			{
 				"type":"while",
-				"conditional":"#p===false",
+				"conditional":"#j<JOINTS",
 				"instructions":[
 					{
-						"type":"set_robot_mode",
-						"mode":"interaction ctrl",
-						"orientation_x":false,
-						"orientation_y":false,
-						"orientation_z":true,
-						"position_x":false,
-						"position_y":false,
-						"position_z":false
+						"type":"goToJointAngles",
+						"joint_angles":"joint_test[#j]",
+						"skippable":true
 					},
 					{
-						"type":"wait",
-						"for":"user input"
+						"type":"goToJointAngles",
+						"joint_angles":"joint_motor_animation_0",
+						"skippable":true
 					},
 					{
-						"type":"set_robot_mode",
-						"mode":"position"
-					},
-					{
-						"//":"3: Alright. Let’s see.",
-						"type":"play",
-						"audio_index":3,
-						"delay":true
-					},
-					{
-						"type":"check_pickup",
-						"store_answer_in":"wheelVal"
-					},
-					{
-						"type":"if",
-						"conditional":"#wheelVal==1",
-						"if_true":[
-							{
-								"type":"set",
-								"key":"p",
-								"val":true
-							}
-						],
-						"if_false":[
-							{
-								"//":"5: Oops, I couldn’t pick it up like that. This time, try to get the entire width of the box in my grasp.",
-								"type":"play",
-								"audio_index":5,
-								"delay":false
-							}
-						]
+						"type":"set",
+						"key":"j",
+						"val":"#j+1"
 					}
 				]
 			},
 			{
 				"//":"How many motors did you count? Use the white buttons on the button box next to you to go up or down in value. Then, press any colored button to submit your answer.",
 				"type":"play",
-				"audio_index":4,
-				"delay":true
-			},
-			{
-				"//":"6: You just helped me change my gripper's orientation so that I could pick up the box. Now, help me pick up Box 3. This time, my gripper is already in the correct orientation, but not in the correct position. Can you move my hand so that it can pick up Box 3? When you're ready for me to pick up the box, press any button on the box.",
-				"type":"play",
-				"audio_index":6,
+				"audio_index":3,
 				"delay":false
 			},
 			{
-				"type":"set",
-				"key":"p",
-				"val":false
+				"type":"numeric_input",
+				"store_answer_in":"wheelVal"
 			},
 			{
-				"type":"while",
-				"conditional":"#p===false",
-				"instructions":[
+				"type":"if",
+				"conditional":"#wheelVal==7",
+				"if_true":[
 					{
-						"type":"set_robot_mode",
-						"mode":"interaction ctrl",
-						"orientation_x":false,
-						"orientation_y":false,
-						"orientation_z":false,
-						"position_x":false,
-						"position_y":true,
-						"position_z":false
-					},
-					{
-						"type":"wait",
-						"for":"user input"
-					},
-					{
-						"type":"set_robot_mode",
-						"mode":"position"
-					},
-					{
-						"//":"3: Alright. Let’s see.",
+						"//":"Good job! Now, please stand back so I can show you something else.",
 						"type":"play",
-						"audio_index":3,
+						"audio_index":4,
 						"delay":true
-					},
-					{
-						"type":"check_pickup",
-						"store_answer_in":"wheelVal"
-					},
+					}
+				],
+				"if_false":[
 					{
 						"type":"if",
-						"conditional":"#wheelVal==1",
+						"conditional":"#wheelVal==14",
 						"if_true":[
 							{
-								"type":"set",
-								"key":"p",
-								"val":true
+								"//":"Not quite. Remember that each motor can move in two directions: clockwise and counterclockwise.",
+								"type":"play",
+								"audio_index":5,
+								"delay":true
 							}
 						],
 						"if_false":[
 							{
-								"//":"5: Oops, I couldn’t pick it up like that. This time, try to get the entire width of the box in my grasp.",
+								"//":"Not quite.",
 								"type":"play",
-								"audio_index":5,
-								"delay":false
+								"audio_index":6,
+								"delay":true
 							}
 						]
-					}
-				]
-			},
-			{
-				"type":"adjustPoseTo",
-				"geometry":"position",
-				"axis":"z",
-				"amount":"Module.Z_TABLE+Module.BOX_HEIGHT/2"
-			},
-			{
-				"type":"gripper",
-				"grip":false
-			},
-			{
-				"type":"goToCartesianPose",
-				"position":"None",
-				"orientation":"None",
-				"relative_pose":"None",
-				"joint_angles":"above_third_box_joint_arg",
-				"endpoint_pose":"None"
-			},
-			{
-				"//":"7:Great! Before, you helped me change my gripper's orientation so that I could pick up Box 2. This time, you helped me change my gripper's position so that I could pick up Box 3.",
-				"type":"play",
-				"audio_index":7,
-				"delay":true
-			},
-			{
-				"type":"adjustPoseTo",
-				"geometry":"position",
-				"axis":"z",
-				"amount":"Module.Z_TABLE+Module.BOX_HEIGHT+0.04"
-			},
-			{
-				"type":"set_graphic_mode",
-				"mode":"pos_orient"
-			},
-			{
-				"//":"8: Now, help me pick up Box 4. If you press the red button on the side of the box, you can change my arm's position. If you press the green button on the box, you can change my arm's orientation. Feel free to switch between the two modes to figure out the difference between the position and orientation. When you're ready for me to pick up Box 4, press any button on the top of the box.",
-				"type":"play",
-				"audio_index":8,
-				"delay":false
-			},
-			{
-				"type":"set",
-				"key":"p",
-				"val":false
-			},
-			{
-				"type":"while",
-				"conditional":"#p===false",
-				"instructions":[
-					{
-						"type":"cuff_interaction",
-						"ways":false
 					},
 					{
-						"//":"3: Alright. Let’s see.",
+						"//":"Let's count them together. Please stand back.",
 						"type":"play",
-						"audio_index":3,
+						"audio_index":7,
 						"delay":true
 					},
 					{
-						"type":"check_pickup",
-						"store_answer_in":"wheelVal"
+						"type":"goToJointAngles",
+						"joint_angles":"joint_motor_animation_0"
 					},
 					{
-						"type":"if",
-						"conditional":"#wheelVal==1",
-						"if_true":[
+						"type":"set",
+						"key":"j",
+						"val":0
+					},
+					{
+						"type":"while",
+						"conditional":"#j<JOINTS",
+						"instructions":[
+							{
+								"//":"#<the number I'm on>",
+								"type":"play",
+								"audio_index":"#j+10",
+								"delay":false
+							},
+							{
+								"type":"goToJointAngles",
+								"joint_angles":"joint_test[#j]",
+								"skippable":true
+							},
+							{
+								"type":"goToJointAngles",
+								"joint_angles":"joint_motor_animation_0",
+								"skippable":true
+							},
 							{
 								"type":"set",
-								"key":"p",
-								"val":true
-							}
-						],
-						"if_false":[
-							{
-								"//":"5: Oops, I couldn’t pick it up like that. This time, try to get the entire width of the box in my grasp.",
-								"type":"play",
-								"audio_index":5,
-								"delay":false
+								"key":"j",
+								"val":"#j+1"
 							}
 						]
+					},
+					{
+						"//":"I have seven motors. Now, please stand back so I can show you something else.",
+						"type":"play",
+						"audio_index":15,
+						"delay":true
 					}
 				]
-			},
-			{
-				"type":"adjustPoseTo",
-				"geometry":"position",
-				"axis":"z",
-				"amount":"Module.Z_TABLE+Module.BOX_HEIGHT/2+0.07"
-			},
-			{
-				"//":"9: Great job!",
-				"type":"play",
-				"audio_index":9,
-				"delay":true
 			},
 			{
 				"type":"proceed",
-				"to_section":"bins"
+				"to_section":"encoders"
 			}
 		]
 	},
 	{
-		"id": "bins",
+		"id":"encoders",
 		"instructions":[
 			{
-				"//":"0: Now that you've mastered picking up objects with a gripper, let's try placing this box into a bin. It may seem like a simple task, but I can't do it in just one motion. If I try to move the box straight into the bin, I'll collide with the side of the bin, like this.",
+				"type":"goToJointAngles",
+				"joint_angles":"default"
+			},
+			{
+				"type":"goToJointAngles",
+				"joint_angles":"joint_dof_start"
+			},
+			{
+				"//":"Like most of my human coworkers, I also have a shoulder, an elbow, and a wrist. For simplicity, I'll call this one my shoulder,",
 				"type":"play",
 				"audio_index":0,
 				"delay":true
 			},
 			{
-				"type":"adjustPoseBy",
-				"geometry":"position",
-				"axis":"y",
-				"amount":"0.22"
+				"type":"goToJointAngles",
+				"joint_angles":"joint_dof_shoulder"
 			},
 			{
 				"type":"goToJointAngles",
-				"joint_angles":"above_fourth_box_joint_arg"
+				"joint_angles":"joint_dof_start"
 			},
 			{
-				"type":"adjustPoseTo",
-				"geometry":"position",
-				"axis":"z",
-				"amount":"Module.Z_TABLE+Module.BOX_HEIGHT/2"
-			},
-			{
-				"type":"gripper",
-				"grip":false
-			},
-			{
-				"type":"goToJointAngles",
-				"joint_angles":"above_fourth_box_joint_arg"
-			},
-			{
-				"//":"1: Can you move the bin back where it was? When it's ready, press any button on the box.",
+				"//":"this one my elbow,",
 				"type":"play",
 				"audio_index":1,
-				"delay":false
-			},
-			{
-				"type":"wait",
-				"for":"user input"
-			},
-			{
-				"//":"2: Now let’s try moving Box 2 into Bin 1.",
-				"type":"play",
-				"audio_index":2,
-				"delay": true
-			},
-			{
-				"//":"3: This time, instead of trying to move the box straight into the bin, I'll add a couple of steps in the middle. Help me set up a series of waypoints so that I can put the box into the bin.",
-				"type":"play",
-				"audio_index":3,
 				"delay":true
 			},
 			{
-				"type":"set_graphic_mode",
-				"mode":"pos_orient"
+				"type":"goToJointAngles",
+				"joint_angles":"joint_dof_elbow"
 			},
 			{
-				"//":"4: First, can you move my hand so its position is over Box 2 and the gripper is in the correct orientation? Use the red and green buttons on the side of the box to switch between position and orientation modes. Press any button on the top of the box when you're done.",
+				"type":"goToJointAngles",
+				"joint_angles":"joint_dof_start"
+			},
+			{
+				"//":"and this one my wrist.",
 				"type":"play",
-				"audio_index":4,
-				"delay":false
+				"audio_index":2,
+				"delay":true
 			},
 			{
-				"type":"cuff_interaction",
-				"ways": true
+				"type":"goToJointAngles",
+				"joint_angles":"joint_dof_wrist"
 			},
 			{
-				"//":"5: Next, lower, my hand so that the box is in between the gripper. Make sure the gripper is low enough so that it can get a good grasp of the box. Press any button on the box to continue.",
+				"type":"goToJointAngles",
+				"joint_angles":"joint_dof_start"
+			},
+			{
+				"//":"But how do I tell where my arm is? How do I know how far I've rotated each motor? I'm going to unlock my shoulder. Try pushing my arm. I'll display how much I think you've turned it on the screen. When you're finished, press any button on the box to let me know.",
 				"type":"play",
-				"audio_index":5,
+				"audio_index":3,
 				"delay":false
 			},
 			{
 				"type":"set_robot_mode",
-				"mode":"interaction ctrl",
-				"orientation_x":false,
-				"orientation_y":false,
-				"orientation_z":false,
-				"position_x":false,
-				"position_y":false,
-				"position_z":true,
-				"in_end_point_frame":true
+				"mode":"admittance ctrl",
+				"resetPos":"joint_dof_start",
+				"joints":[0],
+				"min_thresh":[1.0]
+			},
+			{
+				"type": "set_graphic_mode",
+				"mode": "canvas"
+			},
+			{
+				"type": "draw",
+				"shape": "bar",
+				"height_percent": "#JOINT_POSITION_0/3.14",
+				"x": 4,
+				"y": 85,
+				"width": 9,
+				"max_height": 80,
+				"fillStyle": ["#7c2629"]
 			},
 			{
 				"type":"wait",
@@ -509,58 +317,58 @@
 			},
 			{
 				"type":"set_robot_mode",
-				"mode":"position",
-				"ways":true
+				"mode":"position"
 			},
 			{
-				"type":"gripper",
-				"grip":true
+				"type":"set_graphic_mode",
+				"mode":"image"
 			},
 			{
-				"//":"6: Now, lift my hand high enough so that the box higher than the bin. Press any button on the box to continue.",
+				"//":"Let me show you how I know. Please stand back.",
+				"type":"play",
+				"audio_index":4,
+				"delay":true
+			},
+			{
+				"type":"goToJointAngles",
+				"joint_angles":"pos_encoder_video"
+			},
+			{
+				"type":"encode"
+			},
+			{
+				"//":"This device is called an encoder. Every motor in my arm has one. These encoders can measure the angles of each of my motors.",
+				"type":"play",
+				"audio_index":5,
+				"delay":true
+			},
+			{
+				"type":"goToJointAngles",
+				"joint_angles":"joint_dof_start"
+			},
+			{
+				"type": "stopEncode"
+			},
+			{
+				"type":"set_graphic_mode",
+				"mode":"image"
+			},
+			{
+				"//":"Now I'm going to lock my shoulder and unlock my wrist. Try pushing my hand. When you're done, press any button on the box.",
 				"type":"play",
 				"audio_index":6,
 				"delay":false
 			},
 			{
 				"type":"set_robot_mode",
-				"mode":"interaction ctrl",
-				"orientation_x":false,
-				"orientation_y":false,
-				"orientation_z":false,
-				"position_x":false,
-				"position_y":false,
-				"position_z":true,
-				"in_end_point_frame":true
-			},
-			{
-				"type":"wait",
-				"for":"user input"
-			},
-			{
-				"type":"set_robot_mode",
-				"mode":"position",
-				"ways":true
+				"mode":"admittance ctrl",
+				"resetPos":"joint_dof_start",
+				"joints":[5],
+				"min_thresh":[0.5]
 			},
 			{
 				"type":"set_graphic_mode",
-				"mode":"pos_orient"
-			},
-			{
-				"//":"7: Next, move my hand so it is directly over Bin 1 and the gripper is in the correct orientation. Use the red and green buttons on the side of the box to switch between position and orientation modes. Press any button on the top of the box to continue..",
-				"type":"play",
-				"audio_index":7,
-				"delay":false
-			},
-			{
-				"type":"cuff_interaction",
-				"ways": true
-			},
-			{
-				"//":"8: Finally, lower my hand so that is just above the bin. Make sure the hand is low enough so that when it drops Box 2, it doesn't drop too far, but high enough so that my grippers don't hit the side of the box. Then, press any button on the box to open my gripper.",
-				"type":"play",
-				"audio_index":8,
-				"delay":false
+				"mode":"canvas"
 			},
 			{
 				"type": "draw",
@@ -578,18 +386,20 @@
 			},
 			{
 				"type":"set_robot_mode",
-				"mode":"position",
-				"ways":true
+				"mode":"position"
 			},
 			{
-				"type":"gripper",
-				"grip":false
-			},
-			{
-				"//":"9: Please stand back so I can reset my position to be over Box 4.",
+				"//":"So far I've only unlocked one motor at a time. Let's try unlocking both my shoulder and wrist motors. Push on my arm again and see what happens. When you're done, press any button on the box.",
 				"type":"play",
-				"audio_index":9,
-				"delay":true
+				"audio_index":7,
+				"delay":false
+			},
+			{
+				"type":"set_robot_mode",
+				"mode":"admittance ctrl",
+				"resetPos":"joint_dof_start",
+				"joints":[0,5],
+				"min_thresh":[1.0,0.5]
 			},
 			{
 				"type": "draw",
@@ -611,28 +421,26 @@
 				"for":"user input"
 			},
 			{
-				"//":"10: Can you please put Box 2 back into its designated position? Press any button on the box once you've done so.",
-				"type":"play",
-				"audio_index":10,
-				"delay":false
+				"type":"set_robot_mode",
+				"mode":"position"
 			},
 			{
-				"type":"wait",
-				"for":"user input"
+				"type":"set_graphic_mode",
+				"mode":"image"
 			},
 			{
 				"//":"Good! Now, before we go further, how many encoders do you think I have in my arm? Step back so I can reset my position. Again, use the white buttons on the box to change the number. Then, press any colored button to submit your answer.",
 				"type":"play",
-				"audio_index":11,
+				"audio_index":8,
 				"delay":true
 			},
 			{
 				"type":"goToJointAngles",
-				"joint_angles":"waypoints.pop(0)"
+				"joint_angles":"default"
 			},
 			{
-				"type":"goToJointAngles",
-				"joint_angles":"waypoints.pop(0)"
+				"type":"numeric_input",
+				"store_answer_in":"wheelVal"
 			},
 			{
 				"type":"if",
@@ -659,8 +467,10 @@
 				]
 			},
 			{
-				"type":"goToJointAngles",
-				"joint_angles":"waypoints.pop(0)"
+				"//":"Now grab and move my arm again. I've unlocked all of my motors, so my arm might drift around a little. Go ahead and grab it anyway while watching the projection to see what I sense as you move each motor. When you're done, press any button on the box.",
+				"type":"play",
+				"audio_index":11,
+				"delay":false
 			},
 			{
 				"type":"set_robot_mode",
@@ -763,25 +573,23 @@
 				"mode":"position"
 			},
 			{
-				"//":"13: Great job! Please stand back so I can adjust",
+				"//":"Using my encoders, I can measure the angles of all seven of my motors. Please stand back so I can reset my position.",
 				"type":"play",
-				"audio_index":13,
+				"audio_index":12,
 				"delay":true
 			},
 			{
-				"type":"adjustPoseTo",
-				"geometry":"position",
-				"axis":"z",
-				"amount":"Module.Z_TABLE+Module.BOX_HEIGHT+0.15"
+				"type":"goToJointAngles",
+				"joint_angles":"default"
 			},
 			{
 				"type":"proceed",
-				"to_section":"camera"
+				"to_section":"2dPosition"
 			}
 		]
 	},
-	{
-		"id": "camera",
+		{
+		"id":"2dPosition",
 		"instructions":[
 			{
 				"type":"set_graphic_mode",
@@ -789,13 +597,18 @@
 				"clear":true
 			},
 			{
-				"//":"0: Now that we are able to put the boxes into the bins, how do I know that I successfully put the box inside the bin?",
+				"//":"Now let's talk about why I have so many motors.",
 				"type":"play",
 				"audio_index":0,
 				"delay":true
 			},
 			{
-				"//":"1: If you look at my wrist, I have a camera. I can use this camera to determine the location of the box with respect to the location of the bin.",
+				"type":"goToJointAngles", 
+				"joint_angles":"kinematics_init_pos",
+				"wait":true
+			},
+			{
+				"//":"Having so many motors is really important. If I can only move my elbow,",
 				"type":"play",
 				"audio_index":1,
 				"delay":true
@@ -840,17 +653,17 @@
 				"fillStyle": "#7c2629"
 			},
 			{
-				"//":"4: Then, I detect the Apriltag and the contours of the bin and trace them with different colors.",
+				"//":"I'll need to move another motor, too!",
 				"type":"play",
 				"audio_index":3,
 				"delay":true
 			},
 			{
-				"type":"set_graphic_mode",
-				"mode":"camera_color_graphic"
+				"type":"goToJointAngles",
+				"joint_angles":"joint_dot_1"
 			},
 			{
-				"//":"5: The green box traces the perimeter of the bin and the blue dot indicates the center of the bin.",
+				"//":"I'm going to move my hand back to where it was and use the display to show the same arc as before.",
 				"type":"play",
 				"audio_index":4,
 				"delay":true
@@ -868,10 +681,11 @@
 				"label":"shoulder"
 			},
 			{
-				"type":"camera_off"
+				"type":"goToJointAngles",
+				"joint_angles":"kinematics_init_pos"
 			},
 			{
-				"//":"6: Putting this into practice, this is what I see...",
+				"//":"If I want to reach that point, I only need to move one motor, my wrist.",
 				"type":"play",
 				"audio_index":5,
 				"delay":true
@@ -914,7 +728,7 @@
 			{
 				"//":"I only needed to use one motor, but it was my elbow, not my wrist.",
 				"type":"play",
-				"audio_index":0,
+				"audio_index":7,
 				"delay":true
 			},
 			{
@@ -940,21 +754,18 @@
 				"label":"wrist"
 			},
 			{
-				"type":"set_graphic_mode",
-				"mode":"image"
+				"type":"goToJointAngles",
+				"joint_angles":"joint_arc_wrist"
 			},
 			{
-				"type": "set_graphic_mode",
-				"mode": "canvas",
-				"clear": true
+				"type":"goToJointAngles",
+				"joint_angles":"joint_ortho_kin"
 			},
 			{
-				"type":"draw",
-				"shape":"rectangle",
-				"x":76,
-				"y":69,
-				"width":11,
-				"height":10
+				"//":"But with my elbow motor, I can move along this curve.",
+				"type":"play",
+				"audio_index":9,
+				"delay":true
 			},
 			{
 				"type":"draw",
@@ -969,21 +780,12 @@
 				"label":"shoulderNew"
 			},
 			{
-				"type":"draw",
-				"shape":"rectangle",
-				"x":40.8,
-				"y":69,
-				"width":11,
-				"height":10,
-				"rotate":90
+				"type":"goToJointAngles",
+				"joint_angles":"joint_arc_elbow"
 			},
 			{
-				"type":"draw",
-				"shape":"rectangle",
-				"x":41.5,
-				"y":33.8,
-				"width":11,
-				"height":10
+				"type":"goToJointAngles",
+				"joint_angles":"joint_ortho_kin"
 			},
 			{
 				"type":"set_graphic_mode",
@@ -1000,17 +802,13 @@
 				"clearRec": true
 			},
 			{
-				"type":"draw",
-				"shape":"rectangle",
-				"x":19,
-				"y":67,
-				"width":17,
-				"height":19
+				"type":"goToJointAngles",
+				"joint_angles":"joint_dot_3_init"
 			},
 			{
-				"//":"2:Before we get started, can you put Box 2 back into its designated position and put Bin 1 on the stand? Press any button on the box when you've done so.",
+				"//":"Let's try another. If I want to move to this point, how many movements will I have to make if I can only move one motor at a time? Just like before, I'm going to unlock my elbow motor for you to push my hand toward the point. If you want to switch to moving my wrist motor, press any button on the box.",
 				"type":"play",
-				"audio_index":1,
+				"audio_index":10,
 				"delay":false
 			},
 			{
@@ -1029,15 +827,25 @@
 				"mode":"position"
 			},
 			{
-				"//":"3: Great! Similarly to last time, can you help me create a series of waypoints so that I can put the Box 3 into the bin?",
+				"//":"Now I've locked my elbow and unlocked my wrist. You can switch back and forth at any time by pressing any button on the box.",
 				"type":"play",
-				"audio_index":2,
-				"delay":true
+				"audio_index":11,
+				"delay":false
 			},
 			{
 				"type":"set",
-				"key":"z",
-				"val":0.05
+				"key":"x",
+				"val":0.54
+			},
+			{
+				"type":"set",
+				"key":"y",
+				"val":0.44
+			},
+			{
+				"type":"set",
+				"key":"tol",
+				"val":0.2
 			},
 			{
 				"type":"set",
@@ -1046,7 +854,7 @@
 			},
 			{
 				"type":"while",
-				"conditional":"Math.abs(#ENDPOINT_POSITION_X-#x)>0.03 || Math.abs(#ENDPOINT_POSITION_Y-(#y))>0.03 || Math.abs(#ENDPOINT_POSITION_Z-#z)>0.03",
+				"conditional":"Math.abs(#ENDPOINT_POSITION_X-#x)>#tol || Math.abs(#ENDPOINT_POSITION_Y-(#y))>#tol",
 				"instructions":[
 					{
 						"type":"set_robot_mode",
@@ -1058,7 +866,7 @@
 					{
 						"type":"wait",
 						"for":"custom",
-						"function":"(Math.abs(#ENDPOINT_POSITION_X-#x)<0.03 && Math.abs(#ENDPOINT_POSITION_Y-(#y))<0.03 && Math.abs(#ENDPOINT_POSITION_Z-#z)<0.03) || (#lastButton >-2)"
+						"function":"(Math.abs(#ENDPOINT_POSITION_X-#x)<#tol && Math.abs(#ENDPOINT_POSITION_Y-(#y))<#tol) || (#lastButton >-2)"
 					},
 					{
 						"type":"set",
@@ -1079,7 +887,7 @@
 					{
 						"type":"wait",
 						"for":"custom",
-						"function":"(Math.abs(#ENDPOINT_POSITION_X-#x)<0.03 && Math.abs(#ENDPOINT_POSITION_Y-(#y))<0.03 && Math.abs(#ENDPOINT_POSITION_Z-#z)<0.03) || (#lastButton >-2)"
+						"function":"(Math.abs(#ENDPOINT_POSITION_X-#x)<#tol && Math.abs(#ENDPOINT_POSITION_Y-(#y))<#tol || (#lastButton >-2)"
 					},
 					{
 						"type":"set",
@@ -1558,173 +1366,17 @@
 				"conditional":"#wheelVal==5",
 				"if_true":[
 					{
-						"type":"wait",
-						"for":"user input"
-					},
-					{
-						"type":"set_robot_mode",
-						"mode":"position",
-						"ways":true
-					},
-					{
-						"type":"gripper",
-						"grip":true
-					},
-					{
-						"//":"6: Now, lift my hand high enough so that the box higher than the bin. Press any button on the box to continue.",
-						"type":"play",
-						"audio_index":5,
-						"delay":false
-					},
-					{
-						"type":"set_robot_mode",
-						"mode":"interaction ctrl",
-						"orientation_x":false,
-						"orientation_y":false,
-						"orientation_z":false,
-						"position_x":false,
-						"position_y":false,
-						"position_z":true,
-						"in_end_point_frame":true
-					},
-					{
-						"type":"wait",
-						"for":"user input"
-					},
-					{
-						"type":"set_robot_mode",
-						"mode":"position",
-						"ways":true
-					},
-					{
-						"//":"7: Next, move my hand so that it is above Bin 1 and the gripper is in the correct orientation and is positioned in the same angle as the bin.",
-						"type":"play",
-						"audio_index":6,
-						"delay":false
-					},
-					{
-						"type":"set_robot_mode",
-						"mode":"interaction ctrl",
-						"orientation_x":true,
-						"orientation_y":true,
-						"orientation_z":true,
-						"position_x":true,
-						"position_y":true,
-						"position_z":true
-					},
-					{
-						"type":"wait",
-						"for":"user input"
-					},
-					{
-						"type":"set_robot_mode",
-						"mode":"position",
-						"ways":true
-					},
-					{
-						"//":"8: Finally, lower my hand so the box is placed in the bin. Make sure the hand is low enough so that when it drops Box 3, it doesn't drop too far, but high enough so that my grippers don't hit the side of the box. Press any button on the box to continue.",
-						"type":"play",
-						"audio_index":7,
-						"delay":false
-					},
-					{
-						"type":"set_robot_mode",
-						"mode":"interaction ctrl",
-						"orientation_x":true,
-						"orientation_y":true,
-						"orientation_z":true,
-						"position_x":true,
-						"position_y":true,
-						"position_z":true
-					},
-					{
-						"type":"wait",
-						"for":"user input"
-					},
-					{
-						"type":"set_robot_mode",
-						"mode":"position",
-						"ways":true
-					},
-					{
-						"type":"gripper",
-						"grip":false
-					},
-					{
-						"//":"9: Please stand back so I can reset my position to be over Box 4.",
-						"type":"play",
-						"audio_index":8,
-						"delay":true
-					},
-					{
-						"type":"adjustPoseBy",
-						"geometry":"position",
-						"axis":"z",
-						"amount":"0.15"
-					},
-					{
-						"type":"goToJointAngles",
-						"joint_angles":"above_fourth_box_joint_arg"
-					},
-					{
-						"//":"10: Can you please put Box 3 back into its designated position? Press the scroll wheel button once you've done so.",
-						"type":"play",
-						"audio_index":9,
-						"delay":false
-					},
-					{
-						"type":"wait",
-						"for":"user input"
-					},
-					{
-						"//":"11: Now I am going to go through the series of waypoints you set up for me and check to see if you successfully put box three into the bin.",
-						"type":"play",
-						"audio_index":10,
-						"delay":true
-					},
-					{
-						"type":"goToJointAngles",
-						"joint_angles":"waypoints.pop(0)"
-					},
-					{
-						"type":"goToJointAngles",
-						"joint_angles":"waypoints.pop(0)"
-					},
-					{
-						"type":"gripper",
-						"grip":true
-					},
-					{
-						"type":"goToJointAngles",
-						"joint_angles":"waypoints.pop(0)"
-					},
-					{
-						"type":"goToJointAngles",
-						"joint_angles":"waypoints.pop(0)"
-					},
-					{
-						"type":"goToJointAngles",
-						"joint_angles":"waypoints.pop(0)",
-						"speed_ratio":0.225
-					},
-					{
-						"type":"gripper",
-						"grip":false
-					},
-					{
-						"type":"adjustPoseBy",
-						"geometry":"position",
-						"axis":"z",
-						"amount":"0.15"
-					},
-					{
-						"type":"goToJointAngles",
-						"joint_angles":"camera_pos2"
-					},
-					{
-						"//":"12: Let's see if you successfully put the box into the bin.",
+						"//":"That's right! I measured my arm positions, and created a force to push my arm back.",
 						"type":"play",
 						"audio_index":11,
+						"delay":true
+					}
+				],
+				"if_false":[
+					{
+						"//":"Not quite. Do you remember pushing my arm and I knew how far I moved?",
+						"type":"play",
+						"audio_index":12,
 						"delay":true
 					},
 					{
@@ -1732,51 +1384,35 @@
 						"store_answer_in":"wheelVal"
 					},
 					{
-						"type":"camera_off"
-					},
-					{
 						"type":"if",
-						"conditional":"#wheelVal==1",
+						"conditional":"#wheelVal==5",
 						"if_true":[
 							{
-								"type":"set",
-								"key":"p",
-								"val":true
+								"//":"That's right! I measured my arm positions, and created a force to push my arm back.",
+								"type":"play",
+								"audio_index":11,
+								"delay":true
 							}
 						],
 						"if_false":[
 							{
-								"//":"14: Ooops! Not quite. Please put box 3 back into its designated position and help me set a new series of waypoints. When you're ready please press any button on the box.",
+								"//":"Sorry, that is incorrect. The correct answer is encoders.",
 								"type":"play",
 								"audio_index":13,
 								"delay":true
-							},
-							{
-								"type":"wait",
-								"for":"user input"
-							},
-							{
-								"type":"goToJointAngles",
-								"joint_angles":"above_fourth_box_joint_arg"
 							}
 						]
 					}
 				]
 			},
 			{
-				"//":"13:Great job! You have fully mastered putting boxes into bins.",
-				"type":"play",
-				"audio_index":12,
-				"delay":true
-			},
-			{
 				"type":"proceed",
-				"to_section":"coding"
+				"to_section":"waypoints"
 			}
 		]
 	},
 	{
-		"id":"coding",
+		"id":"waypoints",
 		"instructions":[
 			{
 				"type":"set_graphic_mode",
@@ -1954,13 +1590,10 @@
 				"ways":true
 			},
 			{
-				"type":"draw",
-				"shape":"rectangle",
-				"x":57.8,
-				"y":69,
-				"width":11,
-				"height":10,
-				"rotate":90
+				"//":"Great job! Now, I'll play back each waypoint. As I move from one waypoint to another, do the same motion with your arm.",
+				"type":"play",
+				"audio_index":7,
+				"delay":true
 			},
 			{
 				"type":"set_graphic_mode",
@@ -1968,17 +1601,18 @@
 				"location":"images/hokeypokey_out.png"
 			},
 			{
-				"//":"1: Please put boxes 1, 3, and 4 off to the side. Press any button on the box when done.",
+				"//":"First, you put my arm in.",
 				"type":"play",
-				"audio_index":0,
-				"delay": false
+				"audio_index":8,
+				"delay":false
 			},
 			{
-				"type":"wait",
-				"for":"user input"
+				"type":"goToJointAngles",
+				"joint_angles":"waypoints.pop(0)",
+				"wait":true
 			},
 			{
-				"//":"2: This next segment will help you practice programming the robot yourself.",
+				"//":"You put my arm out.",
 				"type":"play",
 				"audio_index":9,
 				"delay":false
@@ -1994,7 +1628,7 @@
 				"wait":true
 			},
 			{
-				"//":"3: I am about to display a series of options you can choose from to create a series of steps to put the box into the bin. Press the desired button to do a specific task. You can choose actions more than once. Once you press an action it will be added to a list displayed in the top left corner.",
+				"//":"You put my arm in,",
 				"type":"play",
 				"audio_index":10,
 				"delay":false
@@ -2010,7 +1644,7 @@
 				"wait":true
 			},
 			{
-				"//":"4: To remove an action from the list, simply press the white button with the minus on it. Once you have gotten the box into the bin, press the white button with a plus on the box to continue.",
+				"//":"And you learned all about, how to set up waypoints and make my motors turn around,",
 				"type":"play",
 				"audio_index":11,
 				"delay":false
@@ -2049,10 +1683,15 @@
 				"location":"images/Welcome.png"
 			},
 			{
-				"//":"5: To enter free mode, press the yellow button. Then, to set a waypoint, press any button on the box.",
+				"//":"And that's what it's all about! High two!",
 				"type":"play",
-				"audio_index":4,
-				"delay": false
+				"audio_index":0,
+				"delay":false
+			},
+			{
+				"type":"goToJointAngles",
+				"joint_angles":"joint_high_two",
+				"wait":true
 			},
 			{
 				"type":"wait",
@@ -2063,59 +1702,22 @@
 				"store_answer_in":"wait_output"
 			},
 			{
-				"type":"while",
-				"conditional":"#p===false",
-				"instructions":[
+				"type":"if",
+				"conditional":"#wait_output==true",
+				"if_true":[
 					{
-						"type":"set_graphic_mode",
-						"mode":"image"
-					},
-					{
-						"type":"programming_choices"
-					},
-					{
-						"//":"6: Please stand back so I can reset my position. ",
+						"//":"As you can probably imagine, playback control can be used for more than just dancing. Today, you recorded my arm positions and played them back to make me do the hokey pokey, but you can also record sequences to make me move equipment, package parts, and more!",
 						"type":"play",
-						"audio_index":5,
-						"delay": true
-					},
+						"audio_index":3,
+						"delay":true
+					}
+				],
+				"if_false":[
 					{
-						"type":"set_graphic_mode",
-						"mode":"canvas",
-						"clear":true
-					},
-					{
-						"type":"draw",
-						"shape":"rectangle",
-						"x":58,
-						"y":69,
-						"width":11,
-						"height":10,
-						"rotate":90
-					},
-					{
-						"type":"draw",
-						"shape":"rectangle",
-						"x":19,
-						"y":67,
-						"width":17,
-						"height":19
-					},
-					{
-						"type":"adjustPoseBy",
-						"geometry":"position",
-						"axis":"z",
-						"amount":"0.15"
-					},
-					{
-						"type":"goToJointAngles",
-						"joint_angles":"above_fourth_box_joint_arg"
-					},
-					{
-						"//":"7: Can you please put Box 2 in its original position? Press any button on the box once you've done so. ",
+						"//":"I only have two fingers, so instead of a high five I can only give high two's. High two!",
 						"type":"play",
-						"audio_index":6,
-						"delay": false
+						"audio_index":1,
+						"delay":true
 					},
 					{
 						"type":"wait",
@@ -2127,59 +1729,37 @@
 					},
 					{
 						"type":"if",
-						"conditional":"#wheelVal==1",
+						"conditional":"#wait_output",
 						"if_true":[
 							{
-								"type":"set",
-								"key":"p",
-								"val":true
+								"//":"As you can probably imagine, playback control can be used for more than just dancing. Today, you recorded my arm positions and played them back to make me do the hokey pokey, but you can also record sequences to make me move equipment, package parts, and more!",
+								"type":"play",
+								"audio_index":3,
+								"delay":true
 							}
 						],
 						"if_false":[
 							{
-								"//":"11: Ooops! Not quite. Please put box 2 back into its designated position and try again. When you're ready, press any button on the box.",
+								"//":"Okay,",
 								"type":"play",
-								"audio_index":10,
+								"audio_index":2,
 								"delay":true
 							},
 							{
-								"type":"wait",
-								"for":"user input"
-							},
-							{
-								"type":"goToJointAngles",
-								"joint_angles":"above_fourth_box_joint_arg"
+								"//":"As you can probably imagine, playback control can be used for more than just dancing. Today, you recorded my arm positions and played them back to make me do the hokey pokey, but you can also record sequences to make me move equipment, package parts, and more!",
+								"type":"play",
+								"audio_index":3,
+								"delay":true
 							}
 						]
 					}
 				]
 			},
 			{
-				"//":"10:Great job! You are a programming expert!",
+				"//":"Great job! You have completed the first learning module.",
 				"type":"play",
-				"audio_index":9,
+				"audio_index":4,
 				"delay":true
-			},
-			{
-				"type":"proceed",
-				"to_section":"end"
-			}
-		]
-	},
-	{
-		"id":"end",
-		"instructions":[
-			{
-				"//":"1: You have learned a lot today! You successfully put multiple boxes into bins in multiple degrees of freedom, learned how my camera works, and programmed me yourself!",
-				"type":"play",
-				"audio_index":0,
-				"delay": true
-			},
-			{
-				"//":"2: Congratulations! You have completed Module 2.",
-				"type":"play",
-				"audio_index":1,
-				"delay": true
 			}
 		]
 	}
