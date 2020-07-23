@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+
+	<arg name="device" default="/tmp/ttyUR" doc="name of rs485 device that is set up for tool_communication."/>
+	
+	<node pkg="robotiq_2f_gripper_control" type="Robotiq2FGripperRtuNode.py" args="$(arg device)" name="gripperNode" />
+	<node pkg="ur" type="teachbot.py" name="teachbotUR" output="screen" />
+
+</launch>

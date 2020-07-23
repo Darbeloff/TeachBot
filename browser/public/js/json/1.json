@@ -3,10 +3,27 @@
 		"id": "intro",
 		"instructions": [
 			{
+				"type":"set_robot_mode",
+				"mode":"position"
+			},
+			{
+				"type":"goToJointAngles",
+				"joint_angles":"IMPE_INIT"
+			},
+			{
+				"type":"set_robot_mode",
+				"mode":"impedance ctrl",
+				"joints":[2],
+				"resetPos":"IMPE_INIT"
+			},
+			{
 				"//":"Hello, my name is TeachBot. It's nice to meet you.",
 				"type":"play",
 				"audio_index":0,
 				"delay":true
+			},
+			{
+				"type":"pause"
 			},
 			{
 				"type": "proceed",

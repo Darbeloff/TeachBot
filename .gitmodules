@@ -1,0 +1,6 @@
+[submodule "robot/src/robotiq"]
+	path = robot/src/robotiq
+	url = https://github.com/ros-industrial/robotiq.git
+[submodule "robot/src/robotiq_85_gripper"]
+	path = robot/src/robotiq_85_gripper
+	url = https://github.com/StanleyInnovation/robotiq_85_gripper.git
