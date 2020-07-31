@@ -53,6 +53,7 @@ add_action_files(
   JointImpedance.action
   ButtonSend.action
   Wait.action
+  InteractionControl.action
 )
 
 generate_messages(
