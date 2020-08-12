@@ -10,15 +10,15 @@ Installation instructions are adapted from the official Universal Robots ROS Dri
 Inside `~/TeachBot/robot/src` run the following commands. 
 ```bash
 # clone the driver
-$ git clone https://github.com/UniversalRobots/Universal_Robots_ROS_Driver.git src/Universal_Robots_ROS_Driver
+$ git clone https://github.com/UniversalRobots/Universal_Robots_ROS_Driver.git
 
 # clone fork of the description to use the calibration feature
-$ git clone -b calibration_devel https://github.com/fmauch/universal_robot.git src/fmauch_universal_robot
+$ git clone -b calibration_devel https://github.com/fmauch/universal_robot.git
 
 # install dependencies
 $ sudo apt update -qq
 $ rosdep update
-$ rosdep install --from-path src --ignore-src -y
+$ rosdep install --from-paths src --ignore-src -y
 
 # build the workspace
 $ cd ../
