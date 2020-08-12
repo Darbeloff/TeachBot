@@ -1,0 +1,13 @@
+Great job! 
+Now that you've mastered picking up objects with a gripper, let's try placing this box into a bin. It may seem like a simple task, but I can't do it in just one motion. If I try to move the box straight into the bin, I'll collide with the side of the bin, like this.
+Can you move the bin back where it was? When it's ready, press the scroll wheel button.
+Let me try again. This time, instead of trying to move the box straight into the bin, I'll add a couple of steps in the middle. Help me set up a series of waypoints so that I can put the box into the bin. First, raise the box. Don't worry about moving the box directly over the bin. For now, just move it a few inches off the table, higher than the height of a bin. When you're done, press the scroll wheel button.
+Next, move the box over the bin. Don't try to change the height or orientation of the box. Simply position it over the bin. When you're done, press the scroll wheel button.
+I don't think that's high enough. Move my arm a little bit higher and press the scroll wheel.
+Finally, we can lower the box into the bin. Make sure the box is low enough so that it doesn't drop too far, then press the scroll wheel button to open my gripper.
+Great job! Now let's try moving Box 3 into the second bin. Move my arm so that it is positioned over Box 3. Press the scroll wheel when you're done.
+Next, lower my hand so that Box 3 is within the gripper's grasp and press the scroll wheel to close the gripper.
+Please stand back so I can confirm.
+Good! Now, raise my arm so that the box is high enough to move over the bin. Just like last time, don't worry about moving the box over the bin. Just raise it off the table. When you're done, press the scroll wheel button.
+I wasn't able to pick it up. Try again. Make sure to get the entire width of the box in my grasp.
+This time, the orientation of the box is different than the orientation of the bin. Like before, press the gray button on my wrist to change my arm's position and the white button on my wrist to change my arm's orientation. When the box is positioned over the bin, press the scroll wheel button.

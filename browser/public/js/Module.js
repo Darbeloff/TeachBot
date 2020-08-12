@@ -1,10 +1,10 @@
 // Constants
 const DIR = 'https://localhost:8000/';    // Directory containing resources
-const JOINTS = 7;                         // Numer of joints in Sawyer arm
 const VERBOSE = true;                     // Whether or not to print everything
 const BUTTON = {'back': 0, 'show': 1, 'circle': 2, 'square': 3, 'triangle': 4};
-// const ROBOT = 'sawyer';
-const ROBOT = 'sawyer';
+// ###### MODIFY TWO LINES ABOVE FOR DIFFERENT ROBOT MODEL! ######
+const ROBOT = 'ur';						  // Robot model, currently sawyer or ur.
+const JOINTS = 6;                         // Numer of joints in the ROBOT
 const ARDUINO = 'button_box';
 
 /**
@@ -212,7 +212,7 @@ function Module(module_num, main, content_elements) {
 	/******************************
 	 *   Setup Section Sequence   *
 	 ******************************/
-	var jsonPath = DIR + 'js/json/' + this.module_num + '.json';
+	var jsonPath = DIR + 'js/json/' + ROBOT + '/' + this.module_num + '.json';
 	var jqhxr = $.getJSON(jsonPath, function(data) {
 		self.sections = data.sections;
 		for (let s=0; s<self.sections.length; s++) {
@@ -241,15 +241,30 @@ Module.prototype.positionCallback = function(msg) {
 	for (let j=0; j<Object.keys(msg).length; j++) {
 		self.dictionary[`JOINT_POSITION_${j}`] = msg[`j${j}`];
 	}
+	if (ROBOT == 'ur') {
+		var temp_j0 = self.dictionary['JOINT_POSITION_0']
+		self.dictionary['JOINT_POSITION_0'] = self.dictionary['JOINT_POSITION_2']
+		self.dictionary['JOINT_POSITION_2'] = temp_j0
+	}
 }
 Module.prototype.velocityCallback = function(msg) {
 	for (let j=0; j<Object.keys(msg).length; j++) {
 		self.dictionary[`JOINT_VELOCITY_${j}`] = msg[`j${j}`];
 	}
+	if (ROBOT == 'ur') {
+		var temp_j0 = self.dictionary['JOINT_VELOCITY_0']
+		self.dictionary['JOINT_VELOCITY_0'] = self.dictionary['JOINT_VELOCITY_2']
+		self.dictionary['JOINT_VELOCITY_2'] = temp_j0
+	}
 }
 Module.prototype.effortCallback = function(msg) {
 	for (let j=0; j<Object.keys(msg).length; j++) {
 		self.dictionary[`EFFORT_${j}`] = msg[`j${j}`];
+	}
+	if (ROBOT == 'ur') {
+		var temp_j0 = self.dictionary['EFFORT_0']
+		self.dictionary['EFFORT_0'] = self.dictionary['EFFORT_2']
+		self.dictionary['EFFORT_2'] = temp_j0
 	}
 }
 Module.prototype.endpointCallback = function(msg) {
@@ -1045,6 +1060,7 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 
 				// When the motion is completed, move to the next instruction.
 				goal.on('result', function(result) {
+					console.log('waiting...');
 					self.start(self.getNextAddress(instructionAddr));
 				});
 				

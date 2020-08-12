@@ -1,0 +1,4 @@
+The first important concept to learn is the one I just messed up: orientation. As you saw, my hand can't grab the object like this. But...
+...if I change the orientation of my hand, I can pick up this object.
+Now you try. I have moved my hand over Box 2. Can you rotate my wrist so I can pick up Box 2? When you're ready for me to pick up the box, press the scroll wheel button.
+Alright. Let’s see.

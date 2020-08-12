@@ -7,12 +7,19 @@ from gtts import gTTS
 
 # Parse user input.
 parser = argparse.ArgumentParser(description='Synthesize text file into audio files of speech.')
-parser.add_argument('module_num', metavar='txt', type=str, help='The module number.')
+parser.add_argument('module_num', metavar='module_num', type=str, help='The module number.')
+parser.add_argument('robot', metavar='robot_name', type=str, help='The robot model, sawyer or ur. Only lower cases supported.')
 args = parser.parse_args()
 
+# Check robot argument and exit if wrong name is given.
+if args.robot!='saywer' and args.robot!='ur':
+	print('Robot arg ' + args.robot + ' is not supported, existing!')
+	quit()
+
+
 # Define the source and destination folders.
-srcDir = '../text/module' + args.module_num + '/'
-destDir = 'module' + args.module_num + '/'
+srcDir = '../text/' + args.robot + '/module' + args.module_num + '/'
+destDir = args.robot + '/module' + args.module_num + '/'
 
 # Ensure destination folder exists.
 if not os.path.exists(destDir):

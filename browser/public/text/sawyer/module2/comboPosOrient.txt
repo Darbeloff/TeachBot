@@ -1,0 +1,2 @@
+Great! Before, you helped me change my gripper's orientation so that I could pick up Box 2. This time, you helped me change my gripper's position so that I could pick up Box 3.
+Now, help me pick up Box 4. If you press the gray button on my wrist, you can change my arm's position. If you press the white button on my wrist, you can change my arm's orientation. Feel free to switch between the two modes to figure out the difference between the position and orientation. When you're ready for me to pick up Box 4, press the scroll wheel button.

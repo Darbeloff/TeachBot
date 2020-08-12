@@ -1,0 +1,1 @@
+Great! You helped me change my gripper's orientation so that I could pick up the box. Now, help me pick up Box 3. This time, my gripper is already in the correct orientation, but not in the correct position. Can you move my hand so that it can pick up Box 3? When you're ready for me to pick up the box, press the scroll wheel button.

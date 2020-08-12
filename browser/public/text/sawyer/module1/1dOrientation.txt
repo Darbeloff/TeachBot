@@ -1,0 +1,2 @@
+Now that you've learned the concept of position, let's talk about orientation.
+Pay attention to my gripper and see how it moves.

@@ -1,0 +1,1 @@
+Now that you've mastered picking up objects with a gripper, let's try placing this box into a bin. It may seem like a simple task, but I can't do it in just one motion. If I try to move the box straight into the bin, I'll collide with the side of the bin, like this.

@@ -2,6 +2,7 @@
 ## IMPORTS ##
 # Basic
 import rospy, math, actionlib
+from math import radians
 import numpy as np
 import sys
 import roslib
@@ -54,18 +55,19 @@ class Module():
 
         # Custom Control Variables --> used in Admittance Control
         self.control = {
-            'i': 0, # index we are on out of the 15 values (0-14)
-            'order': 15, # how many we are keeping for filtering
+            'i': 0, # index we are on out of the order values (0 to order-1)
+            'order': 60, # how many we are keeping for filtering
             # Structured self.control['effort'][tap #, e.g. i][joint, e.g. 'right_j0']
             'effort': [], # effort is read-only. UR does not support direct effort/torque control for safety reasons.
             'position': [],
             'velocity': []
         }
         
-        # Variables for forces-x --> used in Admittance control, UR specific
+        # Variables for forces-x --> used in Admittance control, UR specific.
+        # For now, these variables are used in impedance control.
         self.forces = {
             'i': 0, # index we are on out of the 60 values (0-59)
-            'order': 60, # how many we are keeping for filtering
+            'order': 59, # how many we are keeping for filtering
             'fx': [], # different from Sawyer, this gathers the wrench values, forces in x-direction
             'fy': [],
             'fz': []
@@ -75,14 +77,35 @@ class Module():
         self.forces['fz'] = [0]*self.forces['order']
         self.FORCE_STANDARDIZATION_CONSTANT = .2
 
+        # Variables for a low-pass effort filter.
+        self.eff_filter = {
+            'i': 0,
+            'order': 60,
+            'effort': {}
+        }
+        for name in JOINT_CONTROL_NAMES:
+            self.eff_filter['effort'][name] = [0.0] * self.eff_filter['order']
+
+        # Variables used in filtering velocity output in admittance control
+        self.vel_filter_adm = {
+            'i': 0,
+            'velocity': {},
+            'order': 1,
+            'vel_cmd_prev': {},
+            'K_past': 0.5
+        }
+        for name in JOINT_CONTROL_NAMES:
+            self.vel_filter_adm['velocity'][name] = [0.0] * self.vel_filter_adm['order']
+            self.vel_filter_adm['vel_cmd_prev'][name] = 0.0
+
         # Variables used in filtering velocity output in impedance control
-        self.vel_filter = {
+        self.vel_filter_imp = {
             'i': 0,
             'order': 7,
             'velocity': {}
         }
         for name in JOINT_CONTROL_NAMES:
-            self.vel_filter['velocity'][name] = [0.0] * self.vel_filter['order']
+            self.vel_filter_imp['velocity'][name] = [0.0] * self.vel_filter_imp['order']
 
         # Create empty structures in self.control to match with above comments 
         zeroVec = dict()
@@ -138,6 +161,13 @@ class Module():
 
         res = self.switch_controller([],['scaled_pos_traj_controller','joint_group_vel_controller'], 1, True, 10.0)
         res = self.switch_controller(['scaled_pos_traj_controller'],[], 1, True, 10.0)
+
+        # Initialize position
+        self.joint_traj_client.wait_for_server()
+        initialize_msg = FollowJointTrajectoryGoal()
+        initialize_msg.trajectory = self.create_traj_goal(joint_dof_start, speed_ratio=3)
+        self.joint_traj_client.send_goal(initialize_msg)
+        self.joint_traj_client.wait_for_result()
 
         self.initialize_gripper()
         rospy.loginfo('TeachBot is initialized and ready to go.')
@@ -213,6 +243,7 @@ class Module():
                 ret = switch_controller_srv([CONTROLLERS[controller.lower()]], [], 1, True, 10.0)
                 if ret.ok:
                     rospy.loginfo("Switched to {} controller".format(CONTROLLERS[controller.lower()]))
+                    self.current_controller = CONTROLLERS[controller.lower()]
             except rospy.ServiceException, e:
                 rospy.logerr("Service call failed to switch to {}".format(CONTROLLERS[controller.lower()]))
 
@@ -224,6 +255,7 @@ class Module():
         position = JointInfo()
         velocity = JointInfo()
         effort = JointInfo()
+        temp_joint_angles = []
         for j in range(Module.JOINTS):
             setattr(position, 'j'+str(j), data.position[j])
             setattr(velocity, 'j'+str(j), data.velocity[j])
@@ -233,22 +265,34 @@ class Module():
             # position, velocity keep 15 values (for filtering later), so set the self.control['i'] index's j'th point to this value
             self.control['position'][self.control['i']]['right_j'+str(j)] = data.position[j] 
             self.control['velocity'][self.control['i']]['right_j'+str(j)] = data.velocity[j]
-
+            self.control['effort'][self.control['i']]['right_j'+str(j)] = data.effort[j]
+            self.eff_filter['effort']['right_j'+str(j)][self.eff_filter['i']] = data.effort[j]
+        
         # Robot orders joint names alphabetically, so elbow comes first and shoulder_pan comes third.
-        # Code below swaps those two to match name to value.
+        # Code below swaps those two to fix the order.
         temp_p = self.control['position'][self.control['i']]['right_j0']
         self.control['position'][self.control['i']]['right_j0'] = self.control['position'][self.control['i']]['right_j2']
         self.control['position'][self.control['i']]['right_j2'] = temp_p
         temp_v = self.control['velocity'][self.control['i']]['right_j0']
         self.control['velocity'][self.control['i']]['right_j0'] = self.control['velocity'][self.control['i']]['right_j2']
         self.control['velocity'][self.control['i']]['right_j2'] = temp_v
+        temp_e = self.control['effort'][self.control['i']]['right_j0']
+        self.control['effort'][self.control['i']]['right_j0'] = self.control['effort'][self.control['i']]['right_j2']
+        self.control['effort'][self.control['i']]['right_j2'] = temp_e
         
         # since we are trying to keep only 'order' values for filtering, +1 if i is less than 'order' and reset to 0 otherwise 
         self.control['i'] = self.control['i']+1 if self.control['i']+1<self.control['order'] else 0
+        self.eff_filter['i'] = self.eff_filter['i']+1 if self.eff_filter['i']+1<self.eff_filter['order'] else 0
 
         # Publish joint state information to the browser 
         self.position_topic.publish(position)
         self.velocity_topic.publish(velocity)
+        # TODO: add effort topic to publish (if needed)
+
+        # for key, val in self.control['effort'][self.control['i']].items():
+        #     self.control['effort'][self.control['i']][key] = round(val, 4)
+
+        # print(self.control['effort'][self.control['i']].values())
 
     
     '''
@@ -270,19 +314,24 @@ class Module():
     to let the browser know that it has finished its task.
     '''
     def cb_GoToJointAngles(self, goal):
+
+        if self.current_controller != CONTROLLERS["position"]:
+            self.switchController("position")
+
         self.joint_traj_client.wait_for_server()
 
         followJoint_msg = FollowJointTrajectoryGoal()
 
         if goal.name != '':
-            print goal.name
-            followJoint_msg.trajectory = self.create_traj_goal(eval(goal.name))
+            print(goal.name)
+            followJoint_msg.trajectory = self.create_traj_goal(eval(goal.name), goal.speed_ratio)
         else:
-            followJoint_msg.trajectory = self.create_traj_goal([goal.j0pos, goal.j1pos, goal.j2pos, goal.j3pos, goal.j4pos, goal.j5pos])
+            followJoint_msg.trajectory = self.create_traj_goal([goal.j0pos, goal.j1pos, goal.j2pos, goal.j3pos, goal.j4pos, goal.j5pos], goal.speed_ratio)
         
         # Send goal to action client and wait for completion of task
         self.joint_traj_client.send_goal(followJoint_msg)
         self.joint_traj_client.wait_for_result()
+
 
         # Set success and return to browser module
         result = ur.msg.GoToJointAnglesResult()
@@ -291,15 +340,24 @@ class Module():
 
     '''
     Helper function to create a JointTrajectory message, which is used to interact with the ROS driver and give the arm commands
-    on how/where to move. 
+    on how/where to move.
+
+    speed_ratio modifies how long the arm takes to reach to the target position. The default is 1.
+    It is converted into speed_ratio by a function. This is because normally, smaller speed_ratio
+    is interpreted as slower speed but smaller value of arg in rospy.Duration(arg) makes the robot move faster.
+    This conversion makes speed_ratio more intuitive to use.
     '''
-    def create_traj_goal(self, array):
+    def create_traj_goal(self, array, speed_ratio=1):
         traj_msg = JointTrajectory()
         traj_msg.joint_names = JOINT_NAMES
 
         jointPositions_msg = JointTrajectoryPoint()
         jointPositions_msg.positions = array
-        jointPositions_msg.time_from_start = rospy.Duration(3)
+        if speed_ratio <= 0:
+            duration = 3
+        else:
+            duration = 1.5/speed_ratio + 1.5
+        jointPositions_msg.time_from_start = rospy.Duration(duration)
 
         traj_msg.points = [jointPositions_msg,]
 
@@ -316,8 +374,12 @@ class Module():
 
         if req.mode == 'position':
             self.switchController('position')
+            # Clear any values in the filter variable so that the next admittance_control starts off clean.
+            for name in JOINT_CONTROL_NAMES:
+                self.vel_filter_adm['velocity'][name] = [0.0] * self.vel_filter_adm['order']
+                self.vel_filter_adm['vel_cmd_prev'][name] = 0.0
 
-        elif req.mode == 'admittance_ctrl':
+        elif req.mode == 'admittance ctrl' or req.model == 'admittance_ctrl':
             # Initialize Joints Dict
             joints = {}
             for j in req.joints:
@@ -350,50 +412,121 @@ class Module():
             # Switch to the joint group velocity controller
             self.switchController('velocity')
             
-            self.modeTimer = rospy.Timer(rospy.Duration(0.1), lambda event=None : self.cb_AdmittanceCtrl(joints, eval(req.resetPos)))
+            self.modeTimer = rospy.Timer(rospy.Duration(0.02), lambda event=None : self.cb_AdmittanceCtrl_new(joints, eval(req.resetPos)))
         
-        # '''
-        # Currently, impedance control is set to work only with one joint, specifically
-        # the elbow joint at one specified posture. This is due to force input in cartesian
-        # coordinate and movement output in joint coordinate. A more complete impedance
-        # control with full-arm scale is possible with more complex calculations but for
-        # current usage of impedance control, only one joint is sufficient.
+        '''
+        Currently, impedance control is set to work only with one joint, specifically
+        the elbow joint at one specified posture. This is due to force input in cartesian
+        coordinate and movement output in joint coordinate. A more complete impedance
+        control with full-arm scale is possible with full kinematics but for
+        current usage of impedance control, this implementation is sufficient.
 
-        # The format below just follows the format from Saywer's version of teachbot.py and
-        # is not intended to use directly as is for multiple joint control.
-        # '''
-        elif req.mode == 'impedance ctrl':
-            # Initialize Joints Dict
-            joints = {}
-            for j in req.joints:
-                joints['right_j'+str(j)] = {}
+        The format below just follows the format from Saywer's version of teachbot.py and
+        is not intended to use directly as is for multiple joint control.
+        '''
+        # elif req.mode == 'impedance ctrl':
+        #     # Initialize Joints Dict
+        #     joints = {}
+        #     for j in req.joints:
+        #         joints['right_j'+str(j)] = {}
 
-            # Set V2F and X2F specs (currently not supported, do not uncomment)
-            # for i,j in enumerate(req.joints):
-            #     joints['right_j'+str(j)]['V2F'] = req.V2F[i]
-            #     joints['right_j'+str(j)]['X2F'] = req.X2F[i]
+        #     # Set V2F and X2F specs (currently not supported, do not uncomment)
+        #     # for i,j in enumerate(req.joints):
+        #     #     joints['right_j'+str(j)]['V2F'] = req.V2F[i]
+        #     #     joints['right_j'+str(j)]['X2F'] = req.X2F[i]
 
-            # Set position and velocity reference points
-            x_ref = self.control['position'][self.control['i']]
-            print(x_ref)
-            for j in req.joints:
-                joints['right_j'+str(j)]['x_ref'] = x_ref['right_j'+str(j)]
-                joints['right_j'+str(j)]['v_ref'] = 0
+        #     # Set position and velocity reference points
+        #     x_ref = self.control['position'][self.control['i']]
+        #     print(x_ref)
+        #     for j in req.joints:
+        #         joints['right_j'+str(j)]['x_ref'] = x_ref['right_j'+str(j)]
+        #         joints['right_j'+str(j)]['v_ref'] = 0
 
-            # Switch to the joint group velocity controller
-            self.switchController('velocity')
+        #     # Switch to the joint group velocity controller
+        #     self.switchController('velocity')
 
-            self.modeTimer = rospy.Timer(rospy.Duration(0.004), lambda event=None : self.cb_ImpedanceCtrl(joints, eval(req.resetPos)))
+        #     self.modeTimer = rospy.Timer(rospy.Duration(0.004), lambda event=None : self.cb_ImpedanceCtrl(joints, eval(req.resetPos)))
 
-        else:
-            rospy.logerr('Robot mode ' + req.mode + ' is not a supported mode.')
+        # else:
+        #     rospy.logerr('Robot mode ' + req.mode + ' is not a supported mode.')
 
         return True
+
+
+    def cb_AdmittanceCtrl_new(self, joints, resetPos, rateNom=10, tics=15):
+        log_bias = {}
+        check_bias = False
+
+        velocities = {}
+        for joint in JOINT_CONTROL_NAMES:
+            velocities[joint] = 0
+
+        for joint in joints.keys():
+            linear_threshold = 2 * joints[joint]['min_thresh']
+            filtered_effort = sum([self.control['effort'][i][joint] for i in range(self.control['order'])])
+            filtered_effort /= self.control['order']
+            vel_cmd = filtered_effort - joints[joint]['bias']
+
+            # BIAS FINDER CODE, not needed for teachbot to run properly.
+            log_bias[joint] = round(filtered_effort, 3)
+            # end of code
+
+            if abs(vel_cmd) < joints[joint]['min_thresh']:
+                vel_cmd = 0
+            elif abs(vel_cmd) < linear_threshold:
+                # if vel_cmd > 0:
+                #     vel_cmd -= joints[joint]['min_thresh']
+                # else:
+                #     vel_cmd += joints[joint]['min_thresh']
+                vel_cmd = -joints[joint]['F2V'] / (2*linear_threshold) * vel_cmd * abs(vel_cmd)
+            else:
+                # vel_cmd = -joints[joint]['F2V'] / 2 * linear_threshold * vel_cmd/abs(vel_cmd)
+                if vel_cmd > 0:
+                    vel_cmd -= joints[joint]['min_thresh']
+                else:
+                    vel_cmd += joints[joint]['min_thresh']
+                vel_cmd *= -joints[joint]['F2V']
+
+            self.vel_filter_adm['velocity'][joint][self.vel_filter_adm['i']] = vel_cmd
+            vel_cmd = sum(self.vel_filter_adm['velocity'][joint]) / self.vel_filter_imp['order']
+            velocities[joint] = self.vel_filter_adm['K_past']*self.vel_filter_adm['vel_cmd_prev'][joint] + (1-self.vel_filter_adm['K_past'])*vel_cmd
+            if abs(velocities[joint]) < 0.001:
+                velocities[joint] = 0.0
+            self.vel_filter_adm['vel_cmd_prev'][joint] = velocities[joint]
+            # velocities[joint] = sum(self.vel_filter_adm['velocity'][joint]) / self.vel_filter_imp['order']
+
+        self.vel_filter_adm['i'] = self.vel_filter_adm['i']+1 if self.vel_filter_adm['i']+1<self.vel_filter_adm['order'] else 0
+
+        # rospy.loginfo(velocities)
+        velocity_msg = Float64MultiArray()
+
+        velocity_data = []
+        for j in range(len(velocities.keys())):
+            velocity_data.append(velocities['right_j'+str(j)])
+        
+        if check_bias:
+            rospy.loginfo('bias mode: '+str(log_bias))
+        else:
+            velocity_msg.data = velocity_data
+            rospy.loginfo(velocity_data)
+            self.publish_velocity_to_robot.publish(velocity_msg)
+
+        # for joint in JOINT_CONTROL_NAMES:
+        #     if joint in joints.keys():
+        #         filtered_effort = sum([self.control['effort'][i][joint] for i in range(self.control['order'])])
+        #         filtered_effort /= self.control['order']
+        #         vel_cmd = filtered_effort - joints[joint]['bias']
+        #         if abs(vel_cmd) < joints[joint]['min_thresh']:
+        #             vel_cmd = 0
+        #         vel_cmd *= -joints[joint]['F2V']
+        #         velocities[joint] = vel_cmd
+        #     else:
+        #         velocities[joint] = 0
 
     def cb_AdmittanceCtrl(self, joints, resetPos, rateNom=10, tics=15):
         # new velocities to send to robot
         velocities = {}
-        for j in range(len(joints.keys())):
+        for joint in range(len(joints.keys())):
             velocities['right_j'+str(j)] = 0
         
         for joint in JOINT_CONTROL_NAMES:
@@ -462,10 +595,10 @@ class Module():
                 else:
                     F2V = Kfv * (force_input - F_threshold)
 
-            self.vel_filter['velocity'][joint][self.vel_filter['i']] = F2V
-            velocities[joint] = sum(self.vel_filter['velocity'][joint]) / self.vel_filter['order']
+            self.vel_filter_imp['velocity'][joint][self.vel_filter_imp['i']] = F2V
+            velocities[joint] = sum(self.vel_filter_imp['velocity'][joint]) / self.vel_filter_imp['order']
 
-        self.vel_filter['i'] = self.vel_filter['i']+1 if self.vel_filter['i']+1<self.vel_filter['order'] else 0
+        self.vel_filter_imp['i'] = self.vel_filter_imp['i']+1 if self.vel_filter_imp['i']+1<self.vel_filter_imp['order'] else 0
 
         velocities_data = []
         for i in range(len(JOINT_CONTROL_NAMES)):
@@ -476,22 +609,25 @@ class Module():
         print(velocities_data)
         # self.publish_velocity_to_robot.publish(velocity_msg)
 
+def deg_to_rad(joints_list):
+    return [radians(j) for j in joints_list]
 
 if __name__ == '__main__':
     ## DEFINE IMPORTANT CONSTANTS --- MAKE SURE THEY MATCH WITH MODULE 1 OR 2 CONSTANTS ##
 
     # POSITION CONSTANTS - ARRAYS THAT MATCH JOINT_NAMES
     ZERO = [0, -1.57, 0, -1.57, 0, 0]
-    SCARA = [0, -3.14, 0, -3.14, -1.57, 0]
+    default = [0, -1.57, 0, -1.57, 0, 0]
+    # SCARA = [0, -3.14, 0, -3.14, -1.57, 0] # OLD SCARA POSE, COLLIDE WITH THE TABLE
+    SCARA = deg_to_rad([-60, -150, -60, -150, -90, 180])
     WRIST_3_FWD = [0, -3.14, 0, -3.14, -1.57, -.5]
     WRIST_2_FWD = [0, -3.14, 0, -3.14, -1.0, 0]
     WRIST_1_FWD = [0, -3.14, 0, -2.54, -1.57, 0]
     ELBOW_FWD = [0, -3.14, 0.5, -3.14, -1.57, 0]
     SHOULDER_FWD = [0, -2.80, 0, -3.14, -1.57, 0]
     BASE_FWD = [0.50, -3.14, 0, -3.14, -1.57, 0]
+    test_base = deg_to_rad([-30, -150, -60, -150, -90, 180])
     IMPE_INIT = [1.57, -3.14, 1.57, -1.57, 1.57, 0]
-    
-    default = ZERO
 
     # TODO: Figure out what no_hit is and what j4 max is    
     # TODO: Figure out DPS becaues the arm needs to be over the table for this part
@@ -502,24 +638,44 @@ if __name__ == '__main__':
 
     # 1
     joint_motor_animation_0 = SCARA
-    joint_motor_animation_1 = [0, -3.14, -0.25, -3.14, -1.25, 0]
+    joint_motor_animation_1 = deg_to_rad([-60, -150, 0.0, -150, -90, 180])
+    joint_motor_animation_2 = deg_to_rad([-60, -120, 0.0, -150, -90, 180])
     # 4
-    joint_test = [0]*Module.JOINTS
-    joint_test = [WRIST_3_FWD, WRIST_2_FWD, WRIST_1_FWD, ELBOW_FWD, SHOULDER_FWD, BASE_FWD]
+    span_test =  [joint for joint in joint_motor_animation_0]
+    span_test[0] += 0.3
+    slift_test = [joint for joint in joint_motor_animation_0]
+    slift_test[1] += 0.3
+    elbow_test = [joint for joint in joint_motor_animation_0]
+    elbow_test[2] += 0.3
+    wrist1_test = [joint for joint in joint_motor_animation_0]
+    wrist1_test[3] += 0.8
+    wrist2_test = [joint for joint in joint_motor_animation_0]
+    wrist2_test[4] += 0.8
+    wrist3_test = [joint for joint in joint_motor_animation_0]
+    wrist3_test[5] += 0.8
+    joint_test = [span_test, slift_test, elbow_test, wrist1_test, wrist2_test, wrist3_test]
+    # joint_test = [0]*Module.JOINTS
+    # joint_test = [WRIST_3_FWD, WRIST_2_FWD, WRIST_1_FWD, ELBOW_FWD, SHOULDER_FWD, BASE_FWD]
     
     # 6 - 15
     # TODO Find the hard-coded values that work for UR
-    # joint_dof_start = [-1.57, DSP,j2scara,0,-j4max,0]
     # joint_dof_shoulder = [-1.57, -2.80 ,j2scara,0,-j4max,0]
     # joint_dof_elbow = [-1.57, DSP, .30, 0,-j4max,0]
     # joint_dof_wrist = [-1.57, DSP,j2scara,0, 0.45,0]
     # joint_dof_up = [-1.57, DSP, j2scara,0,-j4max,0]
     # for now use the following so it goes through this section of the module but doesn't swing around like crazy
-    joint_dof_start = SCARA
-    joint_dof_shoulder = SCARA
-    joint_dof_elbow = SCARA
-    joint_dof_wrist = SCARA
+    joint_dof_start =       deg_to_rad([-60, -150, -60, -150, -90, 180]) # SCARA
+    joint_dof_shoulder =    deg_to_rad([-90, -150, -60, -150, -90, 180])
+    joint_dof_elbow =       deg_to_rad([-60, -120, -90, -150, -90, 180])
+    joint_dof_wrist =       deg_to_rad([-60, -150, -60, -150, -45, 180])
     joint_dof_up = SCARA
+    # TEMP position for development at BIC.
+    joint_dof_start_BIC =   deg_to_rad([-130, -150, -60, -150, -90, 180])
+
+    pos_encoder_video = deg_to_rad([-90, -90, -60, -180, -90, 180])
+
+    kinematics_init_pos = deg_to_rad([-60, -150, -60, -150, -90, 180]) # SCARA
+
 
     m = Module()
 

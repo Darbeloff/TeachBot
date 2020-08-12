@@ -1,0 +1,6 @@
+Now that we are able to put the boxes into the bins, how do I know that I successfully put the box inside the bin?
+If you look at my wrist, I have a camera. I can use this camera to determine the location of the box with respect to the location of the bin. 
+First, I take a picture of the projector screen, which will look something like this...
+Then, I detect the Apriltag and the contours of the bin and trace them with different colors. 
+The green box traces the perimeter of the bin. The blue box traces the outline of the Apriltag.
+Putting this into practice, this is what I see...
