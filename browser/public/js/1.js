@@ -9,8 +9,8 @@ var m = new Module(module_num, main, [image, animator, canvas_obj]);
 /**************************
  *   Main Functionality   *
  **************************/
-var start_seq = 'encoders';
-var start_location = 32;
+var start_seq = 'intro';
+var start_location = 0;
 
 async function main() {
     m.displayOff();

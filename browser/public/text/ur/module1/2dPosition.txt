@@ -1,5 +1,5 @@
-Now let's talk about why I have so many motors.
-Having so many motors is really important. If I can only move my,
+Now let's talk about why I have so many motors. Please stand back.
+Having so many motors is really important. If I can only move my shoulder,
 I can only reach points along this curve. So, if I want to reach this point,
 I'll need to move another motor, too!
 I'm going to move my hand back to where it was and use the display to show the same arc as before.

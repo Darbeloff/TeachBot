@@ -1,3 +1,4 @@
+"encoders"
 			{
 				"type":"if",
 				"conditional":"#wheelVal==7",
@@ -22,6 +23,7 @@
 					}
 				]
 			},
+			
 			{
 				"//":"Now grab and move my arm again. I've unlocked all of my motors, so my arm might drift around a little. Go ahead and grab it anyway while watching the projection to see what I sense as you move each motor. When you're done, press any button on the box.",
 				"type":"play",
@@ -113,3 +115,41 @@
 				"type":"wait",
 				"for":"user input"
 			},
+
+
+"2dPosition"
+			{
+				"//":"By combining all of the motions I can make with just one of my motors, I can move my hand freely through a large space!",
+				"type":"play",
+				"audio_index":19,
+				"delay":true
+			},
+			{
+				"//":"Grab my hand and see how large my range of motion is. I've unlocked all my motors, so my arm might drift around again. Go ahead and grab it anyway. When you're done, press any button on the box.",
+				"type":"play",
+				"audio_index":20,
+				"delay":false
+			},
+			{
+				"type":"set_robot_mode",
+				"mode":"interaction ctrl",
+				"orientation_x":true,
+				"orientation_y":true,
+				"orientation_z":true,
+				"position_x":true,
+				"position_y":true,
+				"position_z":true
+			},
+			{
+				"type":"wait",
+				"for":"user input"
+			},
+			{
+				"type":"set_robot_mode",
+				"mode":"position"
+			},
+			{
+				"//":"Please stand back so that I can reset my position.",
+				"type":"play",
+				"audio_index":21,
+				"delay":true

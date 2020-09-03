@@ -100,6 +100,11 @@ function Module(module_num, main, content_elements) {
 		messageType: ROBOT + '/EndpointInfo'
 	});
 	this.endpoint.subscribe(self.endpointCallback);
+	// this.wrench = new ROSLIB.Topic({
+	// 	ros: ros,
+	// 	name: '/teachbot/Wrench',
+	// 	messageType: ROBOT + '/Wrench'
+	// });
 
 	// Service Servers
 	var DevModeSrv = new ROSLIB.Service({
@@ -275,6 +280,7 @@ Module.prototype.endpointCallback = function(msg) {
 	self.dictionary[`ENDPOINT_ORIENTATION_Y`] = msg.orientation.y;
 	self.dictionary[`ENDPOINT_ORIENTATION_Z`] = msg.orientation.z;
 	self.dictionary[`ENDPOINT_ORIENTATION_W`] = msg.orientation.w;
+	// console.log(self.dictionary[`ENDPOINT_POSITION_X`])
 }
 
 /*Module.prototype.unsubscribeFrom = function(topic) {
@@ -301,7 +307,7 @@ Module.prototype.endpointCallback = function(msg) {
  */
 Module.prototype.loadTextAndAudio = function() {
 	// Base of directory containing text
-	this.text_dir = DIR + 'text/module' + this.module_num + '/';
+	this.text_dir = DIR + 'text/' + ROBOT +'/module' + this.module_num + '/';
 	
 	// For each section
 	for (let s=0; s<this.sections.length; s++) {
@@ -328,7 +334,7 @@ Module.prototype.loadTextAndAudio = function() {
 				self.sections[s]._audio_duration_copy = new Array(audioCount);
 				self.sections[s]._num_loaded = 0;
 				for (let a=0; a<audioCount; a++) {
-					self.sections[s]._audiofiles_mp3[a] = DIR + 'audio/module' + self.module_num + '/' + self.sections[s].id + '/line' + a.toString() + '.mp3';
+					self.sections[s]._audiofiles_mp3[a] = DIR + 'audio/' + ROBOT + '/module' + self.module_num + '/' + self.sections[s].id + '/line' + a.toString() + '.mp3';
 					let audio = new Audio();
 					audio.addEventListener('canplaythrough', function() {
 						self.sections[s]._audio_duration[a] = audio.duration*1000;
@@ -669,6 +675,15 @@ Module.prototype.start = async function(instructionAddr=['intro',0]) {
 
 				console.log("module paused here.")
 				// self.start(self.getNextAddress(instructionAddr));
+
+				break;
+
+			case 'display':
+				console.log("Entered display case.");
+
+				var timerId = setInterval(() => {
+					console.log('tick')
+				}, 1000);
 
 				break;
 

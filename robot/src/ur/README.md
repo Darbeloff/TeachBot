@@ -51,11 +51,19 @@ You can adjust the speed that your robot moves at using the speed slider. It is 
 
  ![Speed Slider on UR5e interface](./speed_slider.png)
 
+Each UR robot is calibrated inside the factory giving exact forward and inverse kinematics. To also make use of this in ROS, you first have to extract the calibration information from the robot. Run the command below to extract the calibration data.
+
+    $ roslaunch ur_calibration calibration_correction.launch robot_ip:=169.254.157.0 \
+    target_filename:="${HOME}/TeachBot/robot/src/ur/my_robot_calibration.yaml"
+
 On your PC, open three terminals to `~/TeachBot/robot` and don't forget to `source devel/setup.bash`. 
 
 In the first terminal, run the following command with your parameters for robot_ip and kinematics_config:
 
-    $ roslaunch ur_robot_driver ur5e_bringup.launch robot_ip:=169.254.157.0 \ kinematics_config:="$(HOME/TeachBot/robot/src/ur/ur5e_robot_calibration.yaml)"
+    $ roslaunch ur_robot_driver ur5e_bringup.launch robot_ip:=169.254.157.0 \
+    kinematics_config:=$(rospack find ur)/my_robot_calibration.yaml \
+    use_tool_communication:=true tool_voltage:=24 tool_parity:=0 tool_baud_rate:=115200 tool_stop_bits:=1 \
+    tool_rx_idle_chars:=1.5 tool_tx_idle_chars:=3.5 tool_device_name:=/tmp/ttyUR
 
 For `robot_ip:=`, put the IP address of your UR robot to replace the IP address of this example. 
 

@@ -34,6 +34,10 @@ bool in_endpoint_frame
 int32[] interaction_frame
 float32[] K_nullspace
 int32 rate
+
+# interaction_trans Parameters
+string[] axis_transformation
+int32[] active_axes
 ---
 # Response
 bool done

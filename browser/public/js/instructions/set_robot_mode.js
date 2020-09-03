@@ -30,9 +30,14 @@ Module.prototype.set_robot_mode = function(instr, instructionAddr) {
 			break;
 
 		case 'impedance ctrl':
-			checkInstruction(instr, ['joints', 'resetPos', 'V2F', 'X2F'], instructionAddr);
-			['joints', 'resetPos', 'V2F', 'X2F'].forEach(function(attr, i) {
-				req[attr] = instr[attr];
+			if (ROBOT == 'sawyer') {
+				checkInstruction(instr, ['joints', 'resetPos', 'V2F', 'X2F'], instructionAddr);
+			} else if (ROBOT == 'ur') {
+				checkInstruction(instr, ['joints', 'resetPos', 'min_thresh', 'P2F', 'F2V'], instructionAddr);
+			}
+			
+			['joints', 'resetPos', 'V2F', 'X2F', 'min_thresh', 'P2F', 'F2V'].forEach(function(attr, i) {
+				if (isntr.hasOwnProperty(attr)) req[attr] = instr[attr];
 			});
 			break;
 
@@ -43,6 +48,11 @@ Module.prototype.set_robot_mode = function(instr, instructionAddr) {
 			 'constrained_axes', 'in_endpoint_frame', 'interaction_frame', 'K_nullspace',
 			 'rate'].forEach(function(attr, i) {
 			 	if (instr.hasOwnProperty(attr)) req[attr] = instr[attr];
+			});
+			break;
+		case 'interaction_trans':
+			['axis_transformation', 'active_axes'].forEach(function(attr, i) {
+				if (instr.hasOwnProperty(attr)) req[attr] = instr[attr];
 			});
 			break;
 
