@@ -677,6 +677,30 @@ class Module():
 
 
     def cb_AdmittanceCtrl_new(self, joints, resetPos, rateNom=10, tics=15):
+        '''
+        Implement admittance control using effort of each joint.
+
+        This function implements admittance control. It takes the joint effort as input and gives
+        joint velocity as output. As of 11/4/2020, this function only works in the joint space, not
+        in the cartesian coordinate of the end effector.
+
+        The velocity output profile is split into two segments to avoid vibration near zero and
+        abrupt acceleration from zero. An exponential velocity provile is used near zero up to a
+        threshold called 'linear_threshold'. After that, the velocity profile becomes linear. The
+        exponential section helps to flaten the velocity provile by eliminating discontinuity.
+
+        Parameters
+        ----------
+        joints : dictionary
+            A dictionary containing joint names to activate along with relevant thersholds and parameters. Check method cb_SetRobotMode for more details.
+        resetPos : list of int
+            joint angles when the robot goes out of boundary. Currently not used.
+
+        Returns
+        -------
+        None
+
+        '''
         log_bias = {}
         check_bias = True
 
@@ -692,7 +716,6 @@ class Module():
 
             # BIAS FINDER CODE, not needed for teachbot to run properly.
             log_bias[joint] = round(filtered_effort, 3)
-            # end of code
 
             if abs(vel_cmd) < joints[joint]['min_thresh']:
                 vel_cmd = 0
@@ -734,19 +757,13 @@ class Module():
             rospy.loginfo(velocity_data)
             self.publish_velocity_to_robot.publish(velocity_msg)
 
-        # for joint in JOINT_CONTROL_NAMES:
-        #     if joint in joints.keys():
-        #         filtered_effort = sum([self.control['effort'][i][joint] for i in range(self.control['order'])])
-        #         filtered_effort /= self.control['order']
-        #         vel_cmd = filtered_effort - joints[joint]['bias']
-        #         if abs(vel_cmd) < joints[joint]['min_thresh']:
-        #             vel_cmd = 0
-        #         vel_cmd *= -joints[joint]['F2V']
-        #         velocities[joint] = vel_cmd
-        #     else:
-        #         velocities[joint] = 0
 
     def cb_AdmittanceCtrl(self, joints, resetPos, rateNom=10, tics=15):
+        '''
+        Deprecated! Use cb_AdmittanceCtrl_new. Delete this function after you check that
+        cb_AdmittanceCtrl is fully functional.
+        '''
+
         # new velocities to send to robot
         velocities = {}
         for joint in range(len(joints.keys())):
@@ -788,6 +805,15 @@ class Module():
     Note that this only applies to elbow joint at posture IMPE_INIT.
     '''
     def cb_ImpedanceCtrl(self, joints, resetPos, f_min_thresh, rateNom=10, tics=15):
+        '''
+        Impedance control implementation
+
+        This is a simplified impedance control in joint space only. In other words, you can only
+        achieve impedance control for individual joints and the system has no knowledge of its
+        location in the cartesian coordinate. Also, the impedance control is only tested when
+        only one joint is activated.
+        '''
+
         # Define some constants used in this callback func.
         F_threshold = f_min_thresh
         F_cutoff = 2 * F_threshold
@@ -835,17 +861,28 @@ class Module():
         # self.publish_velocity_to_robot.publish(velocity_msg)
 
     def cb_InteractionTrans(self, axis_transformation, active_axes):
-        # This callback function implements interaction control but with
-            # fixed angles of the end effector. This means that the robot
-            # moves in translational directions (x, y, and z) but the end-
-            # effector does not rotate. A full interaction control
-            # requires rotation matrix, forward kinematics and stuff, and
-            # even without a full interaction control, teachbot can run 90%
-            # of the code. As such, it is not implemented. The methods
-            # used in this function such as mapping xyz from tcp to base only
-            # applies to this simplified interaction control. DO NOT use it
-            # outside of this function!
-        # Future To-Do: implement full interaction control.
+        '''
+        This callback function implements interaction control but with
+        fixed angles of the end effector. This means that it moves
+        in translational directions (x, y, and z) but the end-
+        effector does not rotate. A full interaction control
+        requires rotation matrix, forward kinematics and stuff, and
+        even without a full interaction control, teachbot can run 90%
+        of the code. As such, it is not implemented. The methods
+        used in this function such as mapping xyz from tcp to base only
+        applies to this simplified interaction control. DO NOT use it
+        outside of this function!
+
+        Future To-Do: implement full interaction control.
+
+        Edit:
+        Current work is not complete and may only work in situations where the coordinate of end effector
+        is aligned to that of the base in multiple of 90 degrees (90, 180, 270, 360). For example, if the
+        end effector coordinate is rotated 32 degrees in x axis, this implementation will not work.
+        
+        My advice is to implement a full interaction control involving full kinematics. 
+        
+        '''
 
         axis_mapping = {
             'x':1,
@@ -877,7 +914,6 @@ class Module():
         test_quat = [self.transform['rotation'][self.transform['i']][axis] for axis in 'xyzw']
         rotation_matrix = quat_to_rotmatrix(test_quat)
         v_g_tcp = np.matmul(rotation_matrix, [0,0,-9.81])
-        # print(v_g_tcp)
 
         # ik_solution = self.ik_solver.get_ik(
         #     self.qinit,
