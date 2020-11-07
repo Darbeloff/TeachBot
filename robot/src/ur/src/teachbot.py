@@ -7,7 +7,7 @@ import numpy as np
 import roslib
 # The following two packages are not well documented. Ideally they are used for gravity compensation.
 import PyKDL as kdl
-import kdl_parser_local as kdl_parser
+# import kdl_parser_local as kdl_parser
 from scipy.spatial.transform import Rotation as R
 import matplotlib.pyplot as plt
 
