@@ -56,7 +56,7 @@ Each UR robot is calibrated inside the factory giving exact forward and inverse 
     $ roslaunch ur_calibration calibration_correction.launch robot_ip:=169.254.157.0 \
     target_filename:="${HOME}/TeachBot/robot/src/ur/my_robot_calibration.yaml"
 
-On your PC, open three terminals to `~/TeachBot/robot` and don't forget to `source devel/setup.bash`. 
+On your PC, open four terminals to `~/TeachBot/robot` and don't forget to `source devel/setup.bash`. 
 
 In the first terminal, run the following command with your parameters for robot_ip and kinematics_config:
 
@@ -81,6 +81,11 @@ In the next terminal tab, run
 
     $ source devel/setup.bash
     $ rosrun ur teachbot.py
+    
+In the third terminal tab, run
+    
+    $ source devel/setup.bash
+    $ rosrun button_box button.py
 
 Then, navigate to the last tab and run
 
