@@ -229,3 +229,26 @@ The main `teachbot.py` scripts are run using the command described above:
 $ # This is just the format of the command. Do not actually enter <name_of_cobot>.
 $ rosrun <name_of_cobot> teachbot.py
 ```
+
+## Citing this Repository
+This repository is affiliated with a journal article you can read for free at https://www.sciencedirect.com/science/article/pii/S2405844021016868. Please use the following text to cite this repository:
+
+Nicholas Stearns Selby, Jerry Ng, Glenda S. Stump, George Westerman, Claire Traweek, and H. Harry Asada, "TeachBot: Towards Teaching Robotics Fundamentals for Human-Robot Collaboration at Work," in _Heliyon_, vol. 7, no. 7, pp. e07583, 2021, doi: 10.1016/j.heliyon.2021.e07583.
+
+The BibTeX is:
+```
+@article{TeachBot,
+  title = {TeachBot: Towards teaching robotics fundamentals for human-robot collaboration at work},
+  journal = {Heliyon},
+  volume = {7},
+  number = {7},
+  pages = {e07583},
+  year = {2021},
+  issn = {2405-8440},
+  doi = {https://doi.org/10.1016/j.heliyon.2021.e07583},
+  url = {https://www.sciencedirect.com/science/article/pii/S2405844021016868},
+  author = {Nicholas Stearns Selby and Jerry Ng and Glenda S. Stump and George Westerman and Claire Traweek and H. Harry Asada},
+  keywords = {Adult learning, Human-computer interface, Human-robot interaction},
+  abstract = {The shortage of skilled workers who can use robots is a crucial issue hampering the growth of manufacturing industries. We present a new type of workforce training system, TeachBot, in which a robotic instructor delivers a series of interactive lectures using graphics and physical demonstration of its arm movements. Furthermore, the TeachBot allows learners to physically interact with the robot. This new human-computer interface, integrating oral and graphical instructions with motion demonstration and physical touch, enables to create engaging training materials. Effective learning takes place when the learner simultaneously interacts with an embodiment of new knowledge. We apply this “Learning by Touching” methodology to teach basic concepts, e.g. how a shaft encoder and feedback control work. In a pilot randomized control test with a small number of human subjects, we find suggestive evidence that Learning by Touching enhances learning effectiveness in this robotic context for adult learners. Students whose learning experience included touching the robot as opposed to watching it delivers the lessons showed gains in their ability to integrate knowledge about robotics. The “touching” group showed statistically significant gains in self-efficacy, which is an important antecedent to further learning and successful use of new technologies, as well as gains in knowledge about robotic concepts that trend toward significance.}
+}
+```
